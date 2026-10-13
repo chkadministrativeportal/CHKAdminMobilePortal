@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#8b0000" />
+  <title>CHK Admin Portal</title>
+  
+  <!-- PWA Manifest Link -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="https://media.base44.com/images/public/69d245aa9b069ec6c6771e6e/c0093c30b_CHKADMINICON.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #8b0000;
+      --primary-fg: #fff;
+      --bg: #f9f9f9;
+      --fg: #141414;
+      --card: #fff;
+      --muted: #f0f0f0;
+      --muted-fg: #6b6b6b;
+      --border: #e5e5e5;
+      --radius: 0.75rem;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding-top: env(safe-area-inset-top); /* For mobile notches */
+    }
+    .header-inner {
+      max-width: 900px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 1rem; height: 56px;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--fg); }
+    .logo img { width: 32px; height: 32px; object-fit: contain; }
+    .logo-text { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; display: none; }
+    @media(min-width:640px){ .logo-text { display: block; } }
+
+    .desktop-nav { display: none; align-items: center; gap: 2px; }
+    @media(min-width:768px){ .desktop-nav { display: flex; } }
+    .desktop-nav a {
+      padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 500;
+      text-decoration: none; color: var(--fg); transition: background 0.15s;
+    }
+    .desktop-nav a:hover { background: var(--muted); }
+    .desktop-nav a.active { background: var(--primary); color: var(--primary-fg); }
+
+    /* MAIN */
+    main { flex: 1; padding-bottom: 80px; }
+    @media(min-width:768px){ main { padding-bottom: 32px; } }
+
+    /* PAGE */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* HERO BANNER */
+    .hero-img img { width: 100%; display: block; }
+
+    /* PAGE HERO */
+    .page-hero {
+      position: relative; background: var(--fg);
+      padding: 48px 16px; display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .page-hero h1 {
+      font-size: clamp(1.2rem, 4vw, 2rem); font-weight: 900; text-transform: uppercase;
+      letter-spacing: 0.15em; color: var(--bg); text-align: center; position: relative; z-index: 1;
+    }
+    .page-hero::after {
+      content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 128px; height: 4px; background: var(--primary); border-radius: 9999px;
+    }
+
+    /* CARDS GRID */
+    .section { max-width: 900px; margin: 0 auto; padding: 32px 16px; }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    @media(min-width:640px){ .card-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+    @media(min-width:1024px){ .card-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    .service-card {
+      display: flex; flex-direction: column;
+      border: 2px solid var(--primary); border-radius: var(--radius);
+      overflow: hidden; text-decoration: none; color: var(--fg);
+      transition: opacity 0.15s; cursor: pointer;
+    }
+    .service-card:hover { opacity: 0.88; }
+    .service-card:active { transform: scale(0.98); }
+    .service-card .card-img {
+      aspect-ratio: 1/1; overflow: hidden; background: var(--muted);
+    }
+    .service-card .card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .service-card .card-img .card-icon {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;
+    }
+    .service-card .card-label {
+      background: var(--card); padding: 4px 4px 6px;
+      display: flex; align-items: center; justify-content: center; min-height: 36px;
+    }
+    .service-card .card-label span {
+      font-weight: 900; font-size: 9px; text-transform: uppercase; letter-spacing: 0.03em;
+      text-align: center; line-height: 1.3;
+    }
+    @media(min-width:640px){
+      .service-card .card-label { min-height: 44px; }
+      .service-card .card-label span { font-size: 12px; }
+    }
+
+    /* DIVIDER */
+    .divider { max-width: 900px; margin: 0 auto; padding: 0 16px; }
+    .divider-line { height: 2px; background: var(--primary); border-radius: 9999px; }
+
+    /* TWO-COL */
+    .two-col { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: center; }
+    @media(min-width:768px){ .two-col { grid-template-columns: 1fr 1fr; } }
+    .map-frame { border-radius: var(--radius); overflow: hidden; aspect-ratio: 16/9; }
+    .map-frame iframe { width: 100%; height: 100%; border: 0; }
+    .text-block h2 { font-size: clamp(1.1rem, 3vw, 1.4rem); font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+    .text-block p { font-size: 12px; color: var(--muted-fg); line-height: 1.7; margin-bottom: 8px; }
+    .btn {
+      display: inline-block; padding: 10px 24px;
+      background: var(--primary); color: var(--primary-fg);
+      font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;
+      border-radius: 8px; text-decoration: none; transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.88; }
+
+    /* IFRAME EMBED */
+    .iframe-wrap { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .iframe-wrap iframe { width: 100%; min-height: 800px; border: 0; display: block; }
+
+    /* VENUE GRID */
+    .venue-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .venue-link {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 12px; background: var(--muted); border-radius: 10px;
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+      text-decoration: none; color: var(--fg); transition: background 0.15s, color 0.15s;
+    }
+    .venue-link:hover { background: var(--primary); color: var(--primary-fg); }
+    .venue-link svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* COLLAPSIBLE */
+    .collapsible-btn {
+      display: flex; align-items: center; gap: 12px;
+      background: none; border: none; cursor: pointer; padding: 0; margin-bottom: 8px;
+    }
+    .collapsible-btn h2 { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: var(--fg); }
+    .chevron { transition: transform 0.2s; color: var(--muted-fg); font-size: 18px; }
+    .chevron.open { transform: rotate(180deg); }
+    .collapsible-body { display: none; }
+    .collapsible-body.open { display: block; }
+
+    /* INFO BOX */
+    .info-box {
+      background: rgba(139,0,0,0.05); border: 1px solid rgba(139,0,0,0.2);
+      border-radius: 10px; padding: 12px; margin-bottom: 24px;
+    }
+    .info-box p { font-size: 12px; font-weight: 600; line-height: 1.6; color: var(--fg); }
+
+    /* ONBOARDING ITEMS */
+    .onboarding-list { display: flex; flex-direction: column; gap: 12px; }
+    .onb-card {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 16px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      text-decoration: none; color: var(--fg); transition: border-color 0.15s;
+    }
+    .onb-card:hover { border-color: var(--primary); }
+    .onb-icon { font-size: 2rem; flex-shrink: 0; }
+    .onb-text h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .onb-text p { font-size: 12px; color: var(--muted-fg); line-height: 1.5; }
+
+    /* MOBILE BOTTOM NAV */
+    .mobile-nav {
+      display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+      background: rgba(255,255,255,0.9); backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      padding-bottom: env(safe-area-inset-bottom); /* For mobile home bars */
+    }
+    @media(min-width:768px){ .mobile-nav { display: none; } }
+    .mobile-nav-inner { display: flex; align-items: center; justify-content: space-around; width: 100%; max-width: 28rem; margin: 0 auto; height: 64px; }
+    .nav-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      min-width: 56px; padding: 4px; background: none; border: none; cursor: pointer;
+      color: var(--muted-fg); text-decoration: none; transition: color 0.15s;
+    }
+    .nav-btn.active { color: var(--primary); }
+    .nav-btn svg { width: 20px; height: 20px; }
+    .nav-btn span { font-size: 10px; font-weight: 500; }
+    .nav-icon-wrap { padding: 4px; border-radius: 12px; }
+    .nav-btn.active .nav-icon-wrap { background: rgba(139,0,0,0.1); }
+
+    /* MORE MENU */
+    .more-menu {
+      display: none; position: fixed; bottom: calc(64px + env(safe-area-inset-bottom)); left: 0; right: 0; z-index: 49;
+      background: var(--card); border-top: 1px solid var(--border); box-shadow: 0 -8px 32px rgba(0,0,0,0.1);
+    }
+    .more-menu.open { display: block; }
+    .more-menu-grid { max-width: 28rem; margin: 0 auto; padding: 12px; display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .more-item {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 12px 8px; border-radius: 12px; font-size: 12px; font-weight: 500;
+      cursor: pointer; color: var(--muted-fg); background: none; border: none; transition: background 0.15s;
+      text-decoration: none;
+    }
+    .more-item:hover { background: var(--muted); }
+    .more-item.active { background: rgba(139,0,0,0.08); color: var(--primary); }
+    .more-item span:first-child { font-size: 20px; }
+
+    /* FOOTER */
+    footer { background: var(--fg); color: var(--bg); display: none; }
+    @media(min-width:768px){ footer { display: block; } }
+    .footer-inner { max-width: 900px; margin: 0 auto; padding: 40px 24px; display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; }
+    footer h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+    footer p, footer a { font-size: 12px; opacity: 0.7; line-height: 1.7; text-decoration: none; color: inherit; display: block; }
+    footer a:hover { opacity: 1; }
+    .footer-copy { text-align: center; font-size: 11px; opacity: 0.4; padding: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+
+    /* MOBILE FOOTER */
+    .mobile-footer { background: var(--fg); color: var(--bg); padding: 32px 16px; padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
+    @media(min-width:768px){ .mobile-footer { display: none; } }
+    .mobile-footer h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+    .mobile-footer p { font-size: 11px; opacity: 0.7; line-height: 1.6; margin-bottom: 24px; }
+    .mobile-footer-copy { text-align: center; font-size: 10px; opacity: 0.4; margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#" onclick="navigate('home')">
+      <img src="https://media.base44.com/images/public/69d245aa9b069ec6c6771e6e/c0093c30b_CHKADMINICON.png" alt="CHK Admin" />
+      <span class="logo-text">CHK Admin Portal</span>
+    </a>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+
+  <!-- HOME -->
+  <div class="page active" id="page-home">
+    <div class="hero-img">
+      <img src="https://lh3.googleusercontent.com/d/1jt7efn2FI8SY7tUCyvUKgYLd5UWozicd" alt="CHK Admin Portal" loading="eager" />
+    </div>
+    <div class="section">
+      <div class="card-grid">
+        <div class="service-card" onclick="navigate('reserve-venue')">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1meKazZN4tmYYQ8XX0SD_VMjrngKlAme3" alt="Venue Reservation" loading="lazy" /></div>
+          <div class="card-label"><span>Venue Reservation</span></div>
+        </div>
+        <div class="service-card" onclick="navigate('venue-calendars')">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1t2R3ETXj245jyk0zVCO7BVOVfUj1j1iE" alt="Venue Calendars" loading="lazy" /></div>
+          <div class="card-label"><span>Venue Calendars</span></div>
+        </div>
+        <div class="service-card" onclick="navigate('reserve-vehicle')">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/14Q7ZZ9o3cd1mkCE0iQ4ryXxeR9tyeN1m" alt="Vehicle Reservation" loading="lazy" /></div>
+          <div class="card-label"><span>Vehicle Reservation</span></div>
+        </div>
+        <div class="service-card" onclick="navigate('forms')">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1Os4BDEGdnau_zIrAsuWA4fRBmnHtktCU" alt="Admin Online Forms" loading="lazy" /></div>
+          <div class="card-label"><span>Admin Online Forms</span></div>
+        </div>
+        <div class="service-card" onclick="navigate('aira')">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1dxigVpH02wmla6mvjcH6JVUOedVeREwM" alt="A.I.R.A." loading="lazy" /></div>
+          <div class="card-label"><span>A.I.R.A.</span></div>
+        </div>
+        <a class="service-card" href="https://chkadministrativeportal.github.io/CHK-Admin-AV-Inventory/" target="_blank" rel="noopener">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1wQbqGcB-vKetXjOKSOadYzinGlAWguKr" alt="Audio Visual Inventory" loading="lazy" /></div>
+          <div class="card-label"><span>Audio Visual Inventory</span></div>
+        </a>
+        <div class="service-card" onclick="navigate('dashboards')">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1LHjK_esNTV438A0VReYJYykVMGmd8BPE" alt="Dashboards" loading="lazy" /></div>
+          <div class="card-label"><span>Dashboards</span></div>
+        </div>
+        <a class="service-card" href="https://docs.google.com/forms/d/e/1FAIpQLSfllwgOddnP_gPLkWhSzTE8dKFrQGMT9-iS4pWR9wIq1EHLNg/viewform" target="_blank" rel="noopener">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1F3WvvYN6Z0nlVob15-PTedF5ssH19BKV" alt="Visit (Get a Visitor Pass)" loading="lazy" /></div>
+          <div class="card-label"><span>Visit (Get a Visitor Pass)</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="divider"><div class="divider-line"></div></div>
+
+    <div class="section">
+      <div class="two-col">
+        <div class="map-frame">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1930.8!2d121.061102!3d14.657708!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTTCsDM5JzI4LjMiTiAxMjHCsDAzJzQxLjkiRQ!5e0!3m2!1sen!2sph!4v1" allowfullscreen loading="lazy" title="CHK Location"></iframe>
+        </div>
+        <div class="text-block">
+          <h2>Our Location</h2>
+          <p>The College of Human Kinetics – Administrative Section is temporarily located at the Varsity Training Center, Magsaysay Avenue, UP Diliman Campus, Quezon City.</p>
+          <p>📍 <strong>Address:</strong> Varsity Training Center, Magsaysay Avenue, UP Diliman, Quezon City, 1101</p>
+          <p>🕒 <strong>Office Hours:</strong> Monday – Friday, 8:00 AM – 5:00 PM</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"><div class="divider-line"></div></div>
+
+    <div class="section">
+      <div class="two-col">
+        <div class="map-frame">
+          <img src="https://lh3.googleusercontent.com/d/1Uni1LQ-ZEFUU7OBJDfbdN0YzeQ6Oe5ra" alt="Feedback QR Code" style="width:100%;height:100%;object-fit:cover;" loading="lazy" />
+        </div>
+        <div class="text-block">
+          <h2>Feedback</h2>
+          <p>How was your experience? Help us improve the CHK admin site by submitting your feedback through the link below or via the QR code.</p>
+          <a class="btn" href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbzvulsSGpC5N7JC_LA6qSmPhAqjsB64qo97miV3i7Aujpl9IC6skV3-MZa4VV-OHacB/exec" target="_blank" rel="noopener">Feedback Form</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-footer">
+      <h3>Administrative Section</h3>
+      <p>Office of the Dean, College of Human Kinetics<br>University of the Philippines Diliman</p>
+      <h3>Contact</h3>
+      <p>📍 Varsity Training Center, Magsaysay Avenue, UP Diliman, QC 1101<br>☎ 8981-8500 Local 4128<br>🕒 Mon–Fri, 8:00 AM – 5:00 PM</p>
+      <div class="mobile-footer-copy">© <script>document.write(new Date().getFullYear())</script> CHK Administrative Section – UP Diliman</div>
+    </div>
+  </div>
+
+  <!-- RESERVE VENUE -->
+  <div class="page" id="page-reserve-venue">
+    <div class="page-hero"><h1>Reserve a Venue</h1></div>
+    <div class="section" style="padding-top:24px">
+      <div class="iframe-wrap">
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSev3CV8mQ6YzfnugoWmSEkUgDEMt_cEDegbTKvKKHD9wwdsNA/viewform?embedded=true" title="Venue Reservation Form">Loading…</iframe>
+      </div>
+      <div style="margin-top:32px">
+        <button class="collapsible-btn" onclick="toggleCollapsible(this)">
+          <h2>Venue Calendars</h2>
+          <span class="chevron">▾</span>
+        </button>
+        <p style="font-size:12px;color:var(--muted-fg);margin-bottom:16px;line-height:1.6">The format of this calendar is based on a semestral schedule. The CHK prioritizes classes first, followed by varsity training.</p>
+        <div class="collapsible-body" id="venue-calendars-inline">
+          <div class="venue-grid" id="venue-grid-inline"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VENUE CALENDARS -->
+  <div class="page" id="page-venue-calendars">
+    <div class="page-hero"><h1>Venue Calendars</h1></div>
+    <div class="section" style="padding-top:24px">
+      <p style="font-size:12px;color:var(--muted-fg);margin-bottom:16px;line-height:1.6">Click on any venue to view its reservation calendar. The format is based on a semestral schedule — CHK prioritizes classes first, then varsity training.</p>
+      <div class="venue-grid" id="venue-grid-main"></div>
+    </div>
+  </div>
+
+  <!-- RESERVE VEHICLE -->
+  <div class="page" id="page-reserve-vehicle">
+    <div class="page-hero"><h1>Reserve a Vehicle</h1></div>
+    <div class="section" style="padding-top:24px">
+      <div class="iframe-wrap">
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScRsNYHsOw1Iv_vW4Oy4A8j6vSRWEWl-Dr7Fpk8AhAxc2hJQA/viewform?embedded=true" title="Vehicle Reservation Form">Loading…</iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORMS -->
+  <div class="page" id="page-forms">
+    <div class="page-hero"><h1>Admin Online Forms</h1></div>
+    <div class="section">
+      <div class="card-grid">
+        <a class="service-card" href="https://docs.google.com/forms/d/e/1FAIpQLSd-Y_6cXUw10tbYKnim-Ib0dE_H0-B2ybodDhtl6YghuoTykQ/viewform" target="_blank" rel="noopener">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1GewizknQY97k77Pl1lHOJfY_WBQhIjVL" alt="Work Order" loading="lazy" /></div>
+          <div class="card-label"><span>Work Order</span></div>
+        </a>
+        <a class="service-card" href="https://docs.google.com/forms/d/e/1FAIpQLScoreOZ7Rq40KAispsuPzRkU5g90km3z8ZOzydvzX-CO_4kcQ/viewform" target="_blank" rel="noopener">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1fH8U8PHKVpB6OV6jgFCj3DitbXGjpvgE" alt="Fund Request" loading="lazy" /></div>
+          <div class="card-label"><span>Fund Request</span></div>
+        </a>
+        <a class="service-card" href="https://docs.google.com/forms/d/e/1FAIpQLScvj5sP0R1uNg8nlCDQDIBvimi-ci-aaaiOEbVLzpm9VTmPvQ/viewform" target="_blank" rel="noopener">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1bnSOm5-ZQXJOmMkIOc-d3YotOwqRYXPh" alt="Meal Request" loading="lazy" /></div>
+          <div class="card-label"><span>Meal Request</span></div>
+        </a>
+        <a class="service-card" href="https://docs.google.com/forms/d/e/1FAIpQLScRrTAuAreeO4YE1ywofYuos67WfGpMDEYoI0IGpTvCt0y9DQ/viewform" target="_blank" rel="noopener">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/13GpTnb4dMF7xzPdUOW3pGEUtn-abtiDT" alt="CHK RAP" loading="lazy" /></div>
+          <div class="card-label"><span>CHK RAP</span></div>
+        </a>
+        <a class="service-card" href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbxwUQ0P6L5aW8T1anA-4d6bL5kDOInFh3Bdi0YcS5mNAj6wIDCFXJSXlAy0q-mj5wB5/exec" target="_blank" rel="noopener">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/15kbVBOSIU1Gw9GGX5M9Y_Ckb-isX_3MC" alt="PPMP Online Form" loading="lazy" /></div>
+          <div class="card-label"><span>PPMP Online Form</span></div>
+        </a>
+        <a class="service-card" href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbzLeR_dq973LeW7W9mp7fKLRVLuKKZvAVjxtiaBUSYz4cjeicGTSyIN7_7jfg3s6iayAQ/exec" target="_blank" rel="noopener">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1gF4sJJtRubWha_oWOF8gCojUQPp8IJrk" alt="COS Wellness Leave" loading="lazy" /></div>
+          <div class="card-label"><span>COS Wellness Leave</span></div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- AIRA -->
+  <div class="page" id="page-aira">
+    <div class="page-hero"><h1>A.I.R.A. System</h1></div>
+    <div class="section" style="padding-top:24px">
+      <h2 style="font-size:1.1rem;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px">Admin Inventory Request Application</h2>
+      <p style="font-size:12px;color:var(--muted-fg);line-height:1.7;margin-bottom:12px"><strong style="color:var(--fg)">A.I.R.A.</strong>, or the CHK Admin Inventory Request Application, is strictly for use by CHK faculty and staff only. Any unauthorized requests will not be entertained.</p>
+      <p style="font-size:12px;color:var(--muted-fg);line-height:1.7;margin-bottom:12px">The purpose of AIRA is to streamline and automate all supply requests and to collect accurate data on the most frequently requested supplies. This data will be used to support planning and preparation for the college's APP-CSE procurement requests.</p>
+      <div class="info-box">
+        <p>⚠️ REMINDER: Please request only what is necessary and avoid stockpiling supplies. Usage patterns will be monitored to help ensure responsible and efficient use of resources.</p>
+      </div>
+      <div class="iframe-wrap">
+        <iframe src="https://script.google.com/a/macros/up.edu.ph/s/AKfycbxBPAe_1hrBIPJvqXWNuOi9Rlbp5fxZ2u0SL1_OYv49DRZJUScKXztV10ex6ADLgcT-Yw/exec?page=ordering" title="AIRA System">Loading…</iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARDS -->
+  <div class="page" id="page-dashboards">
+    <div class="page-hero"><h1>Dashboards</h1></div>
+    <div class="section">
+      <div class="card-grid">
+        <a class="service-card" href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbwGYdpEVXRXmULvMIh__ZjorD3xF4lxzMAllRDyQ4ymRXmcqN60IKHME4LPaoT2WO3S/exec?page=staff" target="_blank" rel="noopener">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1PQVqdH3JaNQNeINmRQXZ688vqGicH04g" alt="Area Dashboard" loading="lazy" /></div>
+          <div class="card-label"><span>Area Dashboard</span></div>
+        </a>
+        <a class="service-card" href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbyRAYyzLvqB9jI_CtL7WK_RizABLwgp1see3L_WD2rpkJK2SDlOnFZTXpyyJ_k_GwytsA/exec?page=dashboard" target="_blank" rel="noopener">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1Snc8lWqIsCBUzbDIr9ffRD5fVzGnhX9d" alt="Trip Dashboard" loading="lazy" /></div>
+          <div class="card-label"><span>Trip Dashboard</span></div>
+        </a>
+        <a class="service-card" href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbxBPAe_1hrBIPJvqXWNuOi9Rlbp5fxZ2u0SL1_OYv49DRZJUScKXztV10ex6ADLgcT-Yw/exec?page=dashboard" target="_blank" rel="noopener">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1ZiBC0pOHS92-IBSqy4GwpU08yjOZfZ71" alt="Stock Dashboard" loading="lazy" /></div>
+          <div class="card-label"><span>Stock Dashboard</span></div>
+        </a>
+        <a class="service-card" href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbxwUQ0P6L5aW8T1anA-4d6bL5kDOInFh3Bdi0YcS5mNAj6wIDCFXJSXlAy0q-mj5wB5/exec?page=dashboard" target="_blank" rel="noopener">
+          <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1UfY1VjLIbCLex1Yj6y82Id3SlES4baBb" alt="CHK-PPMP Dashboard" loading="lazy" /></div>
+          <div class="card-label"><span>CHK-PPMP Dashboard</span></div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONBOARDING -->
+  <div class="page" id="page-onboarding">
+    <div class="page-hero"><h1>Onboarding</h1></div>
+    <div class="section" style="padding-top:24px">
+      <div class="onboarding-list">
+        <a class="onb-card" href="https://docs.google.com/document/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pub" target="_blank" rel="noopener">
+          <div class="onb-icon">📖</div>
+          <div class="onb-text">
+            <h3>Onboarding Guide</h3>
+            <p>Everything new staff need to know about the CHK Administrative Section — procedures, systems, and contacts.</p>
+          </div>
+        </a>
+        <a class="onb-card" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml" target="_blank" rel="noopener">
+          <div class="onb-icon">👥</div>
+          <div class="onb-text">
+            <h3>Staff Directory</h3>
+            <p>Contact information and roles of CHK administrative staff members.</p>
+          </div>
+        </a>
+        <a class="onb-card" href="https://docs.google.com/document/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pub" target="_blank" rel="noopener">
+          <div class="onb-icon">📋</div>
+          <div class="onb-text">
+            <h3>Office Policies</h3>
+            <p>Guidelines and policies governing the CHK Administrative Section operations.</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEEDBACK -->
+  <div class="page" id="page-feedback">
+    <div class="page-hero"><h1>Feedback</h1></div>
+    <div class="section" style="padding-top:24px">
+      <div class="two-col">
+        <div class="map-frame">
+          <img src="https://lh3.googleusercontent.com/d/1Uni1LQ-ZEFUU7OBJDfbdN0YzeQ6Oe5ra" alt="Feedback QR Code" style="width:100%;height:100%;object-fit:cover;" loading="lazy" />
+        </div>
+        <div class="text-block">
+          <h2>Share Your Feedback</h2>
+          <p>How was your experience? Help us improve the CHK admin site by submitting your feedback through the link below or via the QR code.</p>
+          <a class="btn" href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbzvulsSGpC5N7JC_LA6qSmPhAqjsB64qo97miV3i7Aujpl9IC6skV3-MZa4VV-OHacB/exec" target="_blank" rel="noopener">Feedback Form</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- MORE MENU -->
+<div class="more-menu" id="more-menu">
+  <div class="more-menu-grid">
+    <a class="more-item" href="#" onclick="navigate('venue-calendars');closeMore()">
+      <span>📅</span><span>Calendars</span>
+    </a>
+    <a class="more-item" href="#" onclick="navigate('aira');closeMore()">
+      <span>📦</span><span>A.I.R.A.</span>
+    </a>
+    <a class="more-item" href="#" onclick="navigate('dashboards');closeMore()">
+      <span>📊</span><span>Dashboards</span>
+    </a>
+    <a class="more-item" href="#" onclick="navigate('onboarding');closeMore()">
+      <span>📋</span><span>Onboarding</span>
+    </a>
+    <a class="more-item" href="#" onclick="navigate('feedback');closeMore()">
+      <span>💬</span><span>Feedback</span>
+    </a>
+  </div>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <a class="nav-btn" id="nav-home" href="#" onclick="navigate('home')">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span>Home</span>
+    </a>
+    <a class="nav-btn" id="nav-reserve-venue" href="#" onclick="navigate('reserve-venue')">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <span>Venues</span>
+    </a>
+    <a class="nav-btn" id="nav-reserve-vehicle" href="#" onclick="navigate('reserve-vehicle')">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      </div>
+      <span>Vehicle</span>
+    </a>
+    <a class="nav-btn" id="nav-forms" href="#" onclick="navigate('forms')">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </div>
+      <span>Forms</span>
+    </a>
+    <button class="nav-btn" id="nav-more" onclick="toggleMore()">
+      <div class="nav-icon-wrap">
+        <svg id="more-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </div>
+      <span id="more-label">More</span>
+    </button>
+  </div>
+</nav>
+
+<!-- DESKTOP FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <h3>Administrative Section</h3>
+      <p>Office of the Dean, College of Human Kinetics<br>University of the Philippines Diliman</p>
+    </div>
+    <div>
+      <h3>Located at</h3>
+      <p>📍 Varsity Training Center, Magsaysay Avenue<br>UP Diliman, Quezon City, 1101<br>☎ 8981-8500 Local 4128<br>🕒 Monday – Friday, 8:00 AM – 5:00 PM</p>
+    </div>
+    <div>
+      <h3>Quick Links</h3>
+      <a href="#" onclick="navigate('home')">Home</a>
+      <a href="#" onclick="navigate('reserve-venue')">Reserve a Venue</a>
+      <a href="#" onclick="navigate('venue-calendars')">Venue Calendars</a>
+      <a href="#" onclick="navigate('reserve-vehicle')">Reserve a Vehicle</a>
+      <a href="#" onclick="navigate('forms')">Forms</a>
+    </div>
+  </div>
+  <div class="footer-copy">© <script>document.write(new Date().getFullYear())</script> CHK Administrative Section – University of the Philippines Diliman</div>
+</footer>
+
+<script>
+  const VENUES = [
+    { name: "Baseball Field", gid: "593929024" },
+    { name: "Baseball Garden", gid: "567935148" },
+    { name: "Dugout 1", gid: "87197056" },
+    { name: "Dugout 2", gid: "306081692" },
+    { name: "Football Field", gid: "1055806031" },
+    { name: "Track Oval", gid: "426248820" },
+    { name: "Tennis Court", gid: "1640909333" },
+    { name: "Tennis Court Room 1", gid: "1634822982" },
+    { name: "Tennis Court Room 2", gid: "475532241" },
+    { name: "VTC Court", gid: "735489721" },
+    { name: "VTC Meeting Room 1", gid: "1253621251" },
+    { name: "VTC Meeting Room 2", gid: "1309697888" },
+    { name: "VTC Weights Room", gid: "1673482118" },
+    { name: "Ylanan Court 1", gid: "356190388" },
+    { name: "Ylanan Court 2", gid: "630773403" },
+    { name: "Ylanan Court 3", gid: "228253580" },
+    { name: "Small Gym Court 4", gid: "1911761496" },
+  ];
+  const BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml";
+
+  function buildVenueGrid(el) {
+    if (!el || el.innerHTML.trim()) return;
+    el.innerHTML = VENUES.map(v => `
+      <a class="venue-link" href="${BASE_URL}?gid=${v.gid}&single=true&rm=minimal" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        ${v.name}
+      </a>`).join('');
+  }
+
+  const PRIMARY_PAGES = ['home','reserve-venue','reserve-vehicle','forms'];
+  let moreOpen = false;
+  let currentPage = 'home';
+
+  function navigate(page) {
+    // hide all
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+
+    // update desktop nav
+    document.querySelectorAll('.desktop-nav a').forEach(a => a.classList.remove('active'));
+    const pageLabels = {
+      'home': 'Home', 'reserve-venue': 'Reserve Venue', 'venue-calendars': 'Calendars',
+      'reserve-vehicle': 'Reserve Vehicle', 'forms': 'Forms', 'aira': 'A.I.R.A.',
+      'dashboards': 'Dashboards', 'onboarding': 'Onboarding', 'feedback': 'Feedback'
+    };
+    document.querySelectorAll('.desktop-nav a').forEach(a => {
+      if (a.textContent.trim() === pageLabels[page]) a.classList.add('active');
+    });
+
+    // update mobile nav
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    const primaryId = 'nav-' + page;
+    if (document.getElementById(primaryId)) document.getElementById(primaryId).classList.add('active');
+    else document.getElementById('nav-more').classList.add('active');
+
+    currentPage = page;
+    window.scrollTo({ top: 0 });
+
+    // build venue grids lazily
+    if (page === 'venue-calendars') buildVenueGrid(document.getElementById('venue-grid-main'));
+    if (page === 'reserve-venue') buildVenueGrid(document.getElementById('venue-grid-inline'));
+
+    // update hash
+    location.hash = page === 'home' ? '' : page;
+    return false;
+  }
+
+  function toggleMore() {
+    moreOpen = !moreOpen;
+    document.getElementById('more-menu').classList.toggle('open', moreOpen);
+    const icon = document.getElementById('more-icon');
+    const label = document.getElementById('more-label');
+    if (moreOpen) {
+      icon.innerHTML = '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>';
+      label.textContent = 'Close';
+    } else {
+      icon.innerHTML = '<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>';
+      label.textContent = 'More';
+    }
+  }
+
+  function closeMore() {
+    moreOpen = false;
+    document.getElementById('more-menu').classList.remove('open');
+    document.getElementById('more-icon').innerHTML = '<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>';
+    document.getElementById('more-label').textContent = 'More';
+  }
+
+  function toggleCollapsible(btn) {
+    const body = btn.nextElementSibling.nextElementSibling;
+    const chevron = btn.querySelector('.chevron');
+    const isOpen = body.classList.toggle('open');
+    chevron.classList.toggle('open', isOpen);
+    if (isOpen) buildVenueGrid(document.getElementById('venue-grid-inline'));
+  }
+
+  // Handle hash routing on load
+  window.addEventListener('load', () => {
+    const hash = location.hash.replace('#', '') || 'home';
+    navigate(hash);
+  });
+
+  // Prevent default on all navigate links
+  document.querySelectorAll('a[onclick]').forEach(a => a.addEventListener('click', e => e.preventDefault()));
+  
+  // Register Service Worker for PWA
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then((registration) => console.log('Service Worker registered'))
+        .catch((err) => console.log('Service Worker failed', err));
+    });
+  }
+</script>
+</body>
+</html>
