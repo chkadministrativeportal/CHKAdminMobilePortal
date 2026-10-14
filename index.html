@@ -90,8 +90,8 @@
     .section { max-width: 900px; margin: 0 auto; padding: 32px 16px; }
     .card-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
     }
     @media(min-width:640px){ .card-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
     @media(min-width:1024px){ .card-grid { grid-template-columns: repeat(4, 1fr); } }
@@ -112,13 +112,15 @@
       width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;
     }
     .service-card .card-label {
-      background: var(--card); padding: 4px 4px 6px;
-      display: flex; align-items: center; justify-content: center; min-height: 36px;
+      background: var(--card); padding: 8px 6px 10px;
+      display: flex; align-items: center; justify-content: center; min-height: 48px;
     }
     .service-card .card-label span {
-      font-weight: 900; font-size: 9px; text-transform: uppercase; letter-spacing: 0.03em;
+      font-weight: 900; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em;
       text-align: center; line-height: 1.3;
     }
+    /* Hide the embedded location map on mobile */
+    @media(max-width:639px){ .map-embed { display: none; } }
     @media(min-width:640px){
       .service-card .card-label { min-height: 44px; }
       .service-card .card-label span { font-size: 12px; }
@@ -655,7 +657,7 @@
 
     <div class="section">
       <div class="two-col">
-        <div class="map-frame">
+        <div class="map-frame map-embed">
           <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1930.8!2d121.061102!3d14.657708!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTTCsDM5JzI4LjMiTiAxMjHCsDAzJzQxLjkiRQ!5e0!3m2!1sen!2sph!4v1" allowfullscreen loading="lazy" title="CHK Location"></iframe>
         </div>
         <div class="text-block">
