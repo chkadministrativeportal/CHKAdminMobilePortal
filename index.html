@@ -860,26 +860,6 @@
 
 </main>
 
-<!-- MORE MENU -->
-<div class="more-menu" id="more-menu">
-  <div class="more-menu-grid">
-    <a class="more-item" href="#" onclick="navigate('venue-calendars');closeMore()">
-      <span>📅</span><span>Calendars</span>
-    </a>
-    <a class="more-item" href="#" onclick="navigate('aira');closeMore()">
-      <span>📦</span><span>A.I.R.A.</span>
-    </a>
-    <a class="more-item" href="#" onclick="navigate('dashboards');closeMore()">
-      <span>📊</span><span>Dashboards</span>
-    </a>
-    <a class="more-item" href="#" onclick="navigate('onboarding');closeMore()">
-      <span>📋</span><span>Onboarding</span>
-    </a>
-    <a class="more-item" href="#" onclick="navigate('feedback');closeMore()">
-      <span>💬</span><span>Feedback</span>
-    </a>
-  </div>
-</div>
 
 <!-- MOBILE BOTTOM NAV -->
 <nav class="mobile-nav">
@@ -890,30 +870,6 @@
       </div>
       <span>Home</span>
     </a>
-    <a class="nav-btn" id="nav-reserve-venue" href="#" onclick="navigate('reserve-venue')">
-      <div class="nav-icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      </div>
-      <span>Venues</span>
-    </a>
-    <a class="nav-btn" id="nav-reserve-vehicle" href="#" onclick="navigate('reserve-vehicle')">
-      <div class="nav-icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-      </div>
-      <span>Vehicle</span>
-    </a>
-    <a class="nav-btn" id="nav-forms" href="#" onclick="navigate('forms')">
-      <div class="nav-icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      </div>
-      <span>Forms</span>
-    </a>
-    <button class="nav-btn" id="nav-more" onclick="toggleMore()">
-      <div class="nav-icon-wrap">
-        <svg id="more-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </div>
-      <span id="more-label">More</span>
-    </button>
   </div>
 </nav>
 
@@ -1028,7 +984,18 @@
   let moreOpen = false;
   let currentPage = 'home';
 
+  const DIRECT_LINKS = {
+    'reserve-venue': 'https://docs.google.com/forms/d/e/1FAIpQLSev3CV8mQ6YzfnugoWmSEkUgDEMt_cEDegbTKvKKHD9wwdsNA/viewform',
+    'reserve-vehicle': 'https://docs.google.com/forms/d/e/1FAIpQLScRsNYHsOw1Iv_vW4Oy4A8j6vSRWEWl-Dr7Fpk8AhAxc2hJQA/viewform'
+  };
+
   function navigate(page) {
+    // Reservation pages go straight to the Google Form
+    if (DIRECT_LINKS[page]) {
+      window.open(DIRECT_LINKS[page], '_blank', 'noopener');
+      if (!document.querySelector('.page.active')) page = 'home';
+      else return false;
+    }
     // hide all
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + page).classList.add('active');
@@ -1048,7 +1015,7 @@
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     const primaryId = 'nav-' + page;
     if (document.getElementById(primaryId)) document.getElementById(primaryId).classList.add('active');
-    else document.getElementById('nav-more').classList.add('active');
+    else if (document.getElementById('nav-more')) document.getElementById('nav-more').classList.add('active');
 
     currentPage = page;
     window.scrollTo({ top: 0 });
@@ -1063,6 +1030,7 @@
   }
 
   function toggleMore() {
+    if (!document.getElementById('more-menu')) return;
     moreOpen = !moreOpen;
     document.getElementById('more-menu').classList.toggle('open', moreOpen);
     const icon = document.getElementById('more-icon');
@@ -1077,6 +1045,7 @@
   }
 
   function closeMore() {
+    if (!document.getElementById('more-menu')) return;
     moreOpen = false;
     document.getElementById('more-menu').classList.remove('open');
     document.getElementById('more-icon').innerHTML = '<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>';
@@ -1093,7 +1062,8 @@
 
   // Handle hash routing on load
   window.addEventListener('load', () => {
-    const hash = location.hash.replace('#', '') || 'home';
+    let hash = location.hash.replace('#', '') || 'home';
+    if (DIRECT_LINKS[hash] || !document.getElementById('page-' + hash)) hash = 'home';
     navigate(hash);
   });
 
