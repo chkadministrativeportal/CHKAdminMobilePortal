@@ -624,10 +624,10 @@
           <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1meKazZN4tmYYQ8XX0SD_VMjrngKlAme3" alt="Venue Reservation" loading="lazy" /></div>
           <div class="card-label"><span>Venue Reservation</span></div>
         </div>
-        <div class="service-card" onclick="navigate('venue-calendars')">
+        <a class="service-card" href="https://chkadministrativeportal.github.io/venuecalendars/" target="_blank" rel="noopener">
           <div class="card-img"><img src="https://lh3.googleusercontent.com/d/1t2R3ETXj245jyk0zVCO7BVOVfUj1j1iE" alt="Venue Calendars" loading="lazy" /></div>
           <div class="card-label"><span>Venue Calendars</span></div>
-        </div>
+        </a>
         <div class="service-card" onclick="navigate('reserve-vehicle')">
           <div class="card-img"><img src="https://lh3.googleusercontent.com/d/14Q7ZZ9o3cd1mkCE0iQ4ryXxeR9tyeN1m" alt="Vehicle Reservation" loading="lazy" /></div>
           <div class="card-label"><span>Vehicle Reservation</span></div>
@@ -719,8 +719,11 @@
   <div class="page" id="page-venue-calendars">
     <div class="page-hero"><h1>Venue Calendars</h1></div>
     <div class="section" style="padding-top:24px">
-      <p style="font-size:12px;color:var(--muted-fg);margin-bottom:16px;line-height:1.6">Click on any venue to view its reservation calendar. The format is based on a semestral schedule — CHK prioritizes classes first, then varsity training.</p>
-      <div class="venue-grid" id="venue-grid-main"></div>
+      <p style="font-size:12px;color:var(--muted-fg);margin-bottom:16px;line-height:1.6">Select a venue to view its reservation calendar. The format is based on a semestral schedule — CHK prioritizes classes first, then varsity training.</p>
+      <div class="iframe-wrap">
+        <iframe src="https://chkadministrativeportal.github.io/venuecalendars/" title="Venue Calendars">Loading…</iframe>
+      </div>
+      <p style="margin-top:12px;text-align:center"><a class="btn" href="https://chkadministrativeportal.github.io/venuecalendars/" target="_blank" rel="noopener">Open in new tab</a></p>
     </div>
   </div>
 
