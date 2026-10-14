@@ -382,6 +382,8 @@
     }
     @media (max-width: 520px) {
       #chk-chat-win { width: calc(100vw - 16px); max-height: 82vh; border-radius: 16px; }
+      /* 16px stops iOS Safari from auto-zooming (and shifting the view) when the input is focused */
+      #chk-input { font-size: 16px; }
       #chk-bot-btn { width: 56px !important; height: 56px !important; }
       #chk-wave-emoji { font-size: 18px !important; }
     }
@@ -1767,14 +1769,43 @@ chatWin.addEventListener('mouseleave',()=>{chatWin.style.transform='scale(1) tra
 // OPEN / CLOSE
 // ══════════════════════════════════════
 function toggleChat(){isOpen?closeChat():openChat();}
-function openChat(){
-  isOpen=true;chatWin.classList.add('chk-open');
+function positionChat(){
+  chatWin.style.height='';
   const lr=launcher.getBoundingClientRect(),wW=Math.min(360,window.innerWidth-16),wH=Math.min(600,window.innerHeight*0.82);
   let wx,wy;
   if(window.innerWidth>520){wx=lr.right-wW;wy=lr.top-wH-10;if(wx<8)wx=8;if(wy<8)wy=8;if(wx+wW>window.innerWidth-8)wx=window.innerWidth-wW-8;}
   else{wx=8;if(lr.top-wH-10>=8){wy=lr.top-wH-10;}else{wy=lr.bottom+10;}if(wy+wH>window.innerHeight-8)wy=window.innerHeight-wH-8;if(wy<8)wy=8;}
   chatWin.style.left=wx+'px';chatWin.style.top=wy+'px';chatWin.style.right='auto';chatWin.style.bottom='auto';
   chatWin.style.width=wW+'px';chatWin.style.maxHeight=wH+'px';
+}
+
+// Keep the chat window (and its input box) inside the visible area when the
+// mobile keyboard opens: pin it to the top of the visual viewport and size it
+// to the space above the keyboard. Restores normal positioning when it closes.
+function fitChatToKeyboard(){
+  const vv=window.visualViewport;
+  if(!isOpen||!vv||window.innerWidth>520) return;
+  const kbOpen=(window.innerHeight-vv.height)>120;
+  if(kbOpen){
+    const h=Math.min(600,vv.height-16);
+    chatWin.style.top=(vv.offsetTop+8)+'px';
+    chatWin.style.bottom='auto';
+    chatWin.style.height=h+'px';
+    chatWin.style.maxHeight=h+'px';
+    requestAnimationFrame(()=>{msgBox.scrollTop=msgBox.scrollHeight;});
+  }else if(chatWin.style.height){
+    positionChat();
+  }
+}
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',fitChatToKeyboard);
+  window.visualViewport.addEventListener('scroll',fitChatToKeyboard);
+}
+inputEl.addEventListener('focus',()=>{setTimeout(fitChatToKeyboard,300);});
+
+function openChat(){
+  isOpen=true;chatWin.classList.add('chk-open');
+  positionChat();fitChatToKeyboard();
   if(msgBox.children.length===0) setTimeout(()=>addMsg('bot',pickReply(KB.greet),KB.greet.chips),300);
   if(window.innerWidth>520) setTimeout(()=>inputEl.focus(),380);
 }
