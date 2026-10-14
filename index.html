@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
-  <meta name="theme-color" content="#0d4a0d" />
+  <meta name="theme-color" content="#000000" />
   <title>CHK Admin Portal</title>
   
   <!-- PWA Manifest Link -->
@@ -37,7 +37,7 @@
     /* HEADER */
     header {
       position: sticky; top: 0; z-index: 50;
-      background: #0d4a0d;
+      background: linear-gradient(90deg, #000000 0%, #6b6b6b 100%);
       border-bottom: 1px solid rgba(255,255,255,0.12);
       padding-top: env(safe-area-inset-top); /* For mobile notches */
     }
@@ -192,7 +192,7 @@
     /* MOBILE BOTTOM NAV */
     .mobile-nav {
       display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
-      background: #0d4a0d;
+      background: linear-gradient(90deg, #000000 0%, #6b6b6b 100%);
       border-top: 1px solid rgba(255,255,255,0.12);
       padding-bottom: env(safe-area-inset-bottom); /* For mobile home bars */
     }
@@ -236,7 +236,7 @@
     .footer-copy { text-align: center; font-size: 11px; opacity: 0.4; padding: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
 
     /* MOBILE FOOTER */
-    .mobile-footer { background: #0d4a0d; color: var(--bg); padding: 32px 16px; padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
+    .mobile-footer { background: var(--fg); color: var(--bg); padding: 32px 16px; padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
     @media(min-width:768px){ .mobile-footer { display: none; } }
     .mobile-footer h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
     .mobile-footer p { font-size: 11px; opacity: 0.7; line-height: 1.6; margin-bottom: 24px; }
