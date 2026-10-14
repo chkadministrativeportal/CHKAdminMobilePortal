@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#8b0000" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
+  <meta name="theme-color" content="#0d4a0d" />
   <title>CHK Admin Portal</title>
   
   <!-- PWA Manifest Link -->
@@ -37,9 +37,8 @@
     /* HEADER */
     header {
       position: sticky; top: 0; z-index: 50;
-      background: rgba(253,251,212,0.9);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
+      background: #0d4a0d;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
       padding-top: env(safe-area-inset-top); /* For mobile notches */
     }
     .header-inner {
@@ -47,7 +46,7 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 1rem; height: 56px;
     }
-    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--fg); }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff; }
     .logo img { width: 32px; height: 32px; object-fit: contain; }
     .logo-text { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; display: none; }
     @media(min-width:640px){ .logo-text { display: block; } }
@@ -56,9 +55,9 @@
     @media(min-width:768px){ .desktop-nav { display: flex; } }
     .desktop-nav a {
       padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 500;
-      text-decoration: none; color: var(--fg); transition: background 0.15s;
+      text-decoration: none; color: #fff; transition: background 0.15s;
     }
-    .desktop-nav a:hover { background: var(--muted); }
+    .desktop-nav a:hover { background: rgba(255,255,255,0.15); }
     .desktop-nav a.active { background: var(--primary); color: var(--primary-fg); }
 
     /* MAIN */
@@ -193,8 +192,8 @@
     /* MOBILE BOTTOM NAV */
     .mobile-nav {
       display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
-      background: rgba(253,251,212,0.95); backdrop-filter: blur(16px);
-      border-top: 1px solid var(--border);
+      background: #0d4a0d;
+      border-top: 1px solid rgba(255,255,255,0.12);
       padding-bottom: env(safe-area-inset-bottom); /* For mobile home bars */
     }
     @media(min-width:768px){ .mobile-nav { display: none; } }
@@ -202,13 +201,13 @@
     .nav-btn {
       display: flex; flex-direction: column; align-items: center; gap: 2px;
       min-width: 56px; padding: 4px; background: none; border: none; cursor: pointer;
-      color: var(--muted-fg); text-decoration: none; transition: color 0.15s;
+      color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.15s;
     }
-    .nav-btn.active { color: var(--primary); }
+    .nav-btn.active { color: #fff; }
     .nav-btn svg { width: 20px; height: 20px; }
     .nav-btn span { font-size: 10px; font-weight: 500; }
     .nav-icon-wrap { padding: 4px; border-radius: 12px; }
-    .nav-btn.active .nav-icon-wrap { background: rgba(139,0,0,0.1); }
+    .nav-btn.active .nav-icon-wrap { background: rgba(255,255,255,0.18); }
 
     /* MORE MENU */
     .more-menu {
@@ -237,7 +236,7 @@
     .footer-copy { text-align: center; font-size: 11px; opacity: 0.4; padding: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
 
     /* MOBILE FOOTER */
-    .mobile-footer { background: var(--fg); color: var(--bg); padding: 32px 16px; padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
+    .mobile-footer { background: #0d4a0d; color: var(--bg); padding: 32px 16px; padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
     @media(min-width:768px){ .mobile-footer { display: none; } }
     .mobile-footer h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
     .mobile-footer p { font-size: 11px; opacity: 0.7; line-height: 1.6; margin-bottom: 24px; }
@@ -386,6 +385,15 @@
       #chk-input { font-size: 16px; }
       #chk-bot-btn { width: 56px !important; height: 56px !important; }
       #chk-wave-emoji { font-size: 18px !important; }
+    }
+
+    /* Compact layout while the on-screen keyboard is open */
+    @media (max-width: 520px) {
+      #chk-chat-win.chk-kb #chk-chat-header { padding: 8px 12px 6px; }
+      #chk-chat-win.chk-kb #chk-beta-tag,
+      #chk-chat-win.chk-kb #chk-chips,
+      #chk-chat-win.chk-kb #chk-spreadsheet-notice { display: none; }
+      #chk-chat-win.chk-kb #chk-messages { min-height: 0; }
     }
 
     /* Header */
@@ -1753,20 +1761,30 @@ function positionChat(){
 }
 
 // Keep the chat window (and its input box) inside the visible area when the
-// mobile keyboard opens: pin it to the top of the visual viewport and size it
-// to the space above the keyboard. Restores normal positioning when it closes.
+// mobile keyboard opens. Works whether the browser shrinks the layout viewport,
+// the visual viewport, or just overlays the keyboard (some Android webviews).
+let baseH=window.innerHeight;
 function fitChatToKeyboard(){
+  if(!isOpen||window.innerWidth>520) return;
   const vv=window.visualViewport;
-  if(!isOpen||!vv||window.innerWidth>520) return;
-  const kbOpen=(window.innerHeight-vv.height)>120;
-  if(kbOpen){
-    const h=Math.min(600,vv.height-16);
-    chatWin.style.top=(vv.offsetTop+8)+'px';
+  const avail=vv?vv.height:window.innerHeight;
+  const top=vv?vv.offsetTop:0;
+  const focused=document.activeElement===inputEl;
+  if(!focused) baseH=Math.max(baseH,window.innerHeight,avail);
+  const shrunk=(baseH-avail)>120;
+  if(focused||shrunk){
+    let h=Math.min(600,avail-16);
+    // keyboard focused but nothing resized (overlay mode): keep to the top ~45%
+    if(focused&&!shrunk) h=Math.min(h,Math.round(avail*0.45));
+    h=Math.max(h,220);
+    chatWin.classList.add('chk-kb');
+    chatWin.style.top=(top+8)+'px';
     chatWin.style.bottom='auto';
     chatWin.style.height=h+'px';
     chatWin.style.maxHeight=h+'px';
     requestAnimationFrame(()=>{msgBox.scrollTop=msgBox.scrollHeight;});
-  }else if(chatWin.style.height){
+  }else if(chatWin.style.height||chatWin.classList.contains('chk-kb')){
+    chatWin.classList.remove('chk-kb');
     positionChat();
   }
 }
@@ -1774,7 +1792,10 @@ if(window.visualViewport){
   window.visualViewport.addEventListener('resize',fitChatToKeyboard);
   window.visualViewport.addEventListener('scroll',fitChatToKeyboard);
 }
-inputEl.addEventListener('focus',()=>{setTimeout(fitChatToKeyboard,300);});
+window.addEventListener('resize',fitChatToKeyboard);
+window.addEventListener('orientationchange',()=>{baseH=0;setTimeout(()=>{baseH=window.innerHeight;fitChatToKeyboard();},400);});
+inputEl.addEventListener('focus',()=>{fitChatToKeyboard();setTimeout(fitChatToKeyboard,300);setTimeout(fitChatToKeyboard,700);});
+inputEl.addEventListener('blur',()=>{setTimeout(fitChatToKeyboard,150);setTimeout(fitChatToKeyboard,600);});
 
 function openChat(){
   isOpen=true;chatWin.classList.add('chk-open');
