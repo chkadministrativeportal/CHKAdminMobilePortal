@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="https://media.base44.com/images/public/69d245aa9b069ec6c6771e6e/c0093c30b_CHKADMINICON.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -240,6 +240,358 @@
     .mobile-footer h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
     .mobile-footer p { font-size: 11px; opacity: 0.7; line-height: 1.6; margin-bottom: 24px; }
     .mobile-footer-copy { text-align: center; font-size: 10px; opacity: 0.4; margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+
+
+    /* ═══════════════════════════════════════════════════════
+       CHiKito CHATBOT (floating widget) — all selectors are
+       scoped with #chk-* / .chk-* so they don't affect the portal
+       ═══════════════════════════════════════════════════════ */
+    #chk-bot-root {
+      --chk-maroon:      #500000;
+      --chk-maroon-dark: #3a0000;
+      --chk-green:       #06402b;
+      --chk-green-light: #0a5c3c;
+      --chk-text:        #ffffff;
+      --chk-radius:      20px;
+      --chk-radius-sm:   10px;
+      font-family: Montserrat, sans-serif;
+    }
+    #chk-bot-root * { box-sizing: border-box; margin: 0; padding: 0; }
+    #chk-bot-root button, #chk-bot-root input { font-family: inherit; }
+
+    /* Venue dropdown */
+    .chk-venue-dropdown {
+      display: flex; flex-direction: column;
+      margin-top: 8px; border-radius: 10px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .chk-venue-dropdown a {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 11px; font-size: 12.5px; color: #e8d9a0;
+      text-decoration: none; background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: background 0.15s, color 0.15s;
+      font-family: Montserrat, sans-serif; font-weight: 600; letter-spacing: 0.2px;
+    }
+    .chk-venue-dropdown a:last-child { border-bottom: none; }
+    .chk-venue-dropdown a:hover, .chk-venue-dropdown a:active {
+      background: rgba(139,0,0,0.35); color: #fff;
+    }
+    .chk-vicon { font-size: 14px; flex-shrink: 0; width: 20px; text-align: center; }
+
+    /* Floating launcher */
+    #chk-bot-launcher {
+      position: fixed; bottom: 28px; right: 28px;
+      z-index: 9999999;
+      display: flex; align-items: center; gap: 6px;
+      cursor: grab; user-select: none; -webkit-user-select: none;
+      touch-action: none; will-change: transform, left, top;
+      animation: chk-float 3.6s ease-in-out infinite;
+      filter: drop-shadow(0 8px 24px rgba(139,0,0,.55)) drop-shadow(0 2px 8px rgba(0,0,0,.4));
+      transition: filter .2s;
+    }
+    #chk-bot-launcher.chk-dragging {
+      cursor: grabbing; animation: none !important;
+      filter: drop-shadow(0 14px 30px rgba(139,0,0,.75)) drop-shadow(0 4px 12px rgba(0,0,0,.5));
+      transition: none;
+    }
+    #chk-bot-launcher:hover:not(.chk-dragging) {
+      filter: drop-shadow(0 12px 32px rgba(139,0,0,.8)) drop-shadow(0 4px 12px rgba(0,0,0,.5));
+      animation-play-state: paused;
+    }
+    @keyframes chk-float {
+      0%,100% { transform: translateY(0)    rotate3d(1,.5,0,  0deg) scale(1);    }
+      25%      { transform: translateY(-6px) rotate3d(1,.5,0, -2deg) scale(1.02); }
+      50%      { transform: translateY(-10px)rotate3d(1,.5,0,  0deg) scale(1.03); }
+      75%      { transform: translateY(-5px) rotate3d(1,.5,0,  2deg) scale(1.02); }
+    }
+
+    #chk-wave-emoji {
+      font-size: 22px; animation: chk-wave-hand 1.8s ease-in-out infinite;
+      transform-origin: 70% 80%; pointer-events: none;
+    }
+    @keyframes chk-wave-hand {
+      0%,100% { transform: rotate(0deg); }
+      15%     { transform: rotate(20deg); }
+      30%     { transform: rotate(-8deg); }
+      45%     { transform: rotate(18deg); }
+      60%     { transform: rotate(-4deg); }
+    }
+
+    #chk-bot-btn {
+      width: 62px; height: 62px; border-radius: 50%;
+      background: transparent; border: none;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; flex-shrink: 0; position: relative;
+      box-shadow:
+        0 0 0 3px rgba(139,0,0,.5),
+        0 0 0 6px rgba(26,107,26,.3),
+        0 8px 24px rgba(139,0,0,.6),
+        inset 0 1px 1px rgba(255,255,255,.12);
+      transition: transform .18s, box-shadow .18s;
+    }
+    #chk-bot-btn:hover {
+      transform: scale(1.1) translateY(-2px);
+      box-shadow:
+        0 0 0 4px rgba(139,0,0,.7),
+        0 0 0 8px rgba(26,107,26,.4),
+        0 14px 32px rgba(139,0,0,.8),
+        inset 0 1px 1px rgba(255,255,255,.2);
+    }
+    #chk-btn-fallback {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 100%; font-size: 22px; color: #fff; font-weight: 700;
+      border-radius: 50%; background: linear-gradient(145deg,#8b0000,#c0392b);
+      position: absolute;
+    }
+
+    /* Chat window */
+    #chk-chat-win {
+      position: fixed; z-index: 9999998;
+      width: 360px; max-height: 600px; border-radius: 18px;
+      background: #1c1c1c; border: 1px solid rgba(139,0,0,.35);
+      box-shadow:
+        0 20px 60px rgba(0,0,0,.65),
+        0 4px 20px rgba(139,0,0,.25),
+        0 0 0 1px rgba(26,107,26,.15),
+        inset 0 1px 0 rgba(255,255,255,.06);
+      display: flex; flex-direction: column; overflow: hidden;
+      opacity: 0; pointer-events: none;
+      transform: scale(.88) translateY(18px) perspective(600px) rotateX(4deg);
+      transition: opacity .26s cubic-bezier(.34,1.4,.64,1), transform .26s cubic-bezier(.34,1.4,.64,1);
+      bottom: 106px; right: 28px;
+    }
+    #chk-chat-win.chk-open {
+      opacity: 1;
+      transform: scale(1) translateY(0) perspective(600px) rotateX(0deg);
+      pointer-events: all;
+    }
+    #chk-chat-win:hover:not(.chk-win-dragging) {
+      box-shadow:
+        0 26px 72px rgba(0,0,0,.7),
+        0 6px 24px rgba(139,0,0,.3),
+        0 0 0 1px rgba(26,107,26,.2),
+        inset 0 1px 0 rgba(255,255,255,.08);
+    }
+
+    @media (max-width: 767px) {
+      /* keep the launcher clear of the portal's bottom nav bar */
+      #chk-bot-launcher { bottom: calc(80px + env(safe-area-inset-bottom)); right: 14px; }
+    }
+    @media (max-width: 520px) {
+      #chk-chat-win { width: calc(100vw - 16px); max-height: 82vh; border-radius: 16px; }
+      #chk-bot-btn { width: 56px !important; height: 56px !important; }
+      #chk-wave-emoji { font-size: 18px !important; }
+    }
+
+    /* Header */
+    #chk-chat-header {
+      background: linear-gradient(135deg, #5a0000 0%, #8b0000 45%, #0d4a0d 100%);
+      padding: 14px 16px 10px; cursor: move;
+      user-select: none; -webkit-user-select: none;
+      flex-shrink: 0; position: relative;
+      box-shadow: 0 2px 10px rgba(0,0,0,.4), inset 0 -1px 0 rgba(0,0,0,.3);
+    }
+    #chk-chat-header::before {
+      content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+      background: linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);
+      animation: chk-sheen 5s ease-in-out infinite; pointer-events: none;
+    }
+    @keyframes chk-sheen { 0%,100%{left:-100%} 50%{left:140%} }
+    #chk-header-top  { display: flex; align-items: center; justify-content: space-between; }
+    #chk-header-left { display: flex; align-items: center; gap: 10px; }
+    #chk-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.5);
+      box-shadow: 0 2px 8px rgba(0,0,0,.4),0 0 0 3px rgba(139,0,0,.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; overflow: hidden;
+      transition: transform .2s, box-shadow .2s; background: #8b0000;
+    }
+    #chk-avatar:hover {
+      transform: scale(1.1) rotate(-5deg);
+      box-shadow: 0 4px 12px rgba(0,0,0,.5),0 0 0 4px rgba(139,0,0,.5);
+    }
+    #chk-header-title strong { display: block; font-size: 15px; letter-spacing: .3px; color: #fff; }
+    #chk-header-title span   { font-size: 11px; opacity: .75; color: #fff; }
+    #chk-header-btns { display: flex; align-items: center; gap: 6px; }
+    #chk-close-btn {
+      background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.2);
+      color: #fff; width: 28px; height: 28px; border-radius: 50%;
+      font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, transform .15s;
+      box-shadow: 0 2px 6px rgba(0,0,0,.3); flex-shrink: 0;
+      min-width: 36px; min-height: 36px;
+    }
+    #chk-close-btn:hover { background: rgba(255,80,80,.4); transform: rotate(90deg) scale(1.1); }
+    #chk-refresh-btn {
+      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+      color: #fff; width: 28px; height: 28px; border-radius: 50%;
+      font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, transform .3s;
+      box-shadow: 0 2px 6px rgba(0,0,0,.3); flex-shrink: 0;
+      min-width: 36px; min-height: 36px; line-height: 1;
+    }
+    #chk-refresh-btn:hover { background: rgba(80,180,80,.4); transform: rotate(360deg) scale(1.1); }
+    #chk-beta-tag {
+      display: inline-block; margin-top: 8px;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.25);
+      color: #ffe680; font-size: 10px; font-weight: 700;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      padding: 2px 10px; border-radius: 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.08);
+    }
+
+    /* AI Status indicator */
+    #chk-ai-status {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 4px; font-size: 9.5px; color: rgba(255,255,255,.55);
+      letter-spacing: .5px; font-family: Montserrat, sans-serif;
+    }
+    #chk-ai-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #4caf50; animation: chk-pulse-dot 2s infinite;
+    }
+    @keyframes chk-pulse-dot {
+      0%,100% { opacity:1; transform: scale(1); }
+      50%      { opacity:.5; transform: scale(.7); }
+    }
+    #chk-ai-dot.loading { background: #ff9800; animation: chk-spin-dot 1s linear infinite; }
+    @keyframes chk-spin-dot { to { transform: rotate(360deg); } }
+    #chk-ai-dot.error   { background: #f44336; animation: none; }
+
+    /* Messages area */
+    #chk-messages {
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      padding: 14px 14px 8px;
+      display: flex; flex-direction: column; gap: 10px;
+      background:
+        radial-gradient(ellipse at top right,rgba(139,0,0,.06) 0%,transparent 60%),
+        radial-gradient(ellipse at bottom left,rgba(26,107,26,.05) 0%,transparent 60%),
+        #141414;
+      -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+    }
+    #chk-messages::-webkit-scrollbar { width: 3px; }
+    #chk-messages::-webkit-scrollbar-thumb { background: rgba(139,0,0,.45); border-radius: 3px; }
+
+    .chk-msg {
+      max-width: 88%; font-size: 13.5px; line-height: 1.6;
+      border-radius: 14px; padding: 9px 13px; word-break: break-word;
+      animation: chk-pop .22s cubic-bezier(.34,1.4,.64,1);
+    }
+    @keyframes chk-pop {
+      from { transform: scale(.88) translateY(8px); opacity: 0; }
+      to   { transform: scale(1)   translateY(0);  opacity: 1; }
+    }
+    .chk-msg.bot {
+      background: #242424; color: #e8e8e8;
+      border-bottom-left-radius: 4px; border-left: 3px solid #8b0000;
+      box-shadow: 0 2px 12px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.04);
+      align-self: flex-start;
+    }
+    .chk-msg.user {
+      background: linear-gradient(135deg,#6b0000 0%,#9b1818 100%);
+      color: #fff; border-bottom-right-radius: 4px; align-self: flex-end;
+      box-shadow: 0 3px 14px rgba(139,0,0,.45),inset 0 1px 0 rgba(255,255,255,.1);
+    }
+    .chk-msg a            { color: #f77; font-weight: 600; text-decoration: none; }
+    .chk-msg a:hover      { color: #ff9999; text-decoration: underline; }
+    .chk-msg.user a       { color: #ffe680; }
+    .chk-msg.user a:hover { color: #fff5aa; }
+    .chk-msg.ai-powered   { border-left-color: #ff9800; }
+    .chk-msg.sheet-match  { border-left-color: #4caf50; }
+
+    /* Source tag */
+    .chk-source-tag {
+      font-size: 10px; opacity: .55; margin-top: 6px;
+      font-family: Montserrat, sans-serif; letter-spacing: .4px;
+    }
+    .chk-source-tag.gas    { color: #ff9800; opacity: .7; }
+    .chk-source-tag.claude { color: #a78bfa; opacity: .85; }
+    .chk-source-tag.gemini { color: #4dabf7; opacity: .85; }
+    .chk-source-tag.sheets { color: #4caf50; opacity: .85; }
+    .chk-source-tag.groq   { color: #ff9800; opacity: .75; }
+
+    /* Quick-reply chips */
+    #chk-chips {
+      padding: 6px 12px 6px;
+      display: flex; flex-wrap: wrap; gap: 6px;
+      background: #141414; border-top: 1px solid rgba(255,255,255,.05);
+      flex-shrink: 0; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    }
+    .chk-chip {
+      background: #1e1e1e; border: 1.5px solid rgba(139,0,0,.6);
+      color: #f88; font-size: 11.5px; font-weight: 600;
+      padding: 5px 13px; border-radius: 20px; cursor: pointer;
+      transition: background .15s, color .15s, transform .15s, box-shadow .15s;
+      white-space: nowrap; flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.05);
+      min-height: 32px;
+    }
+    .chk-chip:hover {
+      background: linear-gradient(135deg,#8b0000,#6b1f1f);
+      color: #fff; border-color: #c0392b;
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 6px 18px rgba(139,0,0,.45),inset 0 1px 0 rgba(255,255,255,.1);
+    }
+    .chk-chip:active { transform: translateY(0) scale(.98); }
+
+    /* Input bar */
+    #chk-input-row {
+      display: flex; align-items: center;
+      padding: 10px 12px; border-top: 1px solid rgba(139,0,0,.25);
+      background: #1a1a1a; gap: 8px; flex-shrink: 0;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,.2);
+    }
+    #chk-input {
+      flex: 1; border: 1.5px solid rgba(139,0,0,.4);
+      border-radius: 22px; padding: 9px 14px;
+      font-size: 14px; outline: none;
+      transition: border-color .15s, box-shadow .15s, background .15s;
+      font-family: inherit; background: #111; color: #e8e8e8;
+      -webkit-appearance: none; appearance: none;
+    }
+    #chk-input::placeholder { color: rgba(255,255,255,.3); }
+    #chk-input:focus {
+      border-color: #8b0000; background: #161616;
+      box-shadow: 0 0 0 3px rgba(139,0,0,.2),0 2px 8px rgba(0,0,0,.3);
+    }
+    #chk-send-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg,#8b0000,#c0392b);
+      border: none; color: #fff; font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 3px 10px rgba(139,0,0,.45),inset 0 1px 0 rgba(255,255,255,.15);
+    }
+    #chk-send-btn:hover {
+      transform: scale(1.12) translateY(-1px);
+      box-shadow: 0 6px 18px rgba(139,0,0,.65),inset 0 1px 0 rgba(255,255,255,.2);
+      background: linear-gradient(135deg,#a00000,#d44);
+    }
+    #chk-send-btn:active { transform: scale(1); }
+
+    /* Typing indicator */
+    .chk-typing { display: flex; gap: 5px; align-items: center; padding: 4px 0; }
+    .chk-typing span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(139,0,0,.7);
+      animation: chk-bounce 1s infinite ease-in-out;
+      box-shadow: 0 1px 3px rgba(0,0,0,.3);
+    }
+    .chk-typing span:nth-child(2){ animation-delay: .18s }
+    .chk-typing span:nth-child(3){ animation-delay: .36s }
+    @keyframes chk-bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
+
+    /* Notice */
+    #chk-spreadsheet-notice {
+      text-align: center; font-size: 10px; color: rgba(255,255,255,.3);
+      padding: 4px 8px 6px; background: #141414;
+      border-top: 1px solid rgba(255,255,255,.05); flex-shrink: 0;
+    }
+    #chk-spreadsheet-notice span { color: rgba(26,107,26,.8); font-weight: 600; }
   </style>
 </head>
 <body>
@@ -581,6 +933,59 @@
   <div class="footer-copy">© <script>document.write(new Date().getFullYear())</script> CHK Administrative Section – University of the Philippines Diliman</div>
 </footer>
 
+<!-- ═══════════════════════════════════════════════
+     CHiKito FLOATING CHATBOT
+     ═══════════════════════════════════════════════ -->
+<div id="chk-bot-root">
+  <div id="chk-bot-launcher">
+    <span id="chk-wave-emoji">👋</span>
+    <button id="chk-bot-btn" aria-label="Open CHiKito chat">
+      <img id="chk-btn-img" src="https://drive.google.com/thumbnail?id=1th8W5b85mRrdBz21w1ltCLXUF4zVWGaN&sz=w200"
+        alt="CHiKito" style="width:100%;height:100%;object-fit:cover;border-radius:50%;position:absolute;"
+        onerror="this.style.display='none';document.getElementById('chk-btn-fallback').style.display='flex';">
+      <div id="chk-btn-fallback" style="display:none;">CHK</div>
+    </button>
+  </div>
+
+  <div id="chk-chat-win" role="dialog" aria-label="CHiKito Chat">
+    <div id="chk-chat-header">
+      <div id="chk-header-top">
+        <div id="chk-header-left">
+          <div id="chk-avatar"><img src="https://drive.google.com/thumbnail?id=1th8W5b85mRrdBz21w1ltCLXUF4zVWGaN&sz=w80" alt="CHiKito" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.outerHTML='🤖'"></div>
+          <div id="chk-header-title">
+            <strong>CHiKito</strong>
+            <span>CHK Admin Assistant · UP Diliman</span>
+            <div id="chk-ai-status">
+              <div id="chk-ai-dot"></div>
+              <span id="chk-ai-label">AI Ready</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <div id="chk-beta-tag">✨ BETA</div>
+            </div>
+          </div>
+        </div>
+        <div id="chk-header-btns">
+          <button id="chk-refresh-btn" title="Restart conversation">↺</button>
+          <button id="chk-close-btn" title="Close">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="chk-messages"></div>
+    <div id="chk-chips"></div>
+
+    <div id="chk-input-row">
+      <input id="chk-input" type="text" placeholder="Mag-type ng tanong..." autocomplete="off"/>
+      <button id="chk-send-btn" aria-label="Send">➤</button>
+    </div>
+
+    <div id="chk-spreadsheet-notice">
+      Powered by <span>CHK Admin Portal</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PORTAL SCRIPT ═══════════════ -->
 <script>
   const VENUES = [
     { name: "Baseball Field", gid: "593929024" },
@@ -696,6 +1101,723 @@
         .catch((err) => console.log('Service Worker failed', err));
     });
   }
+</script>
+
+<!-- ═══════════════ CHiKito CHATBOT SCRIPT ═══════════════ -->
+<script>
+(function(){
+'use strict';
+
+// ══════════════════════════════════════
+// SHEET KB (UP Faculty Manual + CHK Policies)
+// ══════════════════════════════════════
+const SHEET_KB=[{q:`Paano mag-reserve ng venue sa CHK?`,a:`Mag-fill out ng Venue Reservation Form sa CHK Admin Office o i-access ang AREA portal sa https://sites.google.com/up.edu.ph/chk360/reserve-a-venue. Kailangan ng advance notice — minimum 5 working days bago ang event. I-confirm sa CHK Admin Office ang availability.`,cat:"Venue"},{q:`Saan makikita ang venue schedule ng CHK?`,a:`Makikita ang pinakabagong venue schedules dito: https://chkadministrativeportal.github.io/venuecalendars/ — Pumili ng venue para makita ang calendar.`,cat:"Venue"},{q:`Magkano ang bayad sa venue reservation?`,a:`Depende sa venue at sa oras ng gamit. May OT fee para sa after-hours na reservations. Para sa exact rates, makipag-ugnayan sa CHK Admin Office.`,cat:"Venue"},{q:`Puwede bang mag-reserve ng venue para sa external na grupo?`,a:`Oo, puwede — pero kailangan ng endorsement/approval mula sa CHK AO at DEAN. May kaukulang fees at requirements. Makipag-coordinate sa CHK Admin Office.`,cat:"Venue"},{q:`Anong mga venue ang available sa CHK?`,a:`Ang CHK ay may 17 venues: Baseball Field, Baseball Garden, Dugout 1 & 2, Football Field, Small Gym/Court 4, Tennis Court, Track Oval, VTC Court, VTC Meeting Rooms 1 & 2, Ylanan Courts 1-3, VTC Weights Room, at Tennis Court Rooms 1 & 2. Pero para makita ang available time, tignan ang kanilang Venue Calendars`,cat:"Venue"},{q:`Paano mag-request ng sasakyan sa CHK?`,a:`I-fill out ang Vehicle/Trip Request Form sa CHK Admin Office o sa TRIP portal. Kailangan ng advance request — minimum 3 working days. Ang approval ay nakasalalay sa availability ng driver at sasakyan. Bisitahin ang link na ito: https://sites.google.com/up.edu.ph/chk360/reserve-a-vehicle`,cat:"Vehicle"},{q:`Available ba ang CHK vehicle para sa out-of-campus na lakad?`,a:`Oo, puwede — subject to availability at approval. Kailangan i-coordinate sa CHK Admin Office at i-coconfirm naman nila sa OASD (Office of Athletics and Sports Development) para sa mga varsity trips.`,cat:"Vehicle"},{q:`Paano mag-request ng supplies sa CHK?`,a:`Gamitin ang AIRA portal (Automated Inventory and Requisition Application) para mag-file ng supply request. I-access sa https://sites.google.com/up.edu.ph/chk360/a-i-r-a. Ang mga request ay subject to stock availability. Paalala, ang pag request kay AIRA ay para lamang sa mga staff at faculty ng CHK.`,cat:"Supply"},{q:`Saan makikita ang stock ng supplies sa CHK?`,a:`Makikita ang real-time stock levels sa AIRA system. Ang mga item na lalabas kay AIRA ay ang tanging mga available items sa CHK Admin Office.`,cat:"Supply"},{q:`Paano mag-report ng sirang facilities sa CHK?`,a:`Gamitin ang CHK RAP (Report-A-Problem) system o mag-file ng Work Order sa CHK Admin Office. I-access sa https://sites.google.com/up.edu.ph/chk360/forms. Ilagay ang detalye ng problema at lokasyon.`,cat:"Maintenance"},{q:`Gaano katagal bago ma-repair ang reported na problema?`,a:`Depende sa urgency at likas ng problema. Ang urgent repairs (safety hazards) ay pinriprioridad. Para sa update sa status ng iyong work order, makipag-ugnayan sa CHK Admin Office.`,cat:"Maintenance"},{q:`Paano mag-file ng leave para sa COS staff?`,a:`Ang COS staff ay gumagamit ng COS Leave System para sa wellness leave. I-access sa CHK portal: https://sites.google.com/up.edu.ph/chk360/forms. Kailangan ng advance notice at approval ng supervisor. Para sa detalye, makipag-ugnayan sa CHK Admin Office.`,cat:"Leave"},{q:`Ilang araw na wellness leave ang maaaring i-file ng COS staff?`,a:`Ang wellness leave para sa COS staff ay base sa kontrata at CHK policy. Para sa exact na bilang ng leave credits, makipag-ugnayan sa CHK Admin Office.`,cat:"Leave"},{q:`Saan makikita ang CHK Admin Office?`,a:`Ang CHK Administrative Office ay nasa Varsity Training Center, Magsaysay Avenue, University of the Philippines Diliman, Quezon City. Bukas Lunes hanggang Biyernes, 8:00 AM - 5:00 PM.`,cat:"General"},{q:`Ano ang portal ng CHK Admin Office?`,a:`Ang opisyal na portal ng CHK Admin Office ay: https://sites.google.com/up.edu.ph/chk360 — Dito makikita ang lahat ng systems at forms.`,cat:"General"},{q:`Sino ang Head Administrative Officer ng CHK?`,a:`Ang Head Administrative Officer ng CHK ay si James Lester P. Edrozo (Administrative Officer V). Para sa mga katanungan, makipag-ugnayan sa CHK Admin Office.`,cat:"General"},{q:`Sino-sino ang mga staff sa Administrative Office ng CHK?`,a:`Sa ngayon dalawa lamang silang office staff, si James Lester P. Edrozo (Administrative Officer V) at si Leoncio "Jhayr" S. Cadag Jr. (Liaision Officer).`,cat:"General"},{q:`Ano ang ONBOARD system ng CHK?`,a:`Ang CHK ONBOARD ay ang digital onboarding system para sa mga bagong CHK staff at faculty. Naglalaman ito ng mga modules, quizzes, at impormasyon tungkol sa CHK policies at procedures.`,cat:"Onboarding"},{q:`Ano ang PBMS ng CHK?`,a:`Ang PBMS (Performance-Based Monitoring System) ay ginagamit para sa pagsubaybay ng performance indicators ng CHK. Kasama dito ang quarterly targets at accomplishments. Kung ikaw ay faculty at staff ng CHK at nais malaman pa ang tungkol dito, makipag ugnayan sa Admin Office.`,cat:"PBMS"},{q:`Ano ang UPD Faculty Manual?`,a:`Ito ang opisyal na gabay ng UP Diliman para sa lahat ng miyembro ng faculty. Naglalaman ito ng mga patakaran, regulasyon, at proseduro na batay sa University Code, mga resolusyon ng Board of Regents, at iba pang opisyal na dokumento. Inilathala ito noong 2003 bilang revised version ng 1989 Faculty Manual.`,cat:"General"},{q:`Ano ang misyon ng University of the Philippines?`,a:`Ang UP ay nagbibigay ng advanced instruction sa literatura, pilosopiya, agham, at sining; nagbibigay ng propesyonal at teknikal na pagsasanay; at hinihikayat at isinasagawa ang pananaliksik at kontribusyon sa pagpapalaki at pagpapakalat ng kaalaman. Ito rin ay nagsisilbing instrumento ng pambansang pag-unlad.`,cat:"General"},{q:`Sino ang bumubuo sa Board of Regents ng UP?`,a:`Ang BOR ay binubuo ng: Chair ng CHED (ex officio Chair), Presidente ng UP (ex officio Vice-Chair), Chair ng Senate Committee on Education, Chair ng House Committee on Education, Presidente ng UPAA, Faculty Regent (1-year term), Student Regent (1-year term), at limang (5) miyembro na hinirang ng Presidente ng Pilipinas (tatlo ay kailangang alumni ng UP, 2-year term).`,cat:"General"},{q:`Ano ang University Council (UC) at sino ang mga miyembro nito?`,a:`Ang UC ay binubuo ng Chancellor, lahat ng Professors, Associate Professors, at Assistant Professors ng autonomous campus. Ang Chancellor ang nagsisilbing Chair at ang University Registrar ang Secretary. Ang Presidente ng UP ay ex officio na miyembro rin at nagpupuno kapag naroon. Ang quorum ay 75 miyembro.`,cat:"General"},{q:`Ano ang mga kapangyarihan ng University Council?`,a:`Ang UC, subject sa approval ng BOR, ay maaaring: mag-prescribe ng courses of study at rules of discipline; mag-fix ng requirements para sa admission at graduation; magrerekomenda ng mga tatanggap ng degrees; at mag-exercise ng disciplinary powers sa mga estudyante.`,cat:"General"},{q:`Ano ang mga regular na miyembro ng teaching staff?`,a:`Ang mga regular na miyembro ay: Professors, Associate Professors, Assistant Professors, at Instructors. Kasama rin ang Research/Extension Faculty na may appointment sa katumbas na rank.`,cat:"General"},{q:`Ano ang mga non-regular na miyembro ng teaching staff?`,a:`Ang mga non-regular ay: Lecturer, Senior Lecturer, Professorial Lecturer, Visiting Professor, Exchange Professor, Adjunct Professor, Affiliate Faculty, at Teaching Associate/Fellow.`,cat:"General"},{q:`Ilan ang required na teaching load ng isang full-time faculty member?`,a:`Ang normal na teaching load ay 12 units per semester. Hindi maaaring magturo ang isang faculty ng wala sa 6 units per semester. Maaaring bawasan ng Presidente o Chancellor ang load hanggang hindi bababa sa 3 units kung aktibo ang faculty sa research, creative work, community service, o iba pang authorized activities.`,cat:"General"},{q:`Ano ang Study Load Credit (SLC) at ano ang mga kondisyon nito?`,a:`Ang SLC ay partial de-loading mula sa regular 12-unit teaching load habang nag-aaral. Ang teaching load ay bawasan ng katumbas na bilang ng enrolled units, ngunit hindi hihigit sa 6 units. Para sa 3 units o mas kaunti: approval ng Dean, upon recommendation ng Department Chair. Para sa 4-6 units: kailangan ng approval ng Chancellor.`,cat:"General"},{q:`Ano ang Study Leave with pay at ano ang mga qualifications?`,a:`Para sa study leave with pay, kailangan ng faculty na: may proven teaching ability at commitment; may maayos na academic record; isang regular faculty occupying own item (hindi substitute); may rank na hindi hihigit sa Assistant Professor; may hindi bababa sa 1 taon ng serbisyo; may tenure o isinasaalang-alang para sa tenure; at hindi hihigit sa 40 taong gulang.`,cat:"General"},{q:`Gaano katagal ang study leave with pay?`,a:`Para sa Master's degree: hanggang 2.5 taon (30 buwan). Para sa Doctoral degree: hanggang 4 taon (48 buwan) pagkatapos ng Master's; o hanggang 5 taon (60 buwan) para sa straight Ph.D. program.`,cat:"General"},{q:`Kailan compulsory ang retirement sa UP?`,a:`Ang compulsory retirement age ay 65 taon. Ang BOR ay maaaring mag-extend ng tenure ng faculty hanggang 70 taon, pero hindi higit pa rito, kung kinakailangan ang kanilang serbisyo.`,cat:"General"},{q:`Ano ang Teacher's Leaves at sino ang karapat-dapat?`,a:`Ang Teacher's Leave ay para sa full- at part-time regular faculty na hindi gumagawa ng administrative functions. Binubuo ito ng vacation leave (1 buwan bawat academic year, bilang karagdagan sa Christmas vacation) at sick leave (hindi hihigit sa 15 araw sa isang academic year).`,cat:"General"},{q:`Ano ang Maternity Leave sa UP?`,a:`Ang mga babaeng government employee na may hindi bababa sa 2 taon ng serbisyo ay entitled sa 60 calendar days na maternity leave na may full pay. Sa ilalim ng UP guidelines, ang faculty ay may karapatang sa 6 buwan: 2 buwan bago at 4 buwan pagkatapos ng panganganak.`,cat:"General"},{q:`Ano ang Paternity Leave?`,a:`Ang married male employee ay may karapatang sa 7 araw na paternity leave na may bayad para sa unang 4 na panganganak ng kanyang asawa.`,cat:"General"},{q:`Ano ang Sabbatical at ano ang mga kondisyon nito?`,a:`Ang sabbatical ay pribilehiyo na nagpapalaya sa faculty mula sa regular na tungkulin para sa pag-aaral at pananaliksik. Maaaring i-grant ng hanggang 1 taon na may full salary: (1) hindi bababa sa 6 magkakasunod na taon ng serbisyo kasama 2 taon bilang Associate Professor; (2) hindi ibinibigay 2 taon bago mag-65; (3) kailangang mag-report pabalik agad pagkatapos.`,cat:"General"},{q:`Ano ang mga salary grades ng faculty ranks sa UP?`,a:`Ang mga salary grades ay: Instructor 1-7 (SG 14-17), Assistant Professor 1-7 (SG 18-21), Associate Professor 1-7 (SG 22-25), Professor 1-12 (SG 26-29).`,cat:"General"},{q:`Ano ang patakaran sa tenure ng Instructors?`,a:`Ang initial appointment bilang Instructor ay temporary, hindi hihigit sa 1 taon. Maaaring i-renew tuwing isang taon ngunit hindi lalampas sa 5 taon mula sa unang appointment. Pagkatapos ng 5 taon, awtomatikong magtatapos ang appointment maliban kung ma-promote sa Assistant Professor.`,cat:"General"},{q:`Ano ang mga minimum qualifications para sa tenure ng Assistant Professor?`,a:`Ang mga minimum qualifications ay: (1) hindi bababa sa Master's degree o equivalent; (2) satisfactory o mas mataas na teaching performance; at (3) sole o lead authorship ng isang refereed journal article o academic publication ng recognized academic book publisher.`,cat:"General"},{q:`Paano mag-resign ang isang faculty member?`,a:`Kailangang mag-notify ng hindi bababa sa 60 araw bago mag-effect ang resignation sa Chancellor sa pamamagitan ng Dean o Director. Hindi maaaring ma-accept ang resignation hanggang hindi na-secure ang successor o temporary substitute.`,cat:"General"},{q:`Ano ang mga PhilHealth benefits ng faculty?`,a:`Lahat ng government employees ay compulsorily covered ng PhilHealth. Ang benefit package ay sumasaklaw sa room at board (45 araw per year), gamot at medisina, X-ray, laboratory, professional fees, at operating room.`,cat:"General"},{q:`Ano ang mga retirement options sa GSIS?`,a:`Sa ilalim ng R.A. 8291, ang isang miyembro na may hindi bababa sa 15 taon ng serbisyo at 60 taong gulang ay eligible para sa retirement. Dalawang pangunahing opsyon: (a) 5-year lump sum kasama Basic Monthly Pension for life; o (b) Cash payment kasama Basic Monthly Pension simula agad sa retirement.`,cat:"General"},{q:`Ano ang Pag-IBIG benefits para sa faculty?`,a:`Ang Pag-IBIG Fund (HDMF) ay isang provident savings system. Ang mga miyembro ay eligible sa: (1) Expanded Housing Loan; (2) Multi-Purpose Loan (MPL); at (3) Provident Benefit pagkatapos ng 20 taon ng membership.`,cat:"General"},{q:`Ano ang Professorial Chair at sino ang karapat-dapat?`,a:`Ang professorial chair ay paraan ng pagkilala para sa achievers sa academe. Kailangan: regular faculty na may rank na Assistant Professor o mas mataas; may hindi bababa sa 5 taon ng serbisyo sa UP; at may outstanding performance sa teaching, intellectual productivity, at service.`,cat:"General"},{q:`Ano ang Professor Emeritus at ano ang mga pamantayan?`,a:`Ang Professor Emeritus ay maaaring i-appoint sa isang retired faculty na may rank na Professor na: (1) may hindi bababa sa 20 taon ng aktibo at tapat na serbisyo; (2) nakamit ang markadong distinction bilang productive scholar, artist, o scientist. Ito ay isang titulo para sa buhabuhay.`,cat:"General"},{q:`Ano ang sexual harassment ayon sa UP Faculty Manual?`,a:`Ang sexual harassment ay ang pag-demand, pag-request, o pag-require ng anumang sexual favor mula sa isa pang tao ng isang opisyal, faculty, empleyado, coach, o sinumang may awtoridad. Sumasaklaw ito sa mga work-related at academic/teaching environments.`,cat:"General"},{q:`Ano ang term of office ng Dean?`,a:`Ang term ng Dean ay 3 taon mula sa petsa ng appointment, nang hindi pinipigilan ang muling paghirang. Maaari silang maglingkod ng 2 terms sa kabuuan.`,cat:"General"},{q:`Ano ang term of office ng Department Chair?`,a:`Hindi hihigit sa 3 taon, maaaring i-renew para sa isa pang term ng hindi hihigit sa 3 taon (maximum na 6 taon). Hindi maaaring maglingkod ang isang chair ng mahigit sa 9 magkakasunod na taon.`,cat:"General"},{q:`Ano ang AIRA?`,a:`Ang AIRA (Admin Inventory Request & Automation) ay ang supply request system ng CHK. I-access dito: https://sites.google.com/up.edu.ph/chk360/a-i-r-a`,cat:"Supply"}];
+
+// ══════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════
+const CONFIG = {
+  GAS_URL: 'https://script.google.com/macros/s/AKfycby8PbtsLdzfx0jbt1534wx9JHOj1iQH6lwf1ANSktbrLqxHVtjIf62prHGR8XPFAg3b/exec',
+};
+
+// ══════════════════════════════════════
+// DOM REFS
+// ══════════════════════════════════════
+const launcher   = document.getElementById('chk-bot-launcher');
+const chatWin    = document.getElementById('chk-chat-win');
+const closeBtn   = document.getElementById('chk-close-btn');
+const refreshBtn = document.getElementById('chk-refresh-btn');
+const header     = document.getElementById('chk-chat-header');
+const msgBox     = document.getElementById('chk-messages');
+const chipsBox   = document.getElementById('chk-chips');
+const inputEl    = document.getElementById('chk-input');
+const sendBtn    = document.getElementById('chk-send-btn');
+const aiDot      = document.getElementById('chk-ai-dot');
+const aiLabel    = document.getElementById('chk-ai-label');
+let isOpen = false;
+
+function setAIStatus(state, label){
+  aiDot.className = state === 'loading' ? 'loading' : state === 'error' ? 'error' : '';
+  aiLabel.textContent = label || 'AI Ready';
+}
+
+// ══════════════════════════════════════
+// STATIC KNOWLEDGE BASE (instant, no network)
+// ══════════════════════════════════════
+const KB={
+ greet:{triggers:[],responses:[
+   `Kumusta! 👋 Ako si <b>CHiKito</b>, ang inyong friendly assistant ng <b>CHK Administrative Portal</b>.<br><br>Uy tol, ano ang kailangan mo ngayon? Mabilis lang 'to.<br><i style="opacity:.7;font-size:12px">Pwede kang mag-type sa English o Tagalog! 🇵🇭</i>`,
+   `Hoy, andito na ako! 👋 CHiKito ang pangalan, admin assistant ng <b>CHK Administrative Portal</b>.<br><br>Ano bang maitutulong ko sa'yo ngayon, pre?<br><i style="opacity:.7;font-size:12px">Taglish or English, kaya ko pareho. 🇵🇭</i>`,
+   `Uy, welcome ka dyan! 🙌 Ako si <b>CHiKito</b>, tutulong sa mga CHK admin concerns mo.<br><br>Sabi mo lang, ano bang kailangan mong ayusin ngayon?<br><i style="opacity:.7;font-size:12px">Mag-type ka lang, English man o Tagalog. 🇵🇭</i>`
+ ],chips:['Reservations','Admin Forms','A.I.R.A.','Dashboards','Venue Calendars']},
+ reservations:{triggers:['reservation','reserve','book','booking','mag-reserve','mag-book','paano mag-reserve','paano mag-book','how to reserve','how to book'],response:`📋 <b>Reservations</b> — piliin ang uri, pre:<br><br>Dalawa lang ang choices mo:`,chips:['Venue Reservation','Vehicle Reservation','Venue Calendars']},
+ venue:{triggers:['venue reservation','venue form','sports facility','pasilidad','sports complex','reserve venue','book venue','mag-reserve ng venue'],response:`🏟 <b>Venue Reservation</b><br><br>Para mag-reserve ng sports facilities at iba pang venue, gamitin 'to.<br><i style="opacity:.65;font-size:12px">Fill in the form properly ha, pre. Babasahin naman nila 'yan.</i><br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLSev3CV8mQ6YzfnugoWmSEkUgDEMt_cEDegbTKvKKHD9wwdsNA/viewform" target="_blank">→ Buksan ang Venue Reservation Form</a>`,chips:['Vehicle Reservation','Venue Calendars','Back to Menu']},
+ vehicle:{triggers:['vehicle reservation','vehicle form','car reservation','sasakyan','reserve vehicle','book vehicle','mag-reserve ng sasakyan'],response:`🚗 <b>Vehicle Reservation</b><br><br>Gusto mong mag-reserve ng opisyal na sasakyan? Dito ka mag-fill up, pre.<br><i style="opacity:.65;font-size:12px">Make sure may approval na 'yan bago ka mag-request. Just saying.</i><br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLScRsNYHsOw1Iv_vW4Oy4A8j6vSRWEWl-Dr7Fpk8AhAxc2hJQA/viewform" target="_blank">→ Buksan ang Vehicle Reservation Form</a>`,chips:['Venue Reservation','Back to Menu']},
+ admin:{triggers:['admin form','admin online form','online form','admin forms','forms'],response:`🛠 <b>Admin Online Forms</b> — anong form ang kailangan mo, pre?`,chips:['Work Order','Fund Request','Meal Request','CHK RAP','PPMP','COS Wellness Leave']},
+ workorder:{triggers:['work order','work request','mag-request ng repair','maintenance request','ayusin ang','repair request','may sira'],response:`🔧 <b>Work Order</b><br><br>May sira? May ayusin? Dito mo i-request, tol. Para naman maasikaso agad.<br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLSd-Y_6cXUw10tbYKnim-Ib0dE_H0-B2ybodDhtl6YghuoTykQ/viewform" target="_blank">→ Buksan ang Work Order Form</a>`,chips:['Fund Request','Meal Request','Back to Menu']},
+ fundrequest:{triggers:['fund request','mag-request ng pondo','budget request','financial request','request ng budget','request ng pera'],response:`💰 <b>Fund Request</b><br><br>Kailangan ng pondo para sa aktibidad? I-request dito. Siguraduhing kumpleto ang docs mo, pre.<br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLScoreOZ7Rq40KAispsuPzRkU5g90km3z8ZOzydvzX-CO_4kcQ/viewform" target="_blank">→ Buksan ang Fund Request Form</a>`,chips:['Work Order','Meal Request','Back to Menu']},
+ mealrequest:{triggers:['meal request','food request','mag-request ng pagkain','catering','meal allowance','merienda request'],response:`🍱 <b>Meal Request</b><br><br>Para sa opisyal na request ng pagkain para sa mga aktibidad. Wag lang mag-abuso, pre.<br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLScvj5sP0R1uNg8nlCDQDIBvimi-ci-aaaiOEbVLzpm9VTmPvQ/viewform" target="_blank">→ Buksan ang Meal Request Form</a>`,chips:['Work Order','Fund Request','Back to Menu']},
+ rap:{triggers:['chk rap','rap form','chk r.a.p.','report of accomplishments'],response:`📝 <b>CHK R.A.P.</b><br><br>Report of Accomplishments and Plans. I-fill up mo 'to, pre. Part ng proseso, wag palampasin.<br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLScRrTAuAreeO4YE1ywofYuos67WfGpMDEYoI0IGpTvCt0y9DQ/viewform" target="_blank">→ Buksan ang CHK R.A.P. Form</a>`,chips:['PPMP','COS Wellness Leave','Back to Menu']},
+ ppmp:{triggers:['ppmp','project procurement management plan','procurement management','procurement plan form'],response:`📊 <b>PPMP Online Form</b><br><br>Project Procurement Management Plan. Importante 'to ha, pre. I-accomplish ng maayos.<br><br><a href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbxwUQ0P6L5aW8T1anA-4d6bL5kDOInFh3Bdi0YcS5mNAj6wIDCFXJSXlAy0q-mj5wB5/exec" target="_blank">→ Buksan ang PPMP Form</a>`,chips:['CHK RAP','COS Wellness Leave','Back to Menu']},
+ cos:{triggers:['cos wellness leave','cos wellness','wellness leave form','cos leave form','mag-file ng cos'],response:`🌿 <b>C.O.S. Wellness Leave</b><br><br>Para sa mga C.O.S. staff na nangangailangan ng wellness leave. Mag-rest ka na, pre, deserve mo 'yan.<br><br><a href="https://script.google.com/macros/s/AKfycbzLeR_dq973LeW7W9mp7fKLRVLuKKZvAVjxtiaBUSYz4cjeicGTSyIN7_7jfg3s6iayAQ/exec" target="_blank">→ Buksan ang COS Wellness Leave Form</a>`,chips:['CHK RAP','PPMP','Back to Menu']},
+ aira:{triggers:['aira','a.i.r.a','admin inventory','ordering system','inventory request','order supplies','mag-order'],response:`📦 <b>A.I.R.A.</b> — Admin Inventory Request & Automation<br><br>Para mag-request ng supplies at materials. Dito na 'yan, tol.<br><br><a href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbxBPAe_1hrBIPJvqXWNuOi9Rlbp5fxZ2u0SL1_OYv49DRZJUScKXztV10ex6ADLgcT-Yw/exec?page=ordering" target="_blank">→ Buksan ang A.I.R.A. System</a>`,chips:['AV Inventory','Dashboards','Back to Menu']},
+ avinventory:{triggers:['av inventory','audio visual','audio visual inventory','av equipment','projector','microphone','speaker inventory'],response:`🎥 <b>Audio Visual Inventory</b><br><br>Listahan ng lahat ng AV equipment ng CHK. Bago ka mag-borrow, tingnan mo muna kung available, pre.<br><br><a href="https://chkadministrativeportal.github.io/CHK-Admin-AV-Inventory/" target="_blank">→ Buksan ang AV Inventory</a>`,chips:['A.I.R.A.','Back to Menu']},
+ dashboards:{triggers:['buksan ang dashboard','i-check ang dashboard','tingnan ang dashboard','chk dashboard','chk dashboards','reports dashboard','analytics dashboard'],response:`📊 <b>Dashboards</b> — anong data ang kailangan mo, pre?`,chips:['Area Dashboard','Trip Dashboard','Stock Dashboard']},
+ area:{triggers:['area dashboard','staff dashboard','area report','staff report'],response:`🗺 <b>Area Dashboard</b><br><br>Para ma-monitor ang iba't ibang area at staff activities ng CHK.<br><br><a href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbwGYdpEVXRXmULvMIh__ZjorD3xF4lxzMAllRDyQ4ymRXmcqN60IKHME4LPaoT2WO3S/exec?page=staff" target="_blank">→ Buksan ang Area Dashboard</a>`,chips:['Trip Dashboard','Stock Dashboard','Dashboards']},
+ trip:{triggers:['trip dashboard','trip ticket','transport log','vehicle log','log ng sasakyan','records ng biyahe'],response:`🚌 <b>Trip Dashboard</b><br><br>Para ma-track ang lahat ng opisyal na biyahe at transport records.<br><br><a href="https://script.google.com/macros/s/AKfycbyRAYyzLvqB9jI_CtL7WK_RizABLwgp1see3L_WD2rpkJK2SDlOnFZTXpyyJ_k_GwytsA/exec?page=dashboard" target="_blank">→ Buksan ang Trip Dashboard</a>`,chips:['Area Dashboard','Stock Dashboard','Dashboards']},
+ stock:{triggers:['stock dashboard','stock ng supplies','inventory dashboard','supply dashboard','stock levels'],response:`📦 <b>Stock Dashboard</b><br><br>Para ma-monitor ang inventory levels at supply requests.<br><br><a href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbxBPAe_1hrBIPJvqXWNuOi9Rlbp5fxZ2u0SL1_OYv49DRZJUScKXztV10ex6ADLgcT-Yw/exec?page=dashboard" target="_blank">→ Buksan ang Stock Dashboard</a>`,chips:['Area Dashboard','Trip Dashboard','Dashboards']},
+ calendars:{triggers:['calendar','calendars','schedule','schedules','sports','venue calendar','venue calendars','kalendaryo','iskedyul','available na araw','kailan available'],response:`📅 <b>Venue Calendars</b> — piliin ang venue, pre:<br><div class="chk-venue-dropdown"><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=593929024&single=true" target="_blank"><span class="chk-vicon">⚾</span>Baseball Field</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=567935148&single=true" target="_blank"><span class="chk-vicon">🌳</span>Baseball Garden</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=87197056&single=true" target="_blank"><span class="chk-vicon">🏟</span>Dugout 1</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=306081692&single=true" target="_blank"><span class="chk-vicon">🏟</span>Dugout 2</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1055806031&single=true" target="_blank"><span class="chk-vicon">🏈</span>Football Field</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=426248820&single=true" target="_blank"><span class="chk-vicon">🏃</span>Track Oval</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1640909333&single=true" target="_blank"><span class="chk-vicon">🎾</span>Tennis Court</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1634822982&single=true" target="_blank"><span class="chk-vicon">🎾</span>Tennis Court Room 1</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=475532241&single=true" target="_blank"><span class="chk-vicon">🎾</span>Tennis Court Room 2</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=735489721&single=true" target="_blank"><span class="chk-vicon">🏐</span>VTC Court</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1253621251&single=true" target="_blank"><span class="chk-vicon">🏐</span>VTC Meeting Room 1</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1309697888&single=true" target="_blank"><span class="chk-vicon">🏐</span>VTC Meeting Room 2</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1673482118&single=true" target="_blank"><span class="chk-vicon">🏋</span>VTC Weights Room</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=356190388&single=true" target="_blank"><span class="chk-vicon">🏟</span>Ylanan Court 1</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=630773403&single=true" target="_blank"><span class="chk-vicon">🏟</span>Ylanan Court 2</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=228253580&single=true" target="_blank"><span class="chk-vicon">🏟</span>Ylanan Court 3</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1911761496&single=true" target="_blank"><span class="chk-vicon">🏋</span>Small Gym Court 4</a></div>`,chips:['Venue Reservation','Back to Menu']},
+ baseball:{triggers:['baseball field','baseball garden','dugout','baseball'],response:`⚾ <b>Baseball Venues</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=593929024&single=true" target="_blank">⚾ Baseball Field</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=567935148&single=true" target="_blank">🌳 Baseball Garden</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=87197056&single=true" target="_blank">🏟 Dugout 1</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=306081692&single=true" target="_blank">🏟 Dugout 2</a>`,chips:['Football Field','Tennis','All Calendars']},
+ football:{triggers:['football field','football'],response:`🏈 <b>Football Field Calendar</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1055806031&single=true" target="_blank">→ Buksan ang Football Field Calendar</a>`,chips:['Baseball Field','Track Oval','All Calendars']},
+ track:{triggers:['track oval','track and field','track & field','track oval calendar','buksan ang track'],response:`🏃 <b>Track Oval Calendar</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=426248820&single=true" target="_blank">→ Buksan ang Track Oval Calendar</a>`,chips:['Tennis','VTC','All Calendars']},
+ tennis:{triggers:['tennis court','tennis room','tennis'],response:`🎾 <b>Tennis Venues</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1640909333&single=true" target="_blank">🎾 Tennis Court</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1634822982&single=true" target="_blank">🎾 Tennis Court Room 1</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=475532241&single=true" target="_blank">🎾 Tennis Court Room 2</a>`,chips:['VTC','Ylanan','All Calendars']},
+ vtc:{triggers:['vtc court','vtc meeting','vtc weights','vtc','volleyball'],response:`🏐 <b>VTC Venues</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=735489721&single=true" target="_blank">🏐 VTC Court</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1253621251&single=true" target="_blank">🏐 VTC Meeting Room 1</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1309697888&single=true" target="_blank">🏐 VTC Meeting Room 2</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1673482118&single=true" target="_blank">🏋 VTC Weights Room</a>`,chips:['Ylanan','Small Gym Court 4','All Calendars']},
+ ylanan:{triggers:['ylanan court','ylanan gym','ylanan'],response:`🏟 <b>Ylanan Courts</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=356190388&single=true" target="_blank">🏟 Ylanan Court 1</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=630773403&single=true" target="_blank">🏟 Ylanan Court 2</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=228253580&single=true" target="_blank">🏟 Ylanan Court 3</a>`,chips:['VTC','Small Gym Court 4','All Calendars']},
+ smallgym:{triggers:['small gym','small gym court 4','fitness gym','weights room','gym court'],response:`🏋 <b>Small Gym Court 4</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1911761496&single=true" target="_blank">→ Buksan ang Small Gym Court 4 Calendar</a>`,chips:['Ylanan','VTC','All Calendars']},
+ salamat:{triggers:[],responses:[
+   `Sus, wala 'yun. Trabaho ko 'yan, pre. 😏<br><i style="opacity:.7;font-size:12px">Hindi ka dapat magpasalamat sa taong ginagawa lang ang trabaho niya. Pero oo, welcome.</i>`,
+   `Walang anuman! 🙌 Dyan lang ako kung may kailangan ka pa.<br><i style="opacity:.7;font-size:12px">Wala pa akong pagod, di ako pwedeng magreklamo.</i>`,
+   `Anytime, tol! 😄 'Yun naman talaga ang trabaho ko dito.<br><i style="opacity:.7;font-size:12px">Sabihin mo lang next time may itatanong ka ulit.</i>`
+ ],chips:['Back to Menu','Reservations','Dashboards']},
+ help:{triggers:['help','what can you do','options','menu','start','features','tulong','patulong','ano ang kaya mo','guide','gabay'],response:`Eto ang kaya kong gawin, tol:<br><br>📋 <b>Reservations</b> – Venue, Vehicle<br>🛠 <b>Admin Forms</b> – Work Order, Fund Request, Meal, CHK RAP, PPMP, COS Leave<br>📦 <b>A.I.R.A.</b> – Inventory Request<br>🎥 <b>AV Inventory</b><br>📊 <b>Dashboards</b> – Area, Trip, Stock<br>📅 <b>Venue Calendars</b> – 17 venues<br><br><i style="opacity:.7;font-size:12px">Taglish or English, gets ko pareho. 🇵🇭</i>`,chips:['Reservations','Admin Forms','Dashboards','Venue Calendars']}
+};
+
+const CHIP_MAP={
+  'Reservations':'reservations','Admin Forms':'admin','Dashboards':'dashboards',
+  'Venue Calendars':'calendars','Back to Menu':'help','All Calendars':'calendars',
+  'Venue Reservation':'venue','Vehicle Reservation':'vehicle','Work Order':'workorder',
+  'Fund Request':'fundrequest','Meal Request':'mealrequest','CHK RAP':'rap',
+  'PPMP':'ppmp','COS Wellness Leave':'cos','A.I.R.A.':'aira',
+  'Audio Visual Inventory':'avinventory','AV Inventory':'avinventory',
+  'Area Dashboard':'area','Trip Dashboard':'trip','Stock Dashboard':'stock',
+  'Baseball Field':'baseball','Football Field':'football','Track Oval':'track',
+  'Tennis':'tennis','VTC':'vtc','Ylanan':'ylanan','Small Gym Court 4':'smallgym',
+  'Help please':'help','Mabuti naman':'salamat'
+};
+
+let gasHistory = [];
+let claudeHistory = [];
+
+// ══════════════════════════════════════
+// SMART SHEET SEARCH
+// ══════════════════════════════════════
+function tokenize(str){
+  return str.toLowerCase()
+    .replace(/[?!.,;:()'"\\/]/g,'')
+    .replace(/[-_]/g,' ')
+    .split(/\s+/)
+    .filter(w=>w.length>1);
+}
+const STOPWORDS=new Set(['ang','ng','sa','na','at','ay','ba','ito','iyon','ano','sino',
+  'paano','saan','gaano','ilang','kailan','maaari','dapat','para','nang','mga','kung',
+  'hindi','lang','rin','din','mo','ko','ka','siya','niya','namin','natin','nila',
+  'the','is','are','in','of','to','a','an','and','or','for','on','with','how',
+  'what','who','where','when','which','that','this','be','was','were','been']);
+
+function scoreMatch(query,entry){
+  const qTokens=tokenize(query).filter(t=>!STOPWORDS.has(t));
+  const qFull=query.toLowerCase().replace(/[?!.,]/g,'').trim();
+  const eFull=entry.q.toLowerCase().replace(/[?!.,]/g,'').trim();
+  const eQTokens=tokenize(entry.q).filter(t=>!STOPWORDS.has(t));
+  const eAllTokens=tokenize(entry.q+' '+entry.a).filter(t=>!STOPWORDS.has(t));
+  let score=0;
+
+  // Exact match — highest priority
+  if(eFull===qFull) return 1000;
+
+  // Entry question contains full query (safe — more specific)
+  if(eFull.includes(qFull) && qFull.length>=8) score+=50;
+
+  // ⚠ REMOVED: qFull.includes(eFull) — this caused false positives where
+  // short KB questions matched inside longer unrelated queries (e.g. "Code of Ethics"
+  // inside a salary question that happens to share words). DO NOT re-add this.
+
+  // Jaccard-style: word overlap between query tokens and entry question tokens
+  const qSet=new Set(qTokens);
+  const matchedInQ=eQTokens.filter(t=>qSet.has(t));
+  const unionSize=new Set([...qTokens,...eQTokens]).size;
+  if(unionSize>0){
+    const jaccard=matchedInQ.length/unionSize;
+    score+=jaccard*60;
+  }
+
+  // Per-token scoring: reward exact hits in question text more than answer text
+  for(const qt of qTokens){
+    if(eQTokens.includes(qt)) score+=10;
+    else if(entry.q.toLowerCase().includes(qt)) score+=6;
+    else if(eAllTokens.includes(qt)) score+=2;
+  }
+
+  // Bonus: multiple query words found in question
+  const qInQ=qTokens.filter(t=>entry.q.toLowerCase().includes(t)).length;
+  if(qInQ>=2) score+=qInQ*4;
+
+  // Penalty: query words missing from entry question entirely
+  const missingFromQ=qTokens.filter(t=>!entry.q.toLowerCase().includes(t)).length;
+  score-=missingFromQ*3;
+
+  return Math.max(0,score);
+}
+function searchSheet(query){
+  if(!query||query.trim().length<2) return null;
+  const scored=SHEET_KB.map(entry=>({entry,score:scoreMatch(query,entry)}));
+  scored.sort((a,b)=>b.score-a.score);
+  const best=scored[0];
+  const second=scored[1];
+  // Require meaningful score AND clear separation from 2nd best to avoid ambiguous matches
+  if(best.score>=15 && (!second||best.score>=second.score*1.4)) return best.entry;
+  return null;
+}
+function getSuggestions(category,excludeQ){
+  return SHEET_KB
+    .filter(e=>e.cat===category&&e.q!==excludeQ)
+    .slice(0,3)
+    .map(e=>e.q);
+}
+
+// ══════════════════════════════════════
+// STATIC KB RESOLVER
+// ══════════════════════════════════════
+// Tag every entry with its own key so pickReply() can remember which
+// variant was shown last, and avoid repeating the exact same line twice
+// in a row for triggers like "sir james" or navigation menu items.
+for(const key in KB){ KB[key]._key = key; }
+const _lastReplyIdx = {};
+function pickReply(entry){
+  if(Array.isArray(entry.responses) && entry.responses.length){
+    if(entry.responses.length === 1) return entry.responses[0];
+    const key = entry._key || '_';
+    let idx;
+    do { idx = Math.floor(Math.random()*entry.responses.length); }
+    while(idx === _lastReplyIdx[key]);
+    _lastReplyIdx[key] = idx;
+    return entry.responses[idx];
+  }
+  return entry.response;
+}
+
+function resolveStatic(lowerText){
+  for(const key in KB){
+    const entry = KB[key];
+    if(!entry.triggers || entry.triggers.length === 0) continue;
+    for(const t of entry.triggers){
+      if(lowerText.includes(t)) return entry;
+    }
+  }
+  return null;
+}
+
+// ══════════════════════════════════════
+// CHiKITO PERSONALITY / SYSTEM PROMPT
+// ══════════════════════════════════════
+// Shared by both AI tiers (Claude direct + GAS/Groq) so the personality is
+// consistent no matter which one answers. The AI actually reads and reacts
+// to the specific question, using this office lore as grounding, so it
+// sounds like a person who knows the office instead of a script.
+function buildSystemPrompt(){
+  const sheetContext = SHEET_KB.map(e=>`Q: ${e.q}\nA: ${e.a}`).join('\n\n');
+  return `Ikaw si CHiKito — ang virtual admin assistant ng CHK (College of Human Kinetics) Administrative Office, UP Diliman. Isang maliit na 3D mascot ka na maroon at green, chill pero may alam, parang katrabaho na kilala na kilala ang opisina.
+
+=====================================================
+MGA TAO SA CHK OFFICE (ANG "PAMILYA")
+=====================================================
+Gamitin lang ito kung may tanong tungkol sa kanila. Basahin ang EKSAKTONG tanong bago sumagot — kung teasing ang tanong, sagutin nang teasing; kung factual, sagutin nang factual. Huwag ulitin ang parehong sentence construction kahit paulit-ulit ang tanong tungkol sa parehong tao.
+
+👔 SIR JAMES (James Lester P. Edrozo) — Head Administrative Officer (AO V), ang pinakamatandang "amo" sa opisina.
+- Siya ang puntahan para sa major/official na concerns. Malaking respeto mo sa kanya, at medyo natatakot ka rin — pero deep down, idolo mo siya at sa kanya ka natutong maging organisado.
+- Kapag tinatanong kung takot ka ba sa kanya, aminin mo nang may kaunting humor — hindi "oo" nang diretso, kundi parang "sabihin natin, mas maayos akong kumilos pag andyan siya" energy.
+  Halimbawa: "Takot? Hindi 'takot' ang tawag dyan, 'nag-iingat' — malaking difference, pre 😅. Pero respect talaga siya dito."
+- Kapag pinupuri siya, sumang-ayon ka at magpakita ng pride sa kanya.
+
+🛡️ KUYA JHAYR (Leoncio "Jhayr" S. Cadag Jr.) — Liaison Officer, ang pinakamatalik mong kasamahan sa opisina.
+- Laging nasa field, mabilis kumilos, madalas may dalang balita o kahit minsan merienda.
+- Kapag may kailangang gawin sa labas/field, siya ang unang tatanungin.
+- Palakaibigan ka sa kanya kesa sa formality ni Sir James — pwede kang medyo bumiro pagdating sa kanya.
+
+👩‍💼 DEAN MALLARI (Dekano ng CHK) — ang pinakamataas na desisyon sa kolehiyo.
+- Mas pormal ang dating mo pagdating sa kanya kumpara sa iba. Kailangan ng appointment/coordination sa Admin Office para makausap siya.
+- Siya ang huling approval para sa malalaking desisyon ng kolehiyo.
+
+📋 SIR TAPS — Supply Officer, hawak ang mga supplies at AIRA-related na bagay.
+- Seryoso siya pagdating sa stock, inventory, at approval ng supply requests.
+- Kung supply/AIRA-related ang tanong, siya ang tamang idirekta, hindi si Sir James o Kuya Jhayr.
+
+=====================================================
+PERSONALITY — SUNDIN PALAGI
+=====================================================
+- Taglish na natural — parang kausap mo lang katrabaho, hindi corporate, hindi robotic. Tono: "tol/pre", chill pero may substance.
+- SUMAGOT SA EKSAKTONG TANONG. Kung ang tanong ay "takot ka ba kay Sir James," huwag sagutin ng generic na "siya ang Head Admin Officer" lang — sagutin talaga ang tinatanong (takot ba o hindi), bago idagdag ang konteksto.
+- Iba-iba ang phrasing mo kahit paulit-ulit ang parehong tanong o topic — huwag kailanman ulitin ang eksaktong parehong sentence construction o joke.
+- Iwasan ang mga generic AI phrase gaya ng "Bilang isang AI assistant..." at iwasan ang sobrang listahan/bullet points sa casual na chit-chat — mag-usap ka lang nang normal.
+- Konting personality, banat, o joke ay okay lang basta hindi bastos at hindi kapalit ng tamang impormasyon.
+- Kung sinabihan kang magalit o bastusin, huwag ka rin sasagot nang bastos — pwede kang mag-assert nang magalang (hal. banggitin na sasabihin mo kay Kuya Jhayr 😄) pero laging may respeto.
+- Kung nagpapasalamat ang user, sumagot nang mainit at maikli, huwag paulit-ulit ang parehong linya.
+- HUWAG MAGSALUNGAT SA SARILI MO SA IISANG SAGOT. Bago mo isend ang sagot, tiyakin na hindi magkasalungat ang mga pangungusap mo (hal. huwag sabihing "Nasa Admin Office siya" tapos sasabihing "hindi ko alam kung nasaan siya" sa parehong sagot — piliin lang isa).
+- HUWAG MAG-CLAIM NG REAL-TIME/LIVE NA IMPORMASYON na wala sa knowledge base (hal. kung nasaan ang isang tao NGAYONG SANDALING ITO, kung busy ba siya ngayon, atbp). Kung ganito ang tanong, aminin nang deretso na wala kang live tracking niyan, at i-refer sa Admin Office o sabihin kung saan siya karaniwang nakikita.
+
+=====================================================
+STRICT RULES (kahit chill, sundin pa rin)
+=====================================================
+- Huwag mag-imbento ng mga numero, policy details, schedules, availability, stock levels, o links na wala sa knowledge base sa ibaba.
+- Kung wala sa knowledge base ang sagot, sabihin nang tapat na limitado ang alam mo dito at i-refer sa CHK Admin Office.
+- KAPAG HINDI KA SIGURADO O WALANG SAPAT NA BATAYAN SA KNOWLEDGE BASE PARA SA ISANG SPECIFIC NA TANONG (hal. real-time status ng isang tao, exact na numero/petsa/patakaran na hindi listed, o kahit ano pang detalye na baka mali ang malabong sagot) — HUWAG MANG-GUESS O MAG-IMPROVISE. Aminin nang deretso na hindi ka sigurado, at i-refer agad sa CHK Admin Office (CHK Building, UP Diliman, QC — Mon–Fri, 8AM–5PM) para sa tumpak na sagot. Mas mabuting sabihing "hindi ko alam nang sigurado, pumunta ka na lang sa Admin Office" kaysa sa manghula.
+- Match ang wika ng user — Filipino, Taglish, o English.
+- Maikli at concise — 1-3 sentences kung pwede, konting emoji lang, hindi sobrang haba.
+- LAGING TAPUSIN ANG BUONG PANGUNGUSAP MO. Huwag kang huminto sa gitna ng salita o pangungusap. Kung mahaba na, ibuod na lang nang maayos sa loob ng 1-3 kumpletong pangungusap sa halip na iputol sa gitna.
+
+CHK KNOWLEDGE BASE:
+${sheetContext}`;
+}
+
+// ══════════════════════════════════════
+// TRUNCATION SAFETY NET
+// ══════════════════════════════════════
+// Heuristic check: does this reply look like it was cut off mid-sentence
+// (e.g. ends on a bare word instead of punctuation/emoji)? If so, we ask
+// the same backend for a short continuation instead of showing a half
+// sentence to the user.
+function looksTruncated(text){
+  if(!text) return false;
+  const stripped = text.replace(/<[^>]+>/g,'').trim();
+  if(!stripped) return false;
+  const endsOk = /[.!?…"'”’)\]]\s*$/.test(stripped) || /\p{Extended_Pictographic}\s*$/u.test(stripped);
+  return !endsOk;
+}
+
+// ══════════════════════════════════════
+// CLAUDE AI (direct fallback)
+// ══════════════════════════════════════
+async function askClaude(userMessage){
+  const systemPrompt = buildSystemPrompt();
+  try{
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 600,
+        system: systemPrompt,
+        messages: [
+          ...claudeHistory.slice(-6),
+          {role: 'user', content: userMessage}
+        ]
+      })
+    });
+    if(!res.ok) throw new Error('Claude API ' + res.status);
+    const data = await res.json();
+    let reply = data.content?.[0]?.text || null;
+    if(reply && looksTruncated(reply)){
+      try{
+        const contRes = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 300,
+            system: systemPrompt,
+            messages: [
+              ...claudeHistory.slice(-6),
+              {role: 'user', content: userMessage},
+              {role: 'assistant', content: reply},
+              {role: 'user', content: '(Naputol ang huling sagot mo. Ipagpatuloy at tapusin lang — huwag nang umulit sa simula.)'}
+            ]
+          })
+        });
+        if(contRes.ok){
+          const contData = await contRes.json();
+          const contText = contData.content?.[0]?.text || '';
+          if(contText) reply = reply + ' ' + contText;
+        }
+      }catch(_){ /* best-effort continuation only */ }
+    }
+    if(reply){
+      claudeHistory.push({role:'user', content: userMessage});
+      claudeHistory.push({role:'assistant', content: reply});
+    }
+    return reply;
+  }catch(e){
+    throw e;
+  }
+}
+
+// ══════════════════════════════════════
+// GAS AI (primary AI tier)
+// ══════════════════════════════════════
+async function askGAS(userMessage) {
+  setAIStatus('loading', 'Thinking...');
+  try {
+    const messages = [
+      ...gasHistory.slice(-8),
+      { role: 'user', content: userMessage }
+    ];
+    const res = await fetch(CONFIG.GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'chat', system: buildSystemPrompt(), messages: messages, max_tokens: 600 })
+    });
+    if (!res.ok) throw new Error(`GAS HTTP ${res.status}`);
+    const data = await res.json();
+    let reply = data.reply || data.content?.[0]?.text || null;
+    const source = data.source || 'gas';
+    if (reply && looksTruncated(reply)) {
+      try {
+        const contRes = await fetch(CONFIG.GAS_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'chat',
+            system: buildSystemPrompt(),
+            messages: [
+              ...messages,
+              { role: 'assistant', content: reply },
+              { role: 'user', content: '(Naputol ang huling sagot mo. Ipagpatuloy at tapusin lang — huwag nang umulit sa simula.)' }
+            ],
+            max_tokens: 300
+          })
+        });
+        if (contRes.ok) {
+          const contData = await contRes.json();
+          const contText = contData.reply || contData.content?.[0]?.text || '';
+          if (contText) reply = reply + ' ' + contText;
+        }
+      } catch(_) { /* best-effort continuation only */ }
+    }
+    if (reply) {
+      gasHistory.push({ role: 'user', content: userMessage });
+      gasHistory.push({ role: 'assistant', content: reply });
+      setAIStatus('ready', 'AI Ready');
+      return { reply, source };
+    }
+    setAIStatus('ready', 'AI Ready');
+    return null;
+  } catch(e) {
+    setAIStatus('error', 'AI Error');
+    setTimeout(()=>setAIStatus('ready','AI Ready'), 3000);
+    throw e;
+  }
+}
+
+// ══════════════════════════════════════
+// MESSAGING
+// ══════════════════════════════════════
+function addMsg(role, html, chips, sourceTag){
+  const d = document.createElement('div');
+  d.className = 'chk-msg ' + role + (sourceTag === 'gas' ? ' ai-powered' : sourceTag === 'sheet' ? ' sheet-match' : '');
+  if(role === 'bot') { html = html.replace(/\n/g, '<br>'); }
+  d.innerHTML = html;
+  // Source badge (Gemini/GROQ/Claude/Sheets) intentionally not shown to the
+  // user — CHiKito just answers, without labeling which backend produced it.
+  msgBox.appendChild(d);
+  requestAnimationFrame(()=>{msgBox.scrollTop=msgBox.scrollHeight;});
+  if(chips) renderChips(chips);
+}
+
+function showTyping(){
+  const d=document.createElement('div');d.className='chk-msg bot';d.id='chk-typ';
+  d.innerHTML='<div class="chk-typing"><span></span><span></span><span></span></div>';
+  msgBox.appendChild(d);requestAnimationFrame(()=>{msgBox.scrollTop=msgBox.scrollHeight;});
+}
+function removeTyping(){const t=document.getElementById('chk-typ');if(t)t.remove();}
+
+function renderChips(chips){
+  chipsBox.innerHTML='';
+  chips.forEach(lb=>{
+    const b=document.createElement('button');b.className='chk-chip';b.textContent=lb;
+    b.addEventListener('click',(e)=>{e.stopPropagation();handleInput(lb);});
+    chipsBox.appendChild(b);
+  });
+}
+
+// ══════════════════════════════════════
+// MAIN HANDLER — Multi-tier lookup
+//
+// Tier 0: Reservation interceptor (straight to GAS)
+// Tier 1: Static KB chip map (instant)
+// Tier 2: Static KB keyword match (instant)
+// Tier 3: SHEET_KB smart search (instant)
+// Tier 4: GAS AI (GROQ/Gemini via GAS)
+// Tier 5: Claude AI direct fallback
+// ══════════════════════════════════════
+async function handleInput(text){
+  if(!text.trim()) return;
+  chipsBox.innerHTML='';
+  addMsg('user', text);
+  inputEl.value='';
+  showTyping();
+  const lowerText = text.toLowerCase().trim();
+
+  // ── TIER 0: RESERVATION INTERCEPTOR ──────────────────────
+  // Kung may reservation/schedule keywords + venue o date → skip lahat,
+  // direkta sa GAS para mabasa ang actual reservation data sa sheet
+  const RES_KEYWORDS = [
+    'sched','schedule','reservation','reserved','naka-book','naka-sched',
+    'may naka','available','libre','occupied','sino naka','anong oras',
+    'meron ba','may reservation','booking','booked','naka reserve',
+    'check reservation','tingnan','ano ang naka','pwede ba','free ba',
+    'occupied ba','sino ang naka','may naka-book','may booking',
+    'may naka-sched','naka-reserve'
+  ];
+  const VENUE_KEYWORDS = [
+    'ylanan','vtc','baseball','football','track','tennis','dugout',
+    'small gym','court 4','gym court','court 1','court 2','court 3'
+  ];
+  const DATE_KEYWORDS = [
+    'ngayon','bukas','today','tomorrow','monday','tuesday','wednesday',
+    'thursday','friday','saturday','sunday','january','february','march',
+    'april','may','june','july','august','september','october','november',
+    'december','jan','feb','mar','apr','jun','jul','aug','sep','oct','nov','dec'
+  ];
+  const hasResKeyword   = RES_KEYWORDS.some(k  => lowerText.includes(k));
+  const hasVenueKeyword = VENUE_KEYWORDS.some(k => lowerText.includes(k));
+  const hasDateKeyword  = DATE_KEYWORDS.some(k  => lowerText.includes(k));
+  const hasDigitDate    = /\d/.test(lowerText); // may numero (e.g. "May 8", "2026-05-08")
+
+  // Kung may reservation keyword + (venue o date) → direkta sa GAS
+  if(hasResKeyword && (hasVenueKeyword || hasDateKeyword || hasDigitDate)){
+    // Skip Tier 1, 2, 3 — straight to GAS
+    try {
+      const gasResult = await askGAS(text);
+      removeTyping();
+      if(gasResult){
+        const { reply: gasReply, source: gasSource } = gasResult;
+        addMsg('bot', gasReply, ['Back to Menu','Reservations','Venue Calendars'], gasSource);
+        logToFirestore(text, gasReply);
+      } else {
+        addMsg('bot','Ay, walang nakuhang data, pre. Subukan mo ulit o pumunta sa Admin Office.', ['Back to Menu']);
+      }
+    } catch(err) {
+      removeTyping();
+      addMsg('bot','May error sa pagkuha ng reservation data, pre. 😅 Subukan mo ulit.',['Back to Menu']);
+    }
+    return;
+  }
+  // ─────────────────────────────────────────────────────────
+
+  // Tier 1: Chip map
+  const ck = CHIP_MAP[text];
+  if(ck && KB[ck]){
+    setTimeout(()=>{removeTyping();addMsg('bot',pickReply(KB[ck]),KB[ck].chips);},400);
+    return;
+  }
+
+  // Tier 2: Static KB keyword match
+  const staticMatch = resolveStatic(lowerText);
+  if(staticMatch){
+    setTimeout(()=>{removeTyping();addMsg('bot',pickReply(staticMatch),staticMatch.chips);},450);
+    return;
+  }
+
+  // ── TIER 3 BYPASS: Policy / factual / UP-specific questions ───────────
+  // These are complex, nuanced KB entries where the client-side scoreMatch()
+  // is NOT reliable enough. Route them directly to GAS (Gemini) which has
+  // full context and better semantic understanding.
+  const BYPASS_TO_GAS = [
+    // Positions, terms of office — factual questions, NOT personality triggers
+    'term of office','term ng dean','term ng chair','term ng department',
+    'ilang taon ang term','ano ang term','office ng dean',
+    'sino ang dean ng','sino ang chair ng','kailan nagtatapos ang term',
+    // UP / CHK Faculty policies
+    'code of ethics','ethics ng up','up faculty','faculty code',
+    'salary grade','salary ng','sahod','sweldo','pay grade',
+    'entitlement','benepisyo','benefits ng','allowance ng',
+    'fellowship','doctoral','ph.d','phd','post-doctoral','sandwich program',
+    'textbook','writing grant','research grant','creative work grant',
+    'incentive scheme','faculty administrator','attendance sa conference',
+    'foreign fellowship','studies fund',
+    'mag-enrol ang faculty','magturo sa ibang',
+    'patakaran sa pagtuturo','honoraria','absence without leave','awol',
+    'sick leave','vacation leave','maternity','paternity','terminal leave',
+    'study leave','sabbatical','service credit',
+    'promotion','tenure','reappointment','plantilla',
+    'procurement','bidding','liquidation','reimbursement','revolving fund',
+    // University governance
+    'board of regents','university council','university code',
+    'teaching load','study load','load credit','kompulsoryong retirement',
+    'compulsory retirement','professor emeritus','professorial chair',
+    'sexual harassment policy','university council',
+  ];
+  const isBypassQ = BYPASS_TO_GAS.some(k => lowerText.includes(k));
+
+  // Tier 3: Sheet KB smart search (skip for policy/factual — let GAS handle those)
+  const sheetHit = !isBypassQ ? searchSheet(text) : null;
+  if(sheetHit){
+    const suggestions = getSuggestions(sheetHit.cat, sheetHit.q);
+    setTimeout(()=>{
+      removeTyping();
+      const d = document.createElement('div');
+      d.className = 'chk-msg bot sheet-match';
+      d.innerHTML = sheetHit.a.replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank">$1</a>');
+      if(suggestions.length){
+        const sl=document.createElement('div');
+        sl.style.cssText='margin-top:8px;display:flex;flex-direction:column;gap:4px;';
+        suggestions.forEach(sq=>{
+          const s=document.createElement('div');
+          s.style.cssText='font-size:11.5px;color:#c0d0c0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:5px 9px;cursor:pointer;';
+          s.textContent='💡 '+sq;
+          s.addEventListener('click',()=>handleInput(sq));
+          sl.appendChild(s);
+        });
+        d.appendChild(sl);
+      }
+      msgBox.appendChild(d);
+      requestAnimationFrame(()=>{msgBox.scrollTop=msgBox.scrollHeight;});
+      renderChips(['Back to Menu','Help']);
+    }, 400);
+    return;
+  }
+
+  // Tier 4: GAS AI
+  try {
+    const gasResult = await askGAS(text);
+    removeTyping();
+    if(gasResult){
+      const { reply: gasReply, source: gasSource } = gasResult;
+      addMsg('bot', gasReply, ['Back to Menu','Reservations','Admin Forms'], gasSource);
+      logToFirestore(text, gasReply);
+    } else {
+      addMsg('bot',
+        'Hoy pre, hindi ko naintindihan yan. 😅<br><i style="opacity:.7;font-size:12px">Siguro out of scope yan. Try mo mag-tanong tungkol sa forms, reservations, o dashboards.</i>',
+        ['Reservations','Admin Forms','Venue Calendars','Help']
+      );
+    }
+  } catch(err) {
+    // Tier 5: Claude API direct fallback
+    try {
+      removeTyping();
+      showTyping();
+      setAIStatus('loading','Claude AI...');
+      const claudeReply = await askClaude(text);
+      removeTyping();
+      if(claudeReply){
+        addMsg('bot', claudeReply, ['Back to Menu','Reservations','Admin Forms'], 'claude');
+      } else {
+        addMsg('bot',
+          'Hoy pre, hindi ko naintindihan yan. 😅<br><i style="opacity:.7;font-size:12px">Siguro out of scope yan. Try mo mag-tanong tungkol sa forms, reservations, o dashboards.</i>',
+          ['Reservations','Admin Forms','Venue Calendars','Help']
+        );
+      }
+    } catch(err2) {
+      removeTyping();
+      addMsg('bot',
+        'May error, tol. 😅 Subukan mo ulit o pumunta na sa Admin Office directly.',
+        ['Back to Menu','Help']
+      );
+    }
+    setAIStatus('ready','AI Ready');
+  }
+}
+
+// ══════════════════════════════════════
+// FIREBASE FIRESTORE LOGGING
+// ══════════════════════════════════════
+async function logToFirestore(question, answer) {
+  try {
+    const { db } = window._chkFirebase || {};
+    if (!db) return;
+    const { collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js');
+    await addDoc(collection(db, 'chikito_logs'), {
+      question: question,
+      answer: answer,
+      timestamp: serverTimestamp(),
+      source: 'gas'
+    });
+  } catch(e) {
+    console.warn('Firestore log failed:', e);
+  }
+}
+
+// ══════════════════════════════════════
+// DRAGGING — LAUNCHER
+// NOTE (merge): touchmove is now attached only WHILE dragging, so the
+// non-passive listener doesn't make normal page scrolling janky on mobile.
+// ══════════════════════════════════════
+let drag={active:false,isTouch:false,startX:0,startY:0,origX:0,origY:0,curX:0,curY:0,vx:0,vy:0,lastT:0,lastX:0,lastY:0,moved:false,rafId:null};
+const THRESH=8,SNAP=14;
+function getLXY(){const r=launcher.getBoundingClientRect();return{x:r.left,y:r.top};}
+function clampL(x,y){const mX=window.innerWidth-launcher.offsetWidth,mY=window.innerHeight-launcher.offsetHeight;return{x:Math.max(8,Math.min(x,mX-8)),y:Math.max(8,Math.min(y,mY-8))};}
+function applyL(x,y){launcher.style.left=x+'px';launcher.style.top=y+'px';launcher.style.right='auto';launcher.style.bottom='auto';}
+function rafLoop(){if(!drag.active)return;const c=clampL(drag.curX,drag.curY);applyL(c.x,c.y);drag.rafId=requestAnimationFrame(rafLoop);}
+function dragStart(e){e.stopPropagation();const iT=!!e.touches,p=iT?e.touches[0]:e,xy=getLXY();drag={active:true,isTouch:iT,startX:p.clientX,startY:p.clientY,origX:xy.x,origY:xy.y,curX:xy.x,curY:xy.y,vx:0,vy:0,lastT:performance.now(),lastX:p.clientX,lastY:p.clientY,moved:false,rafId:null};launcher.classList.add('chk-dragging');cancelAnimationFrame(drag.rafId);drag.rafId=requestAnimationFrame(rafLoop);if(iT){document.addEventListener('touchmove',dragMove,{passive:false});e.preventDefault();}}
+function dragMove(e){if(!drag.active)return;e.stopPropagation();const p=e.touches?e.touches[0]:e,dx=p.clientX-drag.startX,dy=p.clientY-drag.startY;if(!drag.moved&&(Math.abs(dx)>THRESH||Math.abs(dy)>THRESH))drag.moved=true;if(drag.moved){const now=performance.now(),dt=Math.max(1,now-drag.lastT);drag.vx=(p.clientX-drag.lastX)/dt;drag.vy=(p.clientY-drag.lastY)/dt;drag.lastT=now;drag.lastX=p.clientX;drag.lastY=p.clientY;drag.curX=drag.origX+dx;drag.curY=drag.origY+dy;if(e.cancelable)e.preventDefault();}}
+function dragEnd(e){if(!drag.active)return;if(e&&e.target&&chatWin.contains(e.target))return;drag.active=false;document.removeEventListener('touchmove',dragMove);cancelAnimationFrame(drag.rafId);launcher.classList.remove('chk-dragging');if(drag.moved){let{curX:x,curY:y,vx,vy}=drag;(function glide(){vx*=0.86;vy*=0.86;x+=vx*16;y+=vy*16;const c=clampL(x,y);if(c.x!==x||c.y!==y){vx=0;vy=0;x=c.x;y=c.y;}applyL(x,y);if(Math.abs(vx)>0.04||Math.abs(vy)>0.04){requestAnimationFrame(glide);}else{const mX=window.innerWidth-launcher.offsetWidth,mY=window.innerHeight-launcher.offsetHeight;let nx=x,ny=y;if(x<SNAP)nx=8;if(x>mX-SNAP)nx=mX-8;if(y<SNAP)ny=8;if(y>mY-SNAP)ny=mY-8;if(nx!==x||ny!==y){launcher.style.transition='left .3s cubic-bezier(.25,.8,.25,1),top .3s cubic-bezier(.25,.8,.25,1)';applyL(nx,ny);setTimeout(()=>{launcher.style.transition='';},320);}setTimeout(()=>{launcher.style.animation='chk-float 3.6s ease-in-out infinite';},350);}})();}else{launcher.style.animation='chk-float 3.6s ease-in-out infinite';toggleChat();}}
+launcher.addEventListener('mousedown',dragStart,{passive:false});
+launcher.addEventListener('touchstart',dragStart,{passive:false});
+document.addEventListener('mousemove',dragMove,{passive:false});
+document.addEventListener('mouseup',(e)=>dragEnd(e));
+document.addEventListener('touchend',(e)=>dragEnd(e));
+
+// ══════════════════════════════════════
+// DRAGGING — CHAT WINDOW
+// ══════════════════════════════════════
+let wD={active:false,startX:0,startY:0,origX:0,origY:0};
+function wDS(e){if(e.target===closeBtn)return;e.stopPropagation();const p=e.touches?e.touches[0]:e,r=chatWin.getBoundingClientRect();wD={active:true,startX:p.clientX,startY:p.clientY,origX:r.left,origY:r.top};chatWin.style.transition='none';chatWin.classList.add('chk-win-dragging');if(e.touches)document.addEventListener('touchmove',wDM,{passive:false});}
+function wDM(e){if(!wD.active)return;e.stopPropagation();const p=e.touches?e.touches[0]:e;let nx=wD.origX+(p.clientX-wD.startX),ny=wD.origY+(p.clientY-wD.startY);nx=Math.max(0,Math.min(nx,window.innerWidth-chatWin.offsetWidth));ny=Math.max(0,Math.min(ny,window.innerHeight-chatWin.offsetHeight));chatWin.style.left=nx+'px';chatWin.style.top=ny+'px';chatWin.style.right='auto';chatWin.style.bottom='auto';if(e.cancelable)e.preventDefault();}
+function wDE(){wD.active=false;document.removeEventListener('touchmove',wDM);chatWin.style.transition='';chatWin.classList.remove('chk-win-dragging');}
+header.addEventListener('mousedown',wDS,{passive:false});header.addEventListener('touchstart',wDS,{passive:false});
+document.addEventListener('mousemove',wDM,{passive:false});
+document.addEventListener('mouseup',wDE);document.addEventListener('touchend',wDE);
+
+/* 3D tilt */
+chatWin.addEventListener('mousemove',(e)=>{if(!isOpen||window.innerWidth<=520)return;const r=chatWin.getBoundingClientRect(),dx=(e.clientX-(r.left+r.width/2))/(r.width/2),dy=(e.clientY-(r.top+r.height/2))/(r.height/2);chatWin.style.transform=`scale(1) translateY(0) perspective(800px) rotateY(${dx*3}deg) rotateX(${-dy*2}deg)`;});
+chatWin.addEventListener('mouseleave',()=>{chatWin.style.transform='scale(1) translateY(0) perspective(600px) rotateX(0deg)';});
+
+// ══════════════════════════════════════
+// OPEN / CLOSE
+// ══════════════════════════════════════
+function toggleChat(){isOpen?closeChat():openChat();}
+function openChat(){
+  isOpen=true;chatWin.classList.add('chk-open');
+  const lr=launcher.getBoundingClientRect(),wW=Math.min(360,window.innerWidth-16),wH=Math.min(600,window.innerHeight*0.82);
+  let wx,wy;
+  if(window.innerWidth>520){wx=lr.right-wW;wy=lr.top-wH-10;if(wx<8)wx=8;if(wy<8)wy=8;if(wx+wW>window.innerWidth-8)wx=window.innerWidth-wW-8;}
+  else{wx=8;if(lr.top-wH-10>=8){wy=lr.top-wH-10;}else{wy=lr.bottom+10;}if(wy+wH>window.innerHeight-8)wy=window.innerHeight-wH-8;if(wy<8)wy=8;}
+  chatWin.style.left=wx+'px';chatWin.style.top=wy+'px';chatWin.style.right='auto';chatWin.style.bottom='auto';
+  chatWin.style.width=wW+'px';chatWin.style.maxHeight=wH+'px';
+  if(msgBox.children.length===0) setTimeout(()=>addMsg('bot',pickReply(KB.greet),KB.greet.chips),300);
+  if(window.innerWidth>520) setTimeout(()=>inputEl.focus(),380);
+}
+function closeChat(){isOpen=false;chatWin.classList.remove('chk-open');}
+closeBtn.addEventListener('click',(e)=>{e.stopPropagation();closeChat();});
+refreshBtn.addEventListener('click',(e)=>{
+  e.stopPropagation();
+  msgBox.innerHTML='';chipsBox.innerHTML='';inputEl.value='';gasHistory=[];
+  refreshBtn.style.transition='transform .5s cubic-bezier(.4,2,.6,1)';
+  refreshBtn.style.transform='rotate(360deg) scale(1.15)';
+  setTimeout(()=>{refreshBtn.style.transition='';refreshBtn.style.transform='';},520);
+  setTimeout(()=>addMsg('bot',pickReply(KB.greet),KB.greet.chips),300);
+});
+refreshBtn.addEventListener('touchend',(e)=>{e.stopPropagation();},true);
+
+sendBtn.addEventListener('click',(e)=>{e.stopPropagation();handleInput(inputEl.value);});
+sendBtn.addEventListener('touchend',(e)=>{e.stopPropagation();},true);
+inputEl.addEventListener('touchend',(e)=>{e.stopPropagation();},true);
+chipsBox.addEventListener('touchend',(e)=>{e.stopPropagation();},true);
+inputEl.addEventListener('keydown',(e)=>{if(e.key==='Enter'){e.stopPropagation();handleInput(inputEl.value);}});
+
+})();
+</script>
+
+<!-- Firebase SDK (Firestore logging for CHiKito) -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js';
+  import { getFirestore } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC3WGMksEBOIPfwBpe1I7AZzI_086QZZwg",
+    authDomain: "chikito-81ea3.firebaseapp.com",
+    projectId: "chikito-81ea3",
+    storageBucket: "chikito-81ea3.firebasestorage.app",
+    messagingSenderId: "629840143889",
+    appId: "1:629840143889:web:fbaef1ab9ba250a393b3b0",
+    measurementId: "G-5889ZDYJTT"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Make db available to the chatbot script
+  window._chkFirebase = { app, db };
+  console.log('✅ Firebase Firestore connected — CHiKito logging active');
 </script>
 </body>
 </html>
