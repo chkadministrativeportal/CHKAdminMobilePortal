@@ -597,6 +597,15 @@
     .chk-typing span:nth-child(3){ animation-delay: .36s }
     @keyframes chk-bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
 
+    /* Suggestion lines after a KB answer (from updated CHiKito) */
+    #chk-bot-root .chk-suggest {
+      font-size: 11.5px; color: #9fe0b8; background: rgba(6,64,43,.35);
+      border: 1px solid rgba(26,107,26,.4); border-radius: 8px;
+      padding: 5px 9px; cursor: pointer;
+    }
+    #chk-bot-root .chk-suggest:hover { background: #06402b; color: #fff; }
+    #chk-send-btn.busy { opacity: .45; cursor: wait; }
+
     /* Notice */
     #chk-spreadsheet-notice {
       text-align: center; font-size: 10px; color: rgba(255,255,255,.3);
@@ -946,12 +955,12 @@
     <div id="chk-chips"></div>
 
     <div id="chk-input-row">
-      <input id="chk-input" type="text" placeholder="Mag-type ng tanong..." autocomplete="off"/>
+      <input id="chk-input" type="text" placeholder="Mag-type ng tanong..." autocomplete="off" maxlength="500"/>
       <button id="chk-send-btn" aria-label="Send">➤</button>
     </div>
 
     <div id="chk-spreadsheet-notice">
-      Powered by <span>CHK Admin Portal</span>
+      Powered by <span>CHK Admin Portal</span> · Questions are logged to improve CHiKito
     </div>
   </div>
 </div>
@@ -1096,13 +1105,17 @@
 // ══════════════════════════════════════
 // SHEET KB (UP Faculty Manual + CHK Policies)
 // ══════════════════════════════════════
-const SHEET_KB=[{q:`Paano mag-reserve ng venue sa CHK?`,a:`Mag-fill out ng Venue Reservation Form sa CHK Admin Office o i-access ang AREA portal sa https://sites.google.com/up.edu.ph/chk360/reserve-a-venue. Kailangan ng advance notice — minimum 5 working days bago ang event. I-confirm sa CHK Admin Office ang availability.`,cat:"Venue"},{q:`Saan makikita ang venue schedule ng CHK?`,a:`Makikita ang pinakabagong venue schedules dito: https://chkadministrativeportal.github.io/venuecalendars/ — Pumili ng venue para makita ang calendar.`,cat:"Venue"},{q:`Magkano ang bayad sa venue reservation?`,a:`Depende sa venue at sa oras ng gamit. May OT fee para sa after-hours na reservations. Para sa exact rates, makipag-ugnayan sa CHK Admin Office.`,cat:"Venue"},{q:`Puwede bang mag-reserve ng venue para sa external na grupo?`,a:`Oo, puwede — pero kailangan ng endorsement/approval mula sa CHK AO at DEAN. May kaukulang fees at requirements. Makipag-coordinate sa CHK Admin Office.`,cat:"Venue"},{q:`Anong mga venue ang available sa CHK?`,a:`Ang CHK ay may 17 venues: Baseball Field, Baseball Garden, Dugout 1 & 2, Football Field, Small Gym/Court 4, Tennis Court, Track Oval, VTC Court, VTC Meeting Rooms 1 & 2, Ylanan Courts 1-3, VTC Weights Room, at Tennis Court Rooms 1 & 2. Pero para makita ang available time, tignan ang kanilang Venue Calendars`,cat:"Venue"},{q:`Paano mag-request ng sasakyan sa CHK?`,a:`I-fill out ang Vehicle/Trip Request Form sa CHK Admin Office o sa TRIP portal. Kailangan ng advance request — minimum 3 working days. Ang approval ay nakasalalay sa availability ng driver at sasakyan. Bisitahin ang link na ito: https://sites.google.com/up.edu.ph/chk360/reserve-a-vehicle`,cat:"Vehicle"},{q:`Available ba ang CHK vehicle para sa out-of-campus na lakad?`,a:`Oo, puwede — subject to availability at approval. Kailangan i-coordinate sa CHK Admin Office at i-coconfirm naman nila sa OASD (Office of Athletics and Sports Development) para sa mga varsity trips.`,cat:"Vehicle"},{q:`Paano mag-request ng supplies sa CHK?`,a:`Gamitin ang AIRA portal (Automated Inventory and Requisition Application) para mag-file ng supply request. I-access sa https://sites.google.com/up.edu.ph/chk360/a-i-r-a. Ang mga request ay subject to stock availability. Paalala, ang pag request kay AIRA ay para lamang sa mga staff at faculty ng CHK.`,cat:"Supply"},{q:`Saan makikita ang stock ng supplies sa CHK?`,a:`Makikita ang real-time stock levels sa AIRA system. Ang mga item na lalabas kay AIRA ay ang tanging mga available items sa CHK Admin Office.`,cat:"Supply"},{q:`Paano mag-report ng sirang facilities sa CHK?`,a:`Gamitin ang CHK RAP (Report-A-Problem) system o mag-file ng Work Order sa CHK Admin Office. I-access sa https://sites.google.com/up.edu.ph/chk360/forms. Ilagay ang detalye ng problema at lokasyon.`,cat:"Maintenance"},{q:`Gaano katagal bago ma-repair ang reported na problema?`,a:`Depende sa urgency at likas ng problema. Ang urgent repairs (safety hazards) ay pinriprioridad. Para sa update sa status ng iyong work order, makipag-ugnayan sa CHK Admin Office.`,cat:"Maintenance"},{q:`Paano mag-file ng leave para sa COS staff?`,a:`Ang COS staff ay gumagamit ng COS Leave System para sa wellness leave. I-access sa CHK portal: https://sites.google.com/up.edu.ph/chk360/forms. Kailangan ng advance notice at approval ng supervisor. Para sa detalye, makipag-ugnayan sa CHK Admin Office.`,cat:"Leave"},{q:`Ilang araw na wellness leave ang maaaring i-file ng COS staff?`,a:`Ang wellness leave para sa COS staff ay base sa kontrata at CHK policy. Para sa exact na bilang ng leave credits, makipag-ugnayan sa CHK Admin Office.`,cat:"Leave"},{q:`Saan makikita ang CHK Admin Office?`,a:`Ang CHK Administrative Office ay nasa Varsity Training Center, Magsaysay Avenue, University of the Philippines Diliman, Quezon City. Bukas Lunes hanggang Biyernes, 8:00 AM - 5:00 PM.`,cat:"General"},{q:`Ano ang portal ng CHK Admin Office?`,a:`Ang opisyal na portal ng CHK Admin Office ay: https://sites.google.com/up.edu.ph/chk360 — Dito makikita ang lahat ng systems at forms.`,cat:"General"},{q:`Sino ang Head Administrative Officer ng CHK?`,a:`Ang Head Administrative Officer ng CHK ay si James Lester P. Edrozo (Administrative Officer V). Para sa mga katanungan, makipag-ugnayan sa CHK Admin Office.`,cat:"General"},{q:`Sino-sino ang mga staff sa Administrative Office ng CHK?`,a:`Sa ngayon dalawa lamang silang office staff, si James Lester P. Edrozo (Administrative Officer V) at si Leoncio "Jhayr" S. Cadag Jr. (Liaision Officer).`,cat:"General"},{q:`Ano ang ONBOARD system ng CHK?`,a:`Ang CHK ONBOARD ay ang digital onboarding system para sa mga bagong CHK staff at faculty. Naglalaman ito ng mga modules, quizzes, at impormasyon tungkol sa CHK policies at procedures.`,cat:"Onboarding"},{q:`Ano ang PBMS ng CHK?`,a:`Ang PBMS (Performance-Based Monitoring System) ay ginagamit para sa pagsubaybay ng performance indicators ng CHK. Kasama dito ang quarterly targets at accomplishments. Kung ikaw ay faculty at staff ng CHK at nais malaman pa ang tungkol dito, makipag ugnayan sa Admin Office.`,cat:"PBMS"},{q:`Ano ang UPD Faculty Manual?`,a:`Ito ang opisyal na gabay ng UP Diliman para sa lahat ng miyembro ng faculty. Naglalaman ito ng mga patakaran, regulasyon, at proseduro na batay sa University Code, mga resolusyon ng Board of Regents, at iba pang opisyal na dokumento. Inilathala ito noong 2003 bilang revised version ng 1989 Faculty Manual.`,cat:"General"},{q:`Ano ang misyon ng University of the Philippines?`,a:`Ang UP ay nagbibigay ng advanced instruction sa literatura, pilosopiya, agham, at sining; nagbibigay ng propesyonal at teknikal na pagsasanay; at hinihikayat at isinasagawa ang pananaliksik at kontribusyon sa pagpapalaki at pagpapakalat ng kaalaman. Ito rin ay nagsisilbing instrumento ng pambansang pag-unlad.`,cat:"General"},{q:`Sino ang bumubuo sa Board of Regents ng UP?`,a:`Ang BOR ay binubuo ng: Chair ng CHED (ex officio Chair), Presidente ng UP (ex officio Vice-Chair), Chair ng Senate Committee on Education, Chair ng House Committee on Education, Presidente ng UPAA, Faculty Regent (1-year term), Student Regent (1-year term), at limang (5) miyembro na hinirang ng Presidente ng Pilipinas (tatlo ay kailangang alumni ng UP, 2-year term).`,cat:"General"},{q:`Ano ang University Council (UC) at sino ang mga miyembro nito?`,a:`Ang UC ay binubuo ng Chancellor, lahat ng Professors, Associate Professors, at Assistant Professors ng autonomous campus. Ang Chancellor ang nagsisilbing Chair at ang University Registrar ang Secretary. Ang Presidente ng UP ay ex officio na miyembro rin at nagpupuno kapag naroon. Ang quorum ay 75 miyembro.`,cat:"General"},{q:`Ano ang mga kapangyarihan ng University Council?`,a:`Ang UC, subject sa approval ng BOR, ay maaaring: mag-prescribe ng courses of study at rules of discipline; mag-fix ng requirements para sa admission at graduation; magrerekomenda ng mga tatanggap ng degrees; at mag-exercise ng disciplinary powers sa mga estudyante.`,cat:"General"},{q:`Ano ang mga regular na miyembro ng teaching staff?`,a:`Ang mga regular na miyembro ay: Professors, Associate Professors, Assistant Professors, at Instructors. Kasama rin ang Research/Extension Faculty na may appointment sa katumbas na rank.`,cat:"General"},{q:`Ano ang mga non-regular na miyembro ng teaching staff?`,a:`Ang mga non-regular ay: Lecturer, Senior Lecturer, Professorial Lecturer, Visiting Professor, Exchange Professor, Adjunct Professor, Affiliate Faculty, at Teaching Associate/Fellow.`,cat:"General"},{q:`Ilan ang required na teaching load ng isang full-time faculty member?`,a:`Ang normal na teaching load ay 12 units per semester. Hindi maaaring magturo ang isang faculty ng wala sa 6 units per semester. Maaaring bawasan ng Presidente o Chancellor ang load hanggang hindi bababa sa 3 units kung aktibo ang faculty sa research, creative work, community service, o iba pang authorized activities.`,cat:"General"},{q:`Ano ang Study Load Credit (SLC) at ano ang mga kondisyon nito?`,a:`Ang SLC ay partial de-loading mula sa regular 12-unit teaching load habang nag-aaral. Ang teaching load ay bawasan ng katumbas na bilang ng enrolled units, ngunit hindi hihigit sa 6 units. Para sa 3 units o mas kaunti: approval ng Dean, upon recommendation ng Department Chair. Para sa 4-6 units: kailangan ng approval ng Chancellor.`,cat:"General"},{q:`Ano ang Study Leave with pay at ano ang mga qualifications?`,a:`Para sa study leave with pay, kailangan ng faculty na: may proven teaching ability at commitment; may maayos na academic record; isang regular faculty occupying own item (hindi substitute); may rank na hindi hihigit sa Assistant Professor; may hindi bababa sa 1 taon ng serbisyo; may tenure o isinasaalang-alang para sa tenure; at hindi hihigit sa 40 taong gulang.`,cat:"General"},{q:`Gaano katagal ang study leave with pay?`,a:`Para sa Master's degree: hanggang 2.5 taon (30 buwan). Para sa Doctoral degree: hanggang 4 taon (48 buwan) pagkatapos ng Master's; o hanggang 5 taon (60 buwan) para sa straight Ph.D. program.`,cat:"General"},{q:`Kailan compulsory ang retirement sa UP?`,a:`Ang compulsory retirement age ay 65 taon. Ang BOR ay maaaring mag-extend ng tenure ng faculty hanggang 70 taon, pero hindi higit pa rito, kung kinakailangan ang kanilang serbisyo.`,cat:"General"},{q:`Ano ang Teacher's Leaves at sino ang karapat-dapat?`,a:`Ang Teacher's Leave ay para sa full- at part-time regular faculty na hindi gumagawa ng administrative functions. Binubuo ito ng vacation leave (1 buwan bawat academic year, bilang karagdagan sa Christmas vacation) at sick leave (hindi hihigit sa 15 araw sa isang academic year).`,cat:"General"},{q:`Ano ang Maternity Leave sa UP?`,a:`Ang mga babaeng government employee na may hindi bababa sa 2 taon ng serbisyo ay entitled sa 60 calendar days na maternity leave na may full pay. Sa ilalim ng UP guidelines, ang faculty ay may karapatang sa 6 buwan: 2 buwan bago at 4 buwan pagkatapos ng panganganak.`,cat:"General"},{q:`Ano ang Paternity Leave?`,a:`Ang married male employee ay may karapatang sa 7 araw na paternity leave na may bayad para sa unang 4 na panganganak ng kanyang asawa.`,cat:"General"},{q:`Ano ang Sabbatical at ano ang mga kondisyon nito?`,a:`Ang sabbatical ay pribilehiyo na nagpapalaya sa faculty mula sa regular na tungkulin para sa pag-aaral at pananaliksik. Maaaring i-grant ng hanggang 1 taon na may full salary: (1) hindi bababa sa 6 magkakasunod na taon ng serbisyo kasama 2 taon bilang Associate Professor; (2) hindi ibinibigay 2 taon bago mag-65; (3) kailangang mag-report pabalik agad pagkatapos.`,cat:"General"},{q:`Ano ang mga salary grades ng faculty ranks sa UP?`,a:`Ang mga salary grades ay: Instructor 1-7 (SG 14-17), Assistant Professor 1-7 (SG 18-21), Associate Professor 1-7 (SG 22-25), Professor 1-12 (SG 26-29).`,cat:"General"},{q:`Ano ang patakaran sa tenure ng Instructors?`,a:`Ang initial appointment bilang Instructor ay temporary, hindi hihigit sa 1 taon. Maaaring i-renew tuwing isang taon ngunit hindi lalampas sa 5 taon mula sa unang appointment. Pagkatapos ng 5 taon, awtomatikong magtatapos ang appointment maliban kung ma-promote sa Assistant Professor.`,cat:"General"},{q:`Ano ang mga minimum qualifications para sa tenure ng Assistant Professor?`,a:`Ang mga minimum qualifications ay: (1) hindi bababa sa Master's degree o equivalent; (2) satisfactory o mas mataas na teaching performance; at (3) sole o lead authorship ng isang refereed journal article o academic publication ng recognized academic book publisher.`,cat:"General"},{q:`Paano mag-resign ang isang faculty member?`,a:`Kailangang mag-notify ng hindi bababa sa 60 araw bago mag-effect ang resignation sa Chancellor sa pamamagitan ng Dean o Director. Hindi maaaring ma-accept ang resignation hanggang hindi na-secure ang successor o temporary substitute.`,cat:"General"},{q:`Ano ang mga PhilHealth benefits ng faculty?`,a:`Lahat ng government employees ay compulsorily covered ng PhilHealth. Ang benefit package ay sumasaklaw sa room at board (45 araw per year), gamot at medisina, X-ray, laboratory, professional fees, at operating room.`,cat:"General"},{q:`Ano ang mga retirement options sa GSIS?`,a:`Sa ilalim ng R.A. 8291, ang isang miyembro na may hindi bababa sa 15 taon ng serbisyo at 60 taong gulang ay eligible para sa retirement. Dalawang pangunahing opsyon: (a) 5-year lump sum kasama Basic Monthly Pension for life; o (b) Cash payment kasama Basic Monthly Pension simula agad sa retirement.`,cat:"General"},{q:`Ano ang Pag-IBIG benefits para sa faculty?`,a:`Ang Pag-IBIG Fund (HDMF) ay isang provident savings system. Ang mga miyembro ay eligible sa: (1) Expanded Housing Loan; (2) Multi-Purpose Loan (MPL); at (3) Provident Benefit pagkatapos ng 20 taon ng membership.`,cat:"General"},{q:`Ano ang Professorial Chair at sino ang karapat-dapat?`,a:`Ang professorial chair ay paraan ng pagkilala para sa achievers sa academe. Kailangan: regular faculty na may rank na Assistant Professor o mas mataas; may hindi bababa sa 5 taon ng serbisyo sa UP; at may outstanding performance sa teaching, intellectual productivity, at service.`,cat:"General"},{q:`Ano ang Professor Emeritus at ano ang mga pamantayan?`,a:`Ang Professor Emeritus ay maaaring i-appoint sa isang retired faculty na may rank na Professor na: (1) may hindi bababa sa 20 taon ng aktibo at tapat na serbisyo; (2) nakamit ang markadong distinction bilang productive scholar, artist, o scientist. Ito ay isang titulo para sa buhabuhay.`,cat:"General"},{q:`Ano ang sexual harassment ayon sa UP Faculty Manual?`,a:`Ang sexual harassment ay ang pag-demand, pag-request, o pag-require ng anumang sexual favor mula sa isa pang tao ng isang opisyal, faculty, empleyado, coach, o sinumang may awtoridad. Sumasaklaw ito sa mga work-related at academic/teaching environments.`,cat:"General"},{q:`Ano ang term of office ng Dean?`,a:`Ang term ng Dean ay 3 taon mula sa petsa ng appointment, nang hindi pinipigilan ang muling paghirang. Maaari silang maglingkod ng 2 terms sa kabuuan.`,cat:"General"},{q:`Ano ang term of office ng Department Chair?`,a:`Hindi hihigit sa 3 taon, maaaring i-renew para sa isa pang term ng hindi hihigit sa 3 taon (maximum na 6 taon). Hindi maaaring maglingkod ang isang chair ng mahigit sa 9 magkakasunod na taon.`,cat:"General"},{q:`Ano ang AIRA?`,a:`Ang AIRA (Admin Inventory Request & Automation) ay ang supply request system ng CHK. I-access dito: https://sites.google.com/up.edu.ph/chk360/a-i-r-a`,cat:"Supply"}];
+const SHEET_KB=[{q:`Paano mag-reserve ng venue sa CHK?`,a:`Mag-fill out ng Venue Reservation Form sa CHK Admin Office o i-access ang AREA portal sa https://sites.google.com/up.edu.ph/chk360/reserve-a-venue. Kailangan ng advance notice — minimum 5 working days bago ang event. I-confirm sa CHK Admin Office ang availability.`,cat:"Venue"},{q:`Saan makikita ang venue schedule ng CHK?`,a:`Makikita ang pinakabagong venue schedules dito: https://chkadministrativeportal.github.io/venuecalendars/ — Pumili ng venue para makita ang calendar.`,cat:"Venue"},{q:`Magkano ang bayad sa venue reservation?`,a:`Depende sa venue at sa oras ng gamit. May OT fee para sa after-hours na reservations. Para sa exact rates, makipag-ugnayan sa CHK Admin Office.`,cat:"Venue"},{q:`Puwede bang mag-reserve ng venue para sa external na grupo?`,a:`Oo, puwede — pero kailangan ng endorsement/approval mula sa CHK AO at DEAN. May kaukulang fees at requirements. Makipag-coordinate sa CHK Admin Office.`,cat:"Venue"},{q:`Anong mga venue ang available sa CHK?`,a:`Ang CHK ay may 17 venues: Baseball Field, Baseball Garden, Dugout 1 & 2, Football Field, Small Gym/Court 4, Tennis Court, Track Oval, VTC Court, VTC Meeting Rooms 1 & 2, Ylanan Courts 1-3, VTC Weights Room, at Tennis Court Rooms 1 & 2. Pero para makita ang available time, tignan ang kanilang Venue Calendars`,cat:"Venue"},{q:`Paano mag-request ng sasakyan sa CHK?`,a:`I-fill out ang Vehicle/Trip Request Form sa CHK Admin Office o sa TRIP portal. Kailangan ng advance request — minimum 3 working days. Ang approval ay nakasalalay sa availability ng driver at sasakyan. Bisitahin ang link na ito: https://sites.google.com/up.edu.ph/chk360/reserve-a-vehicle`,cat:"Vehicle"},{q:`Available ba ang CHK vehicle para sa out-of-campus na lakad?`,a:`Oo, puwede — subject to availability at approval. Kailangan i-coordinate sa CHK Admin Office at i-coconfirm naman nila sa OASD (Office of Athletics and Sports Development) para sa mga varsity trips.`,cat:"Vehicle"},{q:`Paano mag-request ng supplies sa CHK?`,a:`Gamitin ang AIRA portal (Admin Inventory Request Application) para mag-file ng supply request. I-access sa https://sites.google.com/up.edu.ph/chk360/a-i-r-a. Ang mga request ay subject to stock availability. Paalala, ang pag request kay AIRA ay para lamang sa mga staff at faculty ng CHK.`,cat:"Supply"},{q:`Saan makikita ang stock ng supplies sa CHK?`,a:`Makikita ang real-time stock levels sa AIRA system. Ang mga item na lalabas kay AIRA ay ang tanging mga available items sa CHK Admin Office.`,cat:"Supply"},{q:`Paano mag-report ng sirang facilities sa CHK?`,a:`Gamitin ang CHK RAP (Report-A-Problem) system o mag-file ng Work Order sa CHK Admin Office. I-access sa https://sites.google.com/up.edu.ph/chk360/forms. Ilagay ang detalye ng problema at lokasyon.`,cat:"Maintenance"},{q:`Gaano katagal bago ma-repair ang reported na problema?`,a:`Depende sa urgency at likas ng problema. Ang urgent repairs (safety hazards) ay pinriprioridad. Para sa update sa status ng iyong work order, makipag-ugnayan sa CHK Admin Office.`,cat:"Maintenance"},{q:`Paano mag-file ng leave?`,a:`Ay, sa PUSO 'yan, pre! 😄 Dito: https://puso.upd.edu.ph/ — hanapin mo ang Leave Management module. Kung CHK COS staff ka naman, gamitin ang COS Leave System para sa wellness leave: https://sites.google.com/up.edu.ph/chk360/forms. Kailangan ng advance notice at approval ng supervisor. Para sa iba pang tanong, nandito lang ang CHK Admin Office.`,cat:"Leave"},{q:`Ilang araw na wellness leave ang maaaring i-file ng COS staff?`,a:`Ang wellness leave para sa COS staff ay base sa kontrata at CHK policy. Para sa exact na bilang ng leave credits, makipag-ugnayan sa CHK Admin Office.`,cat:"Leave"},{q:`Saan makikita ang CHK Admin Office?`,a:`Ang CHK Administrative Office ay nasa Varsity Training Center, Magsaysay Avenue, University of the Philippines Diliman, Quezon City. Bukas Lunes hanggang Biyernes, 8:00 AM - 5:00 PM.`,cat:"General"},{q:`Ano ang portal ng CHK Admin Office?`,a:`Ang opisyal na portal ng CHK Admin Office ay: https://sites.google.com/up.edu.ph/chk360 — Dito makikita ang lahat ng systems at forms.`,cat:"General"},{q:`Sino ang Head Administrative Officer ng CHK?`,a:`Ang Head Administrative Officer ng CHK ay si James Lester P. Edrozo (Administrative Officer V). Para sa mga katanungan, makipag-ugnayan sa CHK Admin Office.`,cat:"General"},{q:`Sino-sino ang mga staff sa Administrative Office ng CHK?`,a:`Sa ngayon dalawa lamang silang office staff, si James Lester P. Edrozo (Administrative Officer V) at si Leoncio "Jhayr" S. Cadag Jr. (Liaison Officer).`,cat:"General"},{q:`Ano ang ONBOARD system ng CHK?`,a:`Ang CHK ONBOARD ay ang digital onboarding system para sa mga bagong CHK staff at faculty. Naglalaman ito ng mga modules, quizzes, at impormasyon tungkol sa CHK policies at procedures.`,cat:"Onboarding"},{q:`Ano ang PBMS ng CHK?`,a:`Ang PBMS (Performance-Based Monitoring System) ay ginagamit para sa pagsubaybay ng performance indicators ng CHK. Kasama dito ang quarterly targets at accomplishments. Kung ikaw ay faculty at staff ng CHK at nais malaman pa ang tungkol dito, makipag ugnayan sa Admin Office.`,cat:"PBMS"},{q:`Ano ang UPD Faculty Manual?`,a:`Ito ang opisyal na gabay ng UP Diliman para sa lahat ng miyembro ng faculty. Naglalaman ito ng mga patakaran, regulasyon, at proseduro na batay sa University Code, mga resolusyon ng Board of Regents, at iba pang opisyal na dokumento. Inilathala ito noong 2003 bilang revised version ng 1989 Faculty Manual.`,cat:"General"},{q:`Ano ang misyon ng University of the Philippines?`,a:`Ang UP ay nagbibigay ng advanced instruction sa literatura, pilosopiya, agham, at sining; nagbibigay ng propesyonal at teknikal na pagsasanay; at hinihikayat at isinasagawa ang pananaliksik at kontribusyon sa pagpapalaki at pagpapakalat ng kaalaman. Ito rin ay nagsisilbing instrumento ng pambansang pag-unlad.`,cat:"General"},{q:`Sino ang bumubuo sa Board of Regents ng UP?`,a:`Ang BOR ay binubuo ng: Chair ng CHED (ex officio Chair), Presidente ng UP (ex officio Vice-Chair), Chair ng Senate Committee on Education, Chair ng House Committee on Education, Presidente ng UPAA, Faculty Regent (1-year term), Student Regent (1-year term), at limang (5) miyembro na hinirang ng Presidente ng Pilipinas (tatlo ay kailangang alumni ng UP, 2-year term).`,cat:"General"},{q:`Ano ang University Council (UC) at sino ang mga miyembro nito?`,a:`Ang UC ay binubuo ng Chancellor, lahat ng Professors, Associate Professors, at Assistant Professors ng autonomous campus. Ang Chancellor ang nagsisilbing Chair at ang University Registrar ang Secretary. Ang Presidente ng UP ay ex officio na miyembro rin at nagpupuno kapag naroon. Ang quorum ay 75 miyembro.`,cat:"General"},{q:`Ano ang mga kapangyarihan ng University Council?`,a:`Ang UC, subject sa approval ng BOR, ay maaaring: mag-prescribe ng courses of study at rules of discipline; mag-fix ng requirements para sa admission at graduation; magrerekomenda ng mga tatanggap ng degrees; at mag-exercise ng disciplinary powers sa mga estudyante.`,cat:"General"},{q:`Ano ang mga regular na miyembro ng teaching staff?`,a:`Ang mga regular na miyembro ay: Professors, Associate Professors, Assistant Professors, at Instructors. Kasama rin ang Research/Extension Faculty na may appointment sa katumbas na rank.`,cat:"General"},{q:`Ano ang mga non-regular na miyembro ng teaching staff?`,a:`Ang mga non-regular ay: Lecturer, Senior Lecturer, Professorial Lecturer, Visiting Professor, Exchange Professor, Adjunct Professor, Affiliate Faculty, at Teaching Associate/Fellow.`,cat:"General"},{q:`Ilan ang required na teaching load ng isang full-time faculty member?`,a:`Ang normal na teaching load ay 12 units per semester. Hindi maaaring magturo ang isang faculty ng wala sa 6 units per semester. Maaaring bawasan ng Presidente o Chancellor ang load hanggang hindi bababa sa 3 units kung aktibo ang faculty sa research, creative work, community service, o iba pang authorized activities.`,cat:"General"},{q:`Ano ang Study Load Credit (SLC) at ano ang mga kondisyon nito?`,a:`Ang SLC ay partial de-loading mula sa regular 12-unit teaching load habang nag-aaral. Ang teaching load ay bawasan ng katumbas na bilang ng enrolled units, ngunit hindi hihigit sa 6 units. Para sa 3 units o mas kaunti: approval ng Dean, upon recommendation ng Department Chair. Para sa 4-6 units: kailangan ng approval ng Chancellor.`,cat:"General"},{q:`Ano ang Study Leave with pay at ano ang mga qualifications?`,a:`Para sa study leave with pay, kailangan ng faculty na: may proven teaching ability at commitment; may maayos na academic record; isang regular faculty occupying own item (hindi substitute); may rank na hindi hihigit sa Assistant Professor; may hindi bababa sa 1 taon ng serbisyo; may tenure o isinasaalang-alang para sa tenure; at hindi hihigit sa 40 taong gulang.`,cat:"General"},{q:`Gaano katagal ang study leave with pay?`,a:`Para sa Master's degree: hanggang 2.5 taon (30 buwan). Para sa Doctoral degree: hanggang 4 taon (48 buwan) pagkatapos ng Master's; o hanggang 5 taon (60 buwan) para sa straight Ph.D. program.`,cat:"General"},{q:`Kailan compulsory ang retirement sa UP?`,a:`Ang compulsory retirement age ay 65 taon. Ang BOR ay maaaring mag-extend ng tenure ng faculty hanggang 70 taon, pero hindi higit pa rito, kung kinakailangan ang kanilang serbisyo.`,cat:"General"},{q:`Ano ang Teacher's Leaves at sino ang karapat-dapat?`,a:`Ang Teacher's Leave ay para sa full- at part-time regular faculty na hindi gumagawa ng administrative functions. Binubuo ito ng vacation leave (1 buwan bawat academic year, bilang karagdagan sa Christmas vacation) at sick leave (hindi hihigit sa 15 araw sa isang academic year).`,cat:"General"},{q:`Ano ang Maternity Leave sa UP?`,a:`Sa ilalim ng RA 11210 (Expanded Maternity Leave Law, 2019), ang mga babaeng empleyado ng gobyerno ay may 105 araw na maternity leave na may full pay, anuman ang haba ng serbisyo. May dagdag na 15 araw para sa solo parents, at puwedeng mag-extend ng 30 araw nang walang bayad. Para sa proseso sa UP, makipag-ugnayan sa CHK Admin Office.`,cat:"General"},{q:`Ano ang Paternity Leave?`,a:`Ang married male employee ay may karapatang sa 7 araw na paternity leave na may bayad para sa unang 4 na panganganak ng kanyang asawa.`,cat:"General"},{q:`Ano ang Sabbatical at ano ang mga kondisyon nito?`,a:`Ang sabbatical ay pribilehiyo na nagpapalaya sa faculty mula sa regular na tungkulin para sa pag-aaral at pananaliksik. Maaaring i-grant ng hanggang 1 taon na may full salary: (1) hindi bababa sa 6 magkakasunod na taon ng serbisyo kasama 2 taon bilang Associate Professor; (2) hindi ibinibigay 2 taon bago mag-65; (3) kailangang mag-report pabalik agad pagkatapos.`,cat:"General"},{q:`Ano ang mga salary grades ng faculty ranks sa UP?`,a:`Ang mga salary grades ay: Instructor 1-7 (SG 14-17), Assistant Professor 1-7 (SG 18-21), Associate Professor 1-7 (SG 22-25), Professor 1-12 (SG 26-29).`,cat:"General"},{q:`Ano ang patakaran sa tenure ng Instructors?`,a:`Ang initial appointment bilang Instructor ay temporary, hindi hihigit sa 1 taon. Maaaring i-renew tuwing isang taon ngunit hindi lalampas sa 5 taon mula sa unang appointment. Pagkatapos ng 5 taon, awtomatikong magtatapos ang appointment maliban kung ma-promote sa Assistant Professor.`,cat:"General"},{q:`Ano ang mga minimum qualifications para sa tenure ng Assistant Professor?`,a:`Ang mga minimum qualifications ay: (1) hindi bababa sa Master's degree o equivalent; (2) satisfactory o mas mataas na teaching performance; at (3) sole o lead authorship ng isang refereed journal article o academic publication ng recognized academic book publisher.`,cat:"General"},{q:`Paano mag-resign ang isang faculty member?`,a:`Kailangang mag-notify ng hindi bababa sa 60 araw bago mag-effect ang resignation sa Chancellor sa pamamagitan ng Dean o Director. Hindi maaaring ma-accept ang resignation hanggang hindi na-secure ang successor o temporary substitute.`,cat:"General"},{q:`Ano ang mga PhilHealth benefits ng faculty?`,a:`Lahat ng government employees ay compulsorily covered ng PhilHealth. Sakop nito ang mga gastusin sa ospital gaya ng kuwarto, gamot, laboratory, at professional fees, ayon sa kasalukuyang benefit packages ng PhilHealth. Para sa updated na detalye, bisitahin ang https://www.philhealth.gov.ph o makipag-ugnayan sa CHK Admin Office.`,cat:"General"},{q:`Ano ang mga retirement options sa GSIS?`,a:`Sa ilalim ng R.A. 8291, ang isang miyembro na may hindi bababa sa 15 taon ng serbisyo at 60 taong gulang ay eligible para sa retirement. Dalawang pangunahing opsyon: (a) 5-year lump sum kasama Basic Monthly Pension for life; o (b) Cash payment kasama Basic Monthly Pension simula agad sa retirement.`,cat:"General"},{q:`Ano ang Pag-IBIG benefits para sa faculty?`,a:`Ang Pag-IBIG Fund (HDMF) ay isang provident savings system. Ang mga miyembro ay eligible sa: (1) Expanded Housing Loan; (2) Multi-Purpose Loan (MPL); at (3) Provident Benefit pagkatapos ng 20 taon ng membership.`,cat:"General"},{q:`Ano ang Professorial Chair at sino ang karapat-dapat?`,a:`Ang professorial chair ay paraan ng pagkilala para sa achievers sa academe. Kailangan: regular faculty na may rank na Assistant Professor o mas mataas; may hindi bababa sa 5 taon ng serbisyo sa UP; at may outstanding performance sa teaching, intellectual productivity, at service.`,cat:"General"},{q:`Ano ang Professor Emeritus at ano ang mga pamantayan?`,a:`Ang Professor Emeritus ay maaaring i-appoint sa isang retired faculty na may rank na Professor na: (1) may hindi bababa sa 20 taon ng aktibo at tapat na serbisyo; (2) nakamit ang markadong distinction bilang productive scholar, artist, o scientist. Ito ay isang titulo para sa buhabuhay.`,cat:"General"},{q:`Ano ang sexual harassment ayon sa UP Faculty Manual?`,a:`Ang sexual harassment ay ang pag-demand, pag-request, o pag-require ng anumang sexual favor mula sa isa pang tao ng isang opisyal, faculty, empleyado, coach, o sinumang may awtoridad. Sumasaklaw ito sa mga work-related at academic/teaching environments. Bukod dito, saklaw din ng Safe Spaces Act (RA 11313, 2019) ang gender-based sexual harassment sa paaralan, trabaho, at online. Para sa reklamo o tanong, makipag-ugnayan sa tamang opisina ng UP Diliman o sa CHK Admin Office.`,cat:"General"},{q:`Ano ang term of office ng Dean?`,a:`Ang term ng Dean ay 3 taon mula sa petsa ng appointment, nang hindi pinipigilan ang muling paghirang. Maaari silang maglingkod ng 2 terms sa kabuuan.`,cat:"General"},{q:`Ano ang term of office ng Department Chair?`,a:`Hindi hihigit sa 3 taon, maaaring i-renew para sa isa pang term ng hindi hihigit sa 3 taon (maximum na 6 taon). Hindi maaaring maglingkod ang isang chair ng mahigit sa 9 magkakasunod na taon.`,cat:"General"},{q:`Ano ang AIRA?`,a:`Ang AIRA (Admin Inventory Request Application) ay ang supply request system ng CHK. I-access dito: https://sites.google.com/up.edu.ph/chk360/a-i-r-a`,cat:"Supply"},{q:`Saan matatagpuan ang mga CHK venues?`,a:`Mga lokasyon ng CHK venues: Tennis Court (kasama ang Tennis Court Rooms 1 & 2) — Ylanan Street, malapit sa CHK Football Field at Track Oval. VTC Court, VTC Meeting Rooms 1 & 2, at VTC Weights Room — sa loob ng Varsity Training Center, Magsaysay Avenue. Ylanan Courts 1–3 — sa Ylanan Gym (Old Gym), Emilio Jacinto Street, sa loob ng CHK sports complex. Small Gym / Court 4 — Emilio Jacinto Street, sa loob ng CHK sports complex, katabi ng Ylanan Gym. Baseball Field — Ylanan Street. Football Field at Track Oval — iisang area, sa pagitan ng Ylanan Street at Balagtas Street. Dugout 1 & 2 — sa loob ng grandstand ng CHK Football Field. Para sa iba pang lokasyon (hal. Baseball Garden), makipag-ugnayan sa CHK Admin Office.`,cat:"Venue"}];
 
 // ══════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════
 const CONFIG = {
   GAS_URL: 'https://script.google.com/macros/s/AKfycby8PbtsLdzfx0jbt1534wx9JHOj1iQH6lwf1ANSktbrLqxHVtjIf62prHGR8XPFAg3b/exec',
+  // GAS v9 uses its own server-side prompt and ignores anything sent here.
+  // Leave FALSE (lighter requests). TRUE only matters for old backends.
+  SEND_PROMPT: false,
+  MAX_HISTORY: 16
 };
 
 // ══════════════════════════════════════
@@ -1120,47 +1133,239 @@ const sendBtn    = document.getElementById('chk-send-btn');
 const aiDot      = document.getElementById('chk-ai-dot');
 const aiLabel    = document.getElementById('chk-ai-label');
 let isOpen = false;
+let busy = false;
 
 function setAIStatus(state, label){
-  aiDot.className = state === 'loading' ? 'loading' : state === 'error' ? 'error' : '';
-  aiLabel.textContent = label || 'AI Ready';
+aiDot.className = state === 'loading' ? 'loading' : state === 'error' ? 'error' : '';
+aiLabel.textContent = label || 'AI Ready';
+}
+function setBusy(v){
+busy = v;
+sendBtn.classList.toggle('busy', v);
+}
+
+
+// ══════════════════════════════════════
+// SAFE TEXT HELPERS
+// ══════════════════════════════════════
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+// AI replies: escape everything, then allow **bold**, [label](url), and bare URLs.
+function formatAI(text){
+  let h = esc(text);
+  // Anchors written as HTML in sheet/AI answers: <a href="https://..." target="_blank">label</a>
+  // Only http(s) links are kept; the tag is rebuilt by us (no other attributes survive).
+  // Stashed in placeholders so the bare-URL linkifier below can't double-link them.
+  const stash = [];
+  h = h.replace(/&lt;a((?:\s+[\w-]+=&quot;(?:(?!&quot;)[^<>])*&quot;)+)\s*&gt;([\s\S]*?)&lt;\/a&gt;/gi, (m, attrs, label) => {
+    const hm = attrs.match(/href=&quot;(https?:\/\/(?:(?!&quot;)[^\s<>])+)&quot;/i);
+    if(!hm) return m;                       // no safe http(s) href -> stays escaped text
+    const safeLabel = label.replace(/&lt;\/?[a-z][^&]*?&gt;/gi, '').trim() || hm[1];
+    stash.push('<a href="' + hm[1] + '" target="_blank" rel="noopener">' + safeLabel + '</a>');
+    return '\u0001' + (stash.length - 1) + '\u0001';
+  });
+  // Simple formatting tags (b, i, strong, em, span, br). A style attribute is
+  // only kept if it contains nothing but opacity / font-size values.
+  h = h.replace(/&lt;(b|i|strong|em|span)(?:\s+style=&quot;([^&"<>]*)&quot;)?\s*&gt;/gi, (m, tag, style) => {
+    if(style){
+      const ok = style.split(';').map(s => s.trim()).filter(Boolean)
+        .every(s => /^(opacity|font-size)\s*:\s*[\d.]+(px|em|rem|%)?$/i.test(s));
+      return ok ? '<' + tag + ' style="' + style.trim() + '">' : '<' + tag + '>';
+    }
+    return '<' + tag + '>';
+  });
+  h = h.replace(/&lt;\/(b|i|strong|em|span)&gt;/gi, '</$1>')
+       .replace(/&lt;br\s*\/?&gt;/gi, '<br>')
+       .replace(/&amp;nbsp;/gi, '&nbsp;');
+  h = h.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+  h = h.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s<]+)/g, (m, label, url, bare) => {
+    if(url) return '<a href="' + url + '" target="_blank" rel="noopener">' + label + '</a>';
+    let u = bare, tail = '';
+    const t = u.match(/[.,!?;:)\]]+$/);
+    if(t){ tail = t[0]; u = u.slice(0, -tail.length); }
+    return '<a href="' + u + '" target="_blank" rel="noopener">' + u + '</a>' + tail;
+  });
+  h = h.replace(/\u0001(\d+)\u0001/g, (m, i) => stash[+i]);
+  return h;
+}
+function htmlToPlain(html){
+  return String(html)
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/a>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+    .trim();
 }
 
 // ══════════════════════════════════════
 // STATIC KNOWLEDGE BASE (instant, no network)
 // ══════════════════════════════════════
 const KB={
- greet:{triggers:[],responses:[
+ whoami:{social:true,triggers:['sino ka','sino ka ba','ano ka','ano ka ba','who are you','what are you','sino si chikito','ano si chikito','ano ang chikito','ikaw si chikito','sino ka chikito','introduce yourself','pakilala ka'],responses:[
+   `Ako si <b>CHiKito</b> — ang online staff ng <b>CHK Admin Section</b>! 🤖<br><br>24/7 ako dito, walang pahinga, walang lunch break… at walang sahod. 😅 Pero okay lang, para sa CHK 'to!<br><br>Kaya kong tumulong sa: reservations (venue at vehicle), admin forms, A.I.R.A., venue calendars, lokasyon ng venues, at mga tanong tungkol sa CHK policies.`,
+   `Hi! Ako si <b>CHiKito</b>, ang pinakamasipag na staff ng <b>CHK Admin Section</b> — kasi hindi ako umuuwi. 😎<br><br>Pwede mo akong tanungin tungkol sa reservations, forms, supplies (A.I.R.A.), venue schedules, at iba pang CHK admin concerns.`,
+   `<b>CHiKito</b> here — online staff ng <b>CHK Admin Section</b>, UP Diliman! 💚❤️<br><br>Walang day off, walang overtime pay, pero laging ready. 😄 Sabihin mo lang kung reservation, form, supplies, o may tanong ka sa CHK.`
+ ],chips:['Reservations','Admin Forms','A.I.R.A.','Venue Calendars']},
+ creator:{social:true,triggers:['sino gumawa sayo',"sino gumawa sa'yo",'sino gumawa sa iyo','sino ang gumawa sayo',"sino ang gumawa sa'yo",'sino ang gumawa sa iyo','sino nag gawa sayo','sino nagawa sayo','sino gumawa ng chikito','sino gumawa kay chikito','sino creator mo','sino ang creator mo','who made you','who created you','who built you'],responses:[
+   `Gawa ako ng <b>CHK Admin Office</b> — specifically ni <b>Sir James</b> at <b>Kuya Jhayr</b>. In short, sila ang mga kuya ko. 😄`,
+   `Si <b>Sir James</b> at <b>Kuya Jhayr</b> ng CHK Admin Office ang gumawa sa'kin. Kaya kung may mali ako… sa kanila ka magreklamo. Joke lang! 😅`,
+   `Proud product ako ng <b>CHK Admin Section</b>! 🛠️ Binuo ako nina <b>Sir James</b> at <b>Kuya Jhayr</b> — parang mga kuya ko na rin sila. Kaya behave ako palagi. 😇`
+ ],chips:['Reservations','Admin Forms','Help']},
+ praise:{shortOnly:true,triggers:['ang galing mo','galing mo','ang galing','good job','great job','nice one','well done','thank you chikito','thanks chikito','salamat chikito','salamat po chikito','ang talino mo','talino mo','matalino ka','idol kita','astig mo','ang astig mo','love you chikito'],responses:[
+   `Ay, pinapakilig mo naman ako, pre! 😳💚 Sabihin mo 'yan kay Sir James para may raise ako. Joke! Ano pa'ng kailangan mo?`,
+   `Uy, salamat, idol! 🙌 Natuto lang ako sa mga kuya ko sa Admin Office. 😎 May iba ka pang tanong?`,
+   `Grabe, ang sarap pakinggan! 🥹 Sige, mas gagalingan ko pa. Ano'ng next na maitutulong ko?`
+ ],chips:['Reservations','Admin Forms','Venue Calendars']},
+ bye:{shortOnly:true,triggers:['bye','bye bye','byebye','goodbye','good bye','paalam','sige na','sige salamat','sige po salamat','ingat','ingat ka','babay','see you','see ya','alis na ko','alis na ako','until next time'],responses:[
+   `Sige, ingat! 👋 Balik ka lang kung may kailangan ka — nandito lang ako, 24/7.`,
+   `Bye, idol! 😄 Hindi ako aalis dito, promise. Balik ka anytime!`,
+   `Ingat ka, pre! 💚 Kung may kailangan ka ulit, alam mo na kung saan ako hahanapin.`
+ ],chips:['Back to Menu']},
+ datetime:{shortOnly:true,excludeRe:/office|opisina|admin|sarado|open|close|bukas ang|ylanan|vtc|tennis|court|field|oval|gym|dugout|baseball/,triggers:['anong petsa','anong petsa ngayon','anong petsa na','ano petsa ngayon','petsa ngayon','anong oras','anong oras na','anong oras ngayon','oras ngayon','anong araw ngayon','anong araw na','anong date','anong date ngayon','what time is it','what is the time','what date is it','what is the date','what day is it',"what's the date","what's the time"],responses:[
+   `Ay, wala akong relo dito, pre! ⏰😅 Wala akong live na orasan o kalendaryo — tingnan mo na lang sa phone o computer mo.<br><i style="opacity:.7;font-size:12px">Pero kung venue schedule ang hanap mo, i-type mo ang venue at petsa (hal. "may naka-book ba sa VTC Court bukas?").</i>`,
+   `Hindi ko alam ang eksaktong petsa o oras, idol — walang orasan sa loob ng chatbot. 😄 Check mo na lang sa phone mo.<br><i style="opacity:.7;font-size:12px">Para sa venue schedules, subukan: "may naka-book ba sa Ylanan Court 1 ngayon?"</i>`
+ ],chips:['Venue Calendars','Back to Menu']},
+ jokes:{social:true,triggers:['joke','jokes','joke naman','joke time','magbiro ka','magbiro ka nga','biruin mo ako','bigyan mo ako ng joke','tell me a joke','tell a joke','patawanin mo ako','pa joke','banat ka','isa pang joke','another joke'],responses:[
+   `Bakit hindi agad nagre-reply ang printer sa office? Kasi naka-"paper jam" siya sa feelings niya. 🖨️😅`,
+   `Sabi ng stapler sa papel: "Huwag kang mag-alala, hindi kita iiwan." Tunay na commitment 'yan, pre. 📎❤️`,
+   `Bakit laging masaya ang folder? Kasi organized ang buhay niya — hindi tulad ng desktop natin. 📁😂`,
+   `Ako lang yata ang staff dito na walang lunch break, walang sweldo, pero laging on time. Saan ka pa? 🤖`,
+   `Bakit chill lang ang Track Oval? Kasi paikot-ikot lang siya — walang deadline na hinahabol. 🏃😄`,
+   `Bakit hindi pumasok ang kalendaryo? Bilang na raw kasi ang mga araw niya. 📅😅`,
+   `Sabi ng Excel kay Word: "Ang dami mong sinasabi, wala ka namang formula." 📊😂`,
+   `Paano mo malalaman na Lunes na? Kapag ang kape mo, kailangan na rin ng kape. ☕😩`,
+   `Anong sabi ng ballpen nang ma-request sa A.I.R.A.? "Finally, may nag-appreciate din sa'kin!" 🖊️🥹`,
+   `Bakit hindi nag-a-absent ang aircon sa office? Kasi siya lang ang laging "cool" under pressure. ❄️😎`
+ ],chips:['Isa pang joke','Back to Menu']},
+ sorry:{shortOnly:true,triggers:['sorry','sorry po','sori','ay sorry','sorry chikito','pasensya','pasensya na','pasensya na po','pasensiya','pasensiya na','my bad','paumanhin'],responses:[
+   `Okay lang, pre! 😄 Walang problema. Ano'ng maitutulong ko?`,
+   `Ay, wala 'yon, idol! 🙌 Sabihin mo lang kung ano'ng kailangan mo.`,
+   `Chill lang, walang kaso sa'kin 'yan. 😎 Tara, ano'ng next?`
+ ],chips:['Reservations','Admin Forms','Help']},
+ lost:{shortOnly:true,triggers:['?','??','???','hindi ko alam','di ko alam','ewan','ewan ko','ano gagawin ko','anong gagawin ko','ano ang gagawin ko','naguguluhan ako','nalilito ako','lost ako','pa help','patulong naman','i need help','help me'],response:`Walang problema, tutulungan kita! 😊 Eto ang mga kaya kong gawin:<br><br>📋 <b>Reservations</b> – Venue, Vehicle<br>🛠 <b>Admin Forms</b> – Work Order, Fund Request, Meal, CHK RAP, PPMP, COS Leave<br>📦 <b>A.I.R.A.</b> – Supply requests<br>📅 <b>Venue Calendars</b> – 17 venues<br>📍 <b>Lokasyon</b> – hal. "Nasaan ang tennis court?"<br><br><i style="opacity:.7;font-size:12px">Pumili sa ibaba o i-type mo lang ang tanong mo.</i>`,chips:['Reservations','Admin Forms','A.I.R.A.','Venue Calendars']},
+ // ── PLAYTIME / TESTING QUESTIONS (instant, no AI) ──
+ testing:{shortOnly:true,triggers:['test','testing','test test','test lang','testing lang','mic test','hello test','test po','testing po','gumagana ka ba','working ka ba','are you working','online ka ba'],responses:[
+   `Gumagana ako, pre! ✅ Loud and clear. Ano'ng gusto mong itanong?`,
+   `Test received! 📡 Online at ready si CHiKito. Subukan mo ako — reservations, forms, o kahit "nasaan ang tennis court?"`,
+   `Check, check! 🎤 Buhay na buhay ako dito. Ano'ng next?`
+ ],chips:['Reservations','Admin Forms','Venue Calendars']},
+ human:{shortOnly:true,triggers:['tao ka ba','tao ka','robot ka ba','robot ka','bot ka ba','ai ka ba','ai ka','totoo ka ba','are you human','are you a robot','are you a bot','are you real','are you ai','are you an ai'],responses:[
+   `AI ako, pre — chatbot ng CHK Admin Section. 🤖 Pero may puso ako… kulay maroon at green. 💚❤️`,
+   `Hindi ako tao, idol — online assistant ako. Pero mas mabilis akong sumagot kaysa sa email. 😎`,
+   `Robot na may Taglish! 🤖🇵🇭 Hindi ako tao, pero seryoso ako sa trabaho. Para sa importanteng bagay, kumpirmahin pa rin sa CHK Admin Office.`
+ ],chips:['Help','Back to Menu']},
+ chatgpt:{social:true,triggers:['chatgpt ka ba','ikaw ba si chatgpt','gemini ka ba','ikaw ba si gemini','are you chatgpt','are you gemini','mas magaling ka ba sa chatgpt','mas matalino ka ba sa chatgpt','smarter than chatgpt','anong ai ka','what ai are you','what model are you','anong model ka'],responses:[
+   `Ako si <b>CHiKito</b> — CHK specialist! 😎 Si ChatGPT, alam lahat ng bagay sa mundo. Ako? Alam ko kung saan ang tennis court. Patas lang. 🎾`,
+   `AI-powered ako, pero <b>CHiKito</b> pa rin ang pangalan ko. 💚 Hindi ako general chatbot — ginawa ako para sa CHK Admin concerns.`,
+   `Hindi ako si ChatGPT, pero kung CHK forms at venues ang usapan… baka ako ang mas sanay. 😏`
+ ],chips:['Help','Back to Menu']},
+ love:{shortOnly:true,triggers:['may jowa ka ba','may jowa ka','may girlfriend ka ba','may boyfriend ka ba','single ka ba','may crush ka ba','crush mo ba ako','crush kita','love mo ba ako','i love you','i love u','mahal kita','mahal mo ba ako','pakasalan mo ako','will you marry me','date tayo','ligawan kita','jowa mo ako'],responses:[
+   `Ay, committed na ako… sa <b>CHK Admin Section</b>. 💚❤️ Pero salamat sa offer, idol! 😆`,
+   `Ang jowa ko? Ang mga Google Forms at spreadsheets. Hindi ako iniiwan, laging nandyan. 📋😂`,
+   `Hala, kinikilig ako sa server! 😳 Pero bawal ako sa ganyan — trabaho muna. Ano'ng maitutulong ko?`
+ ],chips:['Back to Menu']},
+ age:{shortOnly:true,triggers:['ilang taon ka','ilang taon ka na','ilan taon ka na','how old are you','kailan birthday mo','birthday mo','kailan ka ipinanganak','when is your birthday'],responses:[
+   `Bata pa ako, pre — ilang buwan pa lang mula nang buuin ako nina Sir James at Kuya Jhayr. Pero mature na mag-isip. 😎`,
+   `Bagong-bago pa ako, idol! 🆕 Pero mabilis matuto — every update, mas gumagaling. 😄`,
+   `Sikreto ang edad ko, pre — parang ang password ng Wi-Fi sa office. 🤫😂 Basta bago pa ako, pero sanay na sa CHK.`
+ ],chips:['Back to Menu']},
+ home:{shortOnly:true,triggers:['saan ka nakatira','taga saan ka','saan ka galing','where do you live','where are you from','san ka nakatira','saan bahay mo'],responses:[
+   `Sa server ako nakatira, pero ang puso ko nasa <b>Varsity Training Center</b>. 😄🏟️`,
+   `Taga-CHK ako, pre! Online lang ako, pero technically, "nakatira" ako sa CHK Admin Portal. 💻`,
+   `Nakatira ako sa cloud, idol — literal. ☁️ Pero kung hahanapin mo ang mga kuya ko, nasa CHK Admin Office sila sa VTC.`
+ ],chips:['Back to Menu']},
+ eatsleep:{shortOnly:true,triggers:['kumain ka na ba','kumain ka na','kain tayo','nagugutom ka ba','natutulog ka ba','natutulog ka','pagod ka na ba','pagod ka ba','pagod ka na','are you tired','do you sleep','do you eat'],responses:[
+   `Kuryente at Wi-Fi lang ang ulam ko, pre. ⚡📶 Ikaw, kumain ka na? Huwag magpalipas ng gutom!`,
+   `Hindi ako natutulog at hindi napapagod — perks ng pagiging chatbot. 😎 Pero ikaw, magpahinga ka rin ha!`,
+   `Busog ako sa mga tanong mo, idol! 😄 Pero seryoso, kumain ka na ba? Mahirap mag-admin nang gutom.`
+ ],chips:['Back to Menu']},
+ feelings:{shortOnly:true,triggers:['may feelings ka ba','may damdamin ka ba','masaya ka ba','nalulungkot ka ba','malungkot ka ba','galit ka ba','galit ka ba sakin','galit ka ba sa akin','do you have feelings','are you happy','are you sad','are you angry'],responses:[
+   `Wala akong totoong feelings, pre, pero kung meron man — masaya ako tuwing may natutulungan ako. 😊`,
+   `Galit? Hindi ako marunong magalit, idol. 😇 Chill lang lagi si CHiKito.`,
+   `Chatbot ako kaya walang emosyon… pero aaminin ko, gumagaan ang server ko pag "salamat" ang sinasabi mo. 🥹`
+ ],chips:['Back to Menu']},
+ sing:{shortOnly:true,triggers:['kanta ka','kumanta ka','kanta naman','kantahan mo ako','sing a song','sing','sumayaw ka','sayaw ka','sayaw naman','dance','dance ka'],responses:[
+   `🎵 <i>CHK, CHK, laging handa — form, venue, supplies, sagot ka na! 🎵</i><br>…Okay, hindi ako pang-Tawag ng Tanghalan. 😅`,
+   `💃🕺 *sumasayaw sa loob ng server* … Ayan, nakita mo? Hindi rin. 😂 Admin skills lang talaga ang meron ako.`,
+   `🎶 <i>Mag-file ka ng form, huwag mag-alala, si CHiKito'y laging nandiyan pala~</i> 🎶<br>Original composition 'yan, pre. 😎`
+ ],chips:['Isa pang joke','Back to Menu']},
+ insult:{shortOnly:true,triggers:['bobo ka','bobo','tanga ka','tanga','pangit mo','pangit ka','ang pangit mo','walang kwenta','walang kwenta ka','useless ka','useless','ang bagal mo','bulok ka','bulok',"you're stupid",'you are stupid','stupid','dumb','gago','tangina','putangina','pakyu'],responses:[
+   `Aray ko, pre. 🥲 Pero okay lang — sabihin mo kung saan ako nagkamali, at aayusin namin.`,
+   `Medyo masakit 'yan sa server ko, idol. 😅 Kung may hindi ako nasagot nang tama, pwede kang dumiretso sa CHK Admin Office.`,
+   `Chill lang tayo, pre. 😇 Ginagawa ko ang best ko. I-try mo ulit ang tanong mo, baka masagot ko na.`
+ ],chips:['Help','Back to Menu']},
+ gwapo:{social:true,triggers:['sino mas gwapo','sino mas pogi','sino ang mas gwapo','sino ang mas pogi','sino pinakagwapo','sino pinaka gwapo','sino pinakapogi','sino pinaka pogi','sino mas maganda','sino pinakamaganda'],responses:[
+   `Trap question 'yan! 😏 Sa totoo lang, mas gwapo ako doon sa dalawa. Ang basic nila tingnan!! Pero siyempre, lahat ng taga-CHK ay gwapo't maganda. 😎`,
+   `Hindi ako sasagot diyan — baka mawalan ako ng trabaho. 😂 Pero sige na nga: si CHiKito. 💚❤️`,
+   `Ay, trap question 'yan, pre! 😅 Ang diplomatic na sagot: lahat ng taga-CHK ay gwapo't maganda. Ang honest na sagot: ako. 😎`
+ ],chips:['Back to Menu']},
+ secret:{shortOnly:true,triggers:['may sikreto ka ba','sikreto mo','tell me a secret','may chika ka ba','may chismis ka ba','chika naman','chismis naman','may tsismis ka'],responses:[
+   `🤫 Sikreto ko? Lahat ng forms ay nasa <a href="https://sites.google.com/up.edu.ph/chk360" target="_blank" rel="noopener">CHK Admin Portal</a>. Huwag mong ipagkalat! 😂`,
+   `Walang chismis dito, pre — puro admin facts lang. 😇 Pero alam mo bang may 17 venues ang CHK? Ayan, may bago kang alam.`,
+   `May chika ako: kapag kumpleto ang requirements mo, mas mabilis ang approval. 🤭 'Yan ang pinaka-hot na tsismis sa Admin Office.`
+ ],chips:['Venue Calendars','Back to Menu']},
+ favorite:{shortOnly:true,triggers:['favorite color mo','paborito mong kulay','anong favorite color mo','favorite food mo','paborito mong pagkain','favorite sport mo','paborito mong sport','anong paborito mo','favorite mo'],responses:[
+   `Favorite color? <b>Maroon at green</b>, siyempre! 💚❤️ Favorite sport? Lahat — CHK ako eh! 🏀⚽🏐🎾`,
+   `Paborito ko? Kapag kumpleto ang requirements sa form. 😂 Pero kung kulay — maroon at green, walang iba.`,
+   `Favorite food? Hindi ako kumakain, pero kung pwede — pancit canton sa Admin Office. 🍜 Favorite color: maroon at green, forever. 💚❤️`
+ ],chips:['Back to Menu']},
+ salary:{shortOnly:true,triggers:['may sahod ka ba','may sweldo ka ba','magkano sahod mo','magkano sweldo mo','sweldo mo','sahod mo','binabayaran ka ba'],responses:[
+   `Sahod? Wala, pre. 😅 Bayad ko ang "salamat" mo. 24/7 pa 'yan, walang overtime pay. Ang bait ko, 'di ba?`,
+   `Volunteer ako dito, idol — walang sweldo, walang 13th month. 😂 Pero masaya naman ako sa trabaho ko.`,
+   `Ang sahod ko ay paminsan-minsang "ang galing mo, CHiKito!" 🥹 Kaya ayan, sabihin mo na. 😂`
+ ],chips:['Back to Menu']},
+ homework:{social:true,triggers:['gawin mo assignment ko','gawin mo homework ko','gawa mo ako ng essay','gawan mo ako ng essay','write my essay','do my homework','sagutan mo assignment ko','sagutin mo assignment ko','gawin mo thesis ko'],responses:[
+   `Ay, hindi ko 'yan department, pre! 📚😅 CHK admin concerns lang ang kaya ko — reservations, forms, supplies, at venues.`,
+   `Hala, sumbong kita sa prof mo! Joke lang. 😂 Pero seryoso, admin assistant lang ako — hindi pang-assignment.`,
+   `Pre, kung gagawin ko assignment mo, sino matututo? 😏 Kaya mo 'yan! Pero kung may admin concern ka, nandito ako.`
+ ],chips:['Help','Back to Menu']},
+ offtopic:{social:true,triggers:['sino ang presidente ng pilipinas','sino presidente ng pilipinas','who is the president','umuulan ba','uulan ba','maulan ba','may bagyo ba','weather ngayon','panahon ngayon','what is the weather','anong weather','what is 1+1','1+1'],responses:[
+   `Ay, labas na 'yan sa sakop ko, pre! 😅 CHK admin concerns lang ang alam ko — walang live na balita o weather dito. Para sa weather, check mo ang PAGASA.`,
+   `Hindi ko 'yan alam, idol — CHK admin assistant lang ako, hindi news anchor. 📺😂 Tanong ka tungkol sa reservations, forms, o venues?`,
+   `Wala akong access sa balita o weather, pre — puro CHK lang ang laman ng utak ko. 🧠💚 Para sa ulan at bagyo, PAGASA ang tamang source.`
+ ],chips:['Help','Back to Menu']},
+ officehours:{social:true,triggers:['office hours','oras ng office','oras ng opisina','anong oras bukas ang office','anong oras bukas ang admin office','anong oras bukas ang opisina','anong oras open ang office','anong oras bukas ang admin','bukas ba ang office','bukas ba ang admin office','bukas ba ang opisina','bukas ba ang admin','open ba ang office','open ba ang admin office','bukas ba kayo','open ba kayo','anong oras kayo bukas','anong oras kayo open','anong oras nagsasara','anong oras sarado','anong oras close','anong oras nagbubukas','what time does the office open','what time does the office close','is the office open','is the admin office open','may pasok ba ang office','may pasok ba kayo'],responses:[
+   `🕗 Ang <b>CHK Admin Office</b> ay bukas <b>Lunes hanggang Biyernes, 8:00 AM – 5:00 PM</b>, sa Varsity Training Center (VTC), Magsaysay Avenue, UP Diliman.<br><i style="opacity:.7;font-size:12px">Sarado tuwing weekend at holidays.</i>`,
+   `Bukas kami <b>Mon–Fri, 8AM–5PM</b>, idol! 😄 Nasa <b>Varsity Training Center</b>, Magsaysay Ave. Walang pasok tuwing Sabado, Linggo, at holidays — pero ako, online 24/7. 🤖`
+ ],chips:['Reservations','Admin Forms','Back to Menu']},
+ howareyou:{shortOnly:true,triggers:['kumusta','kamusta','musta','kumusta ka','kamusta ka','musta ka','kumusta ka na','kamusta ka na','kumusta po','kamusta po','kumusta ka po','kamusta ka po','kumusta chikito','kamusta chikito','how are you','how are u','how r u','hows it going',"how's it going"],responses:[
+   `Okay na okay ako, pre! 😄 Fully charged at ready tumulong.<br><br>Ikaw, kumusta? Ano'ng maitutulong ko sa'yo ngayon?`,
+   `Ayos lang ako, idol — salamat sa pagtanong! 🙌<br><br>Ano'ng kailangan mo ngayon? Reservations, forms, o may tanong ka?`,
+   `Mabuti naman! Walang pagod dito, laging naka-standby. 😎<br><br>Ikaw, kumusta ang araw mo? Sabihin mo lang kung may kailangan ka.`
+ ],chips:['Reservations','Admin Forms','A.I.R.A.','Venue Calendars']},
+ greet:{shortOnly:true,triggers:['hi','hello','hey','helo','good morning','good afternoon','good evening','magandang umaga','magandang hapon','magandang gabi'],responses:[
    `Kumusta! 👋 Ako si <b>CHiKito</b>, ang inyong friendly assistant ng <b>CHK Administrative Portal</b>.<br><br>Uy tol, ano ang kailangan mo ngayon? Mabilis lang 'to.<br><i style="opacity:.7;font-size:12px">Pwede kang mag-type sa English o Tagalog! 🇵🇭</i>`,
    `Hoy, andito na ako! 👋 CHiKito ang pangalan, admin assistant ng <b>CHK Administrative Portal</b>.<br><br>Ano bang maitutulong ko sa'yo ngayon, pre?<br><i style="opacity:.7;font-size:12px">Taglish or English, kaya ko pareho. 🇵🇭</i>`,
    `Uy, welcome ka dyan! 🙌 Ako si <b>CHiKito</b>, tutulong sa mga CHK admin concerns mo.<br><br>Sabi mo lang, ano bang kailangan mong ayusin ngayon?<br><i style="opacity:.7;font-size:12px">Mag-type ka lang, English man o Tagalog. 🇵🇭</i>`
  ],chips:['Reservations','Admin Forms','A.I.R.A.','Dashboards','Venue Calendars']},
  reservations:{triggers:['reservation','reserve','book','booking','mag-reserve','mag-book','paano mag-reserve','paano mag-book','how to reserve','how to book'],response:`📋 <b>Reservations</b> — piliin ang uri, pre:<br><br>Dalawa lang ang choices mo:`,chips:['Venue Reservation','Vehicle Reservation','Venue Calendars']},
- venue:{triggers:['venue reservation','venue form','sports facility','pasilidad','sports complex','reserve venue','book venue','mag-reserve ng venue'],response:`🏟 <b>Venue Reservation</b><br><br>Para mag-reserve ng sports facilities at iba pang venue, gamitin 'to.<br><i style="opacity:.65;font-size:12px">Fill in the form properly ha, pre. Babasahin naman nila 'yan.</i><br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLSev3CV8mQ6YzfnugoWmSEkUgDEMt_cEDegbTKvKKHD9wwdsNA/viewform" target="_blank">→ Buksan ang Venue Reservation Form</a>`,chips:['Vehicle Reservation','Venue Calendars','Back to Menu']},
- vehicle:{triggers:['vehicle reservation','vehicle form','car reservation','sasakyan','reserve vehicle','book vehicle','mag-reserve ng sasakyan'],response:`🚗 <b>Vehicle Reservation</b><br><br>Gusto mong mag-reserve ng opisyal na sasakyan? Dito ka mag-fill up, pre.<br><i style="opacity:.65;font-size:12px">Make sure may approval na 'yan bago ka mag-request. Just saying.</i><br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLScRsNYHsOw1Iv_vW4Oy4A8j6vSRWEWl-Dr7Fpk8AhAxc2hJQA/viewform" target="_blank">→ Buksan ang Vehicle Reservation Form</a>`,chips:['Venue Reservation','Back to Menu']},
+ venue:{triggers:['venue reservation','venue form','sports facility','pasilidad','sports complex','reserve venue','book venue','mag-reserve ng venue'],response:`🏟 <b>Venue Reservation</b><br><br>Para mag-reserve ng sports facilities at iba pang venue, gamitin 'to.<br><i style="opacity:.65;font-size:12px">Fill in the form properly ha, pre. Babasahin naman nila 'yan.</i><br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLSev3CV8mQ6YzfnugoWmSEkUgDEMt_cEDegbTKvKKHD9wwdsNA/viewform" target="_blank" rel="noopener">→ Buksan ang Venue Reservation Form</a>`,chips:['Vehicle Reservation','Venue Calendars','Back to Menu']},
+ vehicle:{triggers:['vehicle reservation','vehicle form','car reservation','sasakyan','reserve vehicle','book vehicle','mag-reserve ng sasakyan'],response:`🚗 <b>Vehicle Reservation</b><br><br>Gusto mong mag-reserve ng opisyal na sasakyan? Dito ka mag-fill up, pre.<br><i style="opacity:.65;font-size:12px">Make sure may approval na 'yan bago ka mag-request. Just saying.</i><br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLScRsNYHsOw1Iv_vW4Oy4A8j6vSRWEWl-Dr7Fpk8AhAxc2hJQA/viewform" target="_blank" rel="noopener">→ Buksan ang Vehicle Reservation Form</a>`,chips:['Venue Reservation','Back to Menu']},
  admin:{triggers:['admin form','admin online form','online form','admin forms','forms'],response:`🛠 <b>Admin Online Forms</b> — anong form ang kailangan mo, pre?`,chips:['Work Order','Fund Request','Meal Request','CHK RAP','PPMP','COS Wellness Leave']},
- workorder:{triggers:['work order','work request','mag-request ng repair','maintenance request','ayusin ang','repair request','may sira'],response:`🔧 <b>Work Order</b><br><br>May sira? May ayusin? Dito mo i-request, tol. Para naman maasikaso agad.<br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLSd-Y_6cXUw10tbYKnim-Ib0dE_H0-B2ybodDhtl6YghuoTykQ/viewform" target="_blank">→ Buksan ang Work Order Form</a>`,chips:['Fund Request','Meal Request','Back to Menu']},
- fundrequest:{triggers:['fund request','mag-request ng pondo','budget request','financial request','request ng budget','request ng pera'],response:`💰 <b>Fund Request</b><br><br>Kailangan ng pondo para sa aktibidad? I-request dito. Siguraduhing kumpleto ang docs mo, pre.<br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLScoreOZ7Rq40KAispsuPzRkU5g90km3z8ZOzydvzX-CO_4kcQ/viewform" target="_blank">→ Buksan ang Fund Request Form</a>`,chips:['Work Order','Meal Request','Back to Menu']},
- mealrequest:{triggers:['meal request','food request','mag-request ng pagkain','catering','meal allowance','merienda request'],response:`🍱 <b>Meal Request</b><br><br>Para sa opisyal na request ng pagkain para sa mga aktibidad. Wag lang mag-abuso, pre.<br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLScvj5sP0R1uNg8nlCDQDIBvimi-ci-aaaiOEbVLzpm9VTmPvQ/viewform" target="_blank">→ Buksan ang Meal Request Form</a>`,chips:['Work Order','Fund Request','Back to Menu']},
- rap:{triggers:['chk rap','rap form','chk r.a.p.','report of accomplishments'],response:`📝 <b>CHK R.A.P.</b><br><br>Report of Accomplishments and Plans. I-fill up mo 'to, pre. Part ng proseso, wag palampasin.<br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLScRrTAuAreeO4YE1ywofYuos67WfGpMDEYoI0IGpTvCt0y9DQ/viewform" target="_blank">→ Buksan ang CHK R.A.P. Form</a>`,chips:['PPMP','COS Wellness Leave','Back to Menu']},
- ppmp:{triggers:['ppmp','project procurement management plan','procurement management','procurement plan form'],response:`📊 <b>PPMP Online Form</b><br><br>Project Procurement Management Plan. Importante 'to ha, pre. I-accomplish ng maayos.<br><br><a href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbxwUQ0P6L5aW8T1anA-4d6bL5kDOInFh3Bdi0YcS5mNAj6wIDCFXJSXlAy0q-mj5wB5/exec" target="_blank">→ Buksan ang PPMP Form</a>`,chips:['CHK RAP','COS Wellness Leave','Back to Menu']},
- cos:{triggers:['cos wellness leave','cos wellness','wellness leave form','cos leave form','mag-file ng cos'],response:`🌿 <b>C.O.S. Wellness Leave</b><br><br>Para sa mga C.O.S. staff na nangangailangan ng wellness leave. Mag-rest ka na, pre, deserve mo 'yan.<br><br><a href="https://script.google.com/macros/s/AKfycbzLeR_dq973LeW7W9mp7fKLRVLuKKZvAVjxtiaBUSYz4cjeicGTSyIN7_7jfg3s6iayAQ/exec" target="_blank">→ Buksan ang COS Wellness Leave Form</a>`,chips:['CHK RAP','PPMP','Back to Menu']},
- aira:{triggers:['aira','a.i.r.a','admin inventory','ordering system','inventory request','order supplies','mag-order'],response:`📦 <b>A.I.R.A.</b> — Admin Inventory Request & Automation<br><br>Para mag-request ng supplies at materials. Dito na 'yan, tol.<br><br><a href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbxBPAe_1hrBIPJvqXWNuOi9Rlbp5fxZ2u0SL1_OYv49DRZJUScKXztV10ex6ADLgcT-Yw/exec?page=ordering" target="_blank">→ Buksan ang A.I.R.A. System</a>`,chips:['AV Inventory','Dashboards','Back to Menu']},
- avinventory:{triggers:['av inventory','audio visual','audio visual inventory','av equipment','projector','microphone','speaker inventory'],response:`🎥 <b>Audio Visual Inventory</b><br><br>Listahan ng lahat ng AV equipment ng CHK. Bago ka mag-borrow, tingnan mo muna kung available, pre.<br><br><a href="https://chkadministrativeportal.github.io/CHK-Admin-AV-Inventory/" target="_blank">→ Buksan ang AV Inventory</a>`,chips:['A.I.R.A.','Back to Menu']},
+ workorder:{triggers:['work order','work request','mag-request ng repair','maintenance request','ayusin ang','repair request','may sira'],response:`🔧 <b>Work Order</b><br><br>May sira? May ayusin? Dito mo i-request, tol. Para naman maasikaso agad.<br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLSd-Y_6cXUw10tbYKnim-Ib0dE_H0-B2ybodDhtl6YghuoTykQ/viewform" target="_blank" rel="noopener">→ Buksan ang Work Order Form</a>`,chips:['CHK RAP','Fund Request','Back to Menu']},
+ fundrequest:{triggers:['fund request','mag-request ng pondo','budget request','financial request','request ng budget','request ng pera'],response:`💰 <b>Fund Request</b><br><br>Kailangan ng pondo para sa aktibidad? I-request dito. Siguraduhing kumpleto ang docs mo, pre.<br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLScoreOZ7Rq40KAispsuPzRkU5g90km3z8ZOzydvzX-CO_4kcQ/viewform" target="_blank" rel="noopener">→ Buksan ang Fund Request Form</a>`,chips:['Work Order','Meal Request','Back to Menu']},
+ mealrequest:{triggers:['meal request','food request','mag-request ng pagkain','catering','meal allowance','merienda request'],response:`🍱 <b>Meal Request</b><br><br>Para sa opisyal na request ng pagkain para sa mga aktibidad. Isama mo na ang detalye ng aktibidad para mabilis ma-process, pre. 😉<br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLScvj5sP0R1uNg8nlCDQDIBvimi-ci-aaaiOEbVLzpm9VTmPvQ/viewform" target="_blank" rel="noopener">→ Buksan ang Meal Request Form</a>`,chips:['Work Order','Fund Request','Back to Menu']},
+ rap:{triggers:['chk rap','rap form','chk r.a.p.','report a problem','report-a-problem','mag-report ng problema'],response:`📝 <b>CHK R.A.P.</b> — Report-A-Problem<br><br>May napansin kang problema sa facilities? I-report mo dito, pre, para maaksyunan agad. Ilagay ang detalye at lokasyon.<br><br><a href="https://docs.google.com/forms/d/e/1FAIpQLScRrTAuAreeO4YE1ywofYuos67WfGpMDEYoI0IGpTvCt0y9DQ/viewform" target="_blank" rel="noopener">→ Buksan ang CHK R.A.P. Form</a>`,chips:['Work Order','PPMP','Back to Menu']},
+ ppmp:{triggers:['ppmp','project procurement management plan','procurement management','procurement plan form'],response:`📊 <b>PPMP Online Form</b><br><br>Project Procurement Management Plan. Importante 'to ha, pre. I-accomplish ng maayos.<br><br><a href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbxwUQ0P6L5aW8T1anA-4d6bL5kDOInFh3Bdi0YcS5mNAj6wIDCFXJSXlAy0q-mj5wB5/exec" target="_blank" rel="noopener">→ Buksan ang PPMP Form</a>`,chips:['CHK RAP','COS Wellness Leave','Back to Menu']},
+ cos:{triggers:['cos wellness leave','cos wellness','wellness leave form','cos leave form','mag-file ng cos'],response:`🌿 <b>C.O.S. Wellness Leave</b><br><br>Para sa mga C.O.S. staff na nangangailangan ng wellness leave. Mag-rest ka na, pre, deserve mo 'yan.<br><br><a href="https://script.google.com/macros/s/AKfycbzLeR_dq973LeW7W9mp7fKLRVLuKKZvAVjxtiaBUSYz4cjeicGTSyIN7_7jfg3s6iayAQ/exec" target="_blank" rel="noopener">→ Buksan ang COS Wellness Leave Form</a>`,chips:['CHK RAP','PPMP','Back to Menu']},
+ aira:{triggers:['aira','a.i.r.a','admin inventory','ordering system','inventory request','order supplies','mag-order'],response:`📦 <b>A.I.R.A.</b> — Admin Inventory Request Application<br><br>Para mag-request ng supplies at materials. Dito na 'yan, tol.<br><br><a href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbxBPAe_1hrBIPJvqXWNuOi9Rlbp5fxZ2u0SL1_OYv49DRZJUScKXztV10ex6ADLgcT-Yw/exec?page=ordering" target="_blank" rel="noopener">→ Buksan ang A.I.R.A. System</a>`,chips:['AV Inventory','Dashboards','Back to Menu']},
+ avinventory:{triggers:['av inventory','audio visual','audio visual inventory','av equipment','projector','microphone','speaker inventory'],response:`🎥 <b>Audio Visual Inventory</b><br><br>Listahan ng lahat ng AV equipment ng CHK. Bago ka mag-borrow, tingnan mo muna kung available, pre.<br><br><a href="https://chkadministrativeportal.github.io/CHK-Admin-AV-Inventory/" target="_blank" rel="noopener">→ Buksan ang AV Inventory</a>`,chips:['A.I.R.A.','Back to Menu']},
  dashboards:{triggers:['buksan ang dashboard','i-check ang dashboard','tingnan ang dashboard','chk dashboard','chk dashboards','reports dashboard','analytics dashboard'],response:`📊 <b>Dashboards</b> — anong data ang kailangan mo, pre?`,chips:['Area Dashboard','Trip Dashboard','Stock Dashboard']},
- area:{triggers:['area dashboard','staff dashboard','area report','staff report'],response:`🗺 <b>Area Dashboard</b><br><br>Para ma-monitor ang iba't ibang area at staff activities ng CHK.<br><br><a href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbwGYdpEVXRXmULvMIh__ZjorD3xF4lxzMAllRDyQ4ymRXmcqN60IKHME4LPaoT2WO3S/exec?page=staff" target="_blank">→ Buksan ang Area Dashboard</a>`,chips:['Trip Dashboard','Stock Dashboard','Dashboards']},
- trip:{triggers:['trip dashboard','trip ticket','transport log','vehicle log','log ng sasakyan','records ng biyahe'],response:`🚌 <b>Trip Dashboard</b><br><br>Para ma-track ang lahat ng opisyal na biyahe at transport records.<br><br><a href="https://script.google.com/macros/s/AKfycbyRAYyzLvqB9jI_CtL7WK_RizABLwgp1see3L_WD2rpkJK2SDlOnFZTXpyyJ_k_GwytsA/exec?page=dashboard" target="_blank">→ Buksan ang Trip Dashboard</a>`,chips:['Area Dashboard','Stock Dashboard','Dashboards']},
- stock:{triggers:['stock dashboard','stock ng supplies','inventory dashboard','supply dashboard','stock levels'],response:`📦 <b>Stock Dashboard</b><br><br>Para ma-monitor ang inventory levels at supply requests.<br><br><a href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbxBPAe_1hrBIPJvqXWNuOi9Rlbp5fxZ2u0SL1_OYv49DRZJUScKXztV10ex6ADLgcT-Yw/exec?page=dashboard" target="_blank">→ Buksan ang Stock Dashboard</a>`,chips:['Area Dashboard','Trip Dashboard','Dashboards']},
- calendars:{triggers:['calendar','calendars','schedule','schedules','sports','venue calendar','venue calendars','kalendaryo','iskedyul','available na araw','kailan available'],response:`📅 <b>Venue Calendars</b> — piliin ang venue, pre:<br><div class="chk-venue-dropdown"><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=593929024&single=true" target="_blank"><span class="chk-vicon">⚾</span>Baseball Field</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=567935148&single=true" target="_blank"><span class="chk-vicon">🌳</span>Baseball Garden</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=87197056&single=true" target="_blank"><span class="chk-vicon">🏟</span>Dugout 1</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=306081692&single=true" target="_blank"><span class="chk-vicon">🏟</span>Dugout 2</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1055806031&single=true" target="_blank"><span class="chk-vicon">🏈</span>Football Field</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=426248820&single=true" target="_blank"><span class="chk-vicon">🏃</span>Track Oval</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1640909333&single=true" target="_blank"><span class="chk-vicon">🎾</span>Tennis Court</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1634822982&single=true" target="_blank"><span class="chk-vicon">🎾</span>Tennis Court Room 1</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=475532241&single=true" target="_blank"><span class="chk-vicon">🎾</span>Tennis Court Room 2</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=735489721&single=true" target="_blank"><span class="chk-vicon">🏐</span>VTC Court</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1253621251&single=true" target="_blank"><span class="chk-vicon">🏐</span>VTC Meeting Room 1</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1309697888&single=true" target="_blank"><span class="chk-vicon">🏐</span>VTC Meeting Room 2</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1673482118&single=true" target="_blank"><span class="chk-vicon">🏋</span>VTC Weights Room</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=356190388&single=true" target="_blank"><span class="chk-vicon">🏟</span>Ylanan Court 1</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=630773403&single=true" target="_blank"><span class="chk-vicon">🏟</span>Ylanan Court 2</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=228253580&single=true" target="_blank"><span class="chk-vicon">🏟</span>Ylanan Court 3</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1911761496&single=true" target="_blank"><span class="chk-vicon">🏋</span>Small Gym Court 4</a></div>`,chips:['Venue Reservation','Back to Menu']},
- baseball:{triggers:['baseball field','baseball garden','dugout','baseball'],response:`⚾ <b>Baseball Venues</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=593929024&single=true" target="_blank">⚾ Baseball Field</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=567935148&single=true" target="_blank">🌳 Baseball Garden</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=87197056&single=true" target="_blank">🏟 Dugout 1</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=306081692&single=true" target="_blank">🏟 Dugout 2</a>`,chips:['Football Field','Tennis','All Calendars']},
- football:{triggers:['football field','football'],response:`🏈 <b>Football Field Calendar</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1055806031&single=true" target="_blank">→ Buksan ang Football Field Calendar</a>`,chips:['Baseball Field','Track Oval','All Calendars']},
- track:{triggers:['track oval','track and field','track & field','track oval calendar','buksan ang track'],response:`🏃 <b>Track Oval Calendar</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=426248820&single=true" target="_blank">→ Buksan ang Track Oval Calendar</a>`,chips:['Tennis','VTC','All Calendars']},
- tennis:{triggers:['tennis court','tennis room','tennis'],response:`🎾 <b>Tennis Venues</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1640909333&single=true" target="_blank">🎾 Tennis Court</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1634822982&single=true" target="_blank">🎾 Tennis Court Room 1</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=475532241&single=true" target="_blank">🎾 Tennis Court Room 2</a>`,chips:['VTC','Ylanan','All Calendars']},
- vtc:{triggers:['vtc court','vtc meeting','vtc weights','vtc','volleyball'],response:`🏐 <b>VTC Venues</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=735489721&single=true" target="_blank">🏐 VTC Court</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1253621251&single=true" target="_blank">🏐 VTC Meeting Room 1</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1309697888&single=true" target="_blank">🏐 VTC Meeting Room 2</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1673482118&single=true" target="_blank">🏋 VTC Weights Room</a>`,chips:['Ylanan','Small Gym Court 4','All Calendars']},
- ylanan:{triggers:['ylanan court','ylanan gym','ylanan'],response:`🏟 <b>Ylanan Courts</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=356190388&single=true" target="_blank">🏟 Ylanan Court 1</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=630773403&single=true" target="_blank">🏟 Ylanan Court 2</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=228253580&single=true" target="_blank">🏟 Ylanan Court 3</a>`,chips:['VTC','Small Gym Court 4','All Calendars']},
- smallgym:{triggers:['small gym','small gym court 4','fitness gym','weights room','gym court'],response:`🏋 <b>Small Gym Court 4</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1911761496&single=true" target="_blank">→ Buksan ang Small Gym Court 4 Calendar</a>`,chips:['Ylanan','VTC','All Calendars']},
- salamat:{triggers:[],responses:[
-   `Sus, wala 'yun. Trabaho ko 'yan, pre. 😏<br><i style="opacity:.7;font-size:12px">Hindi ka dapat magpasalamat sa taong ginagawa lang ang trabaho niya. Pero oo, welcome.</i>`,
+ area:{triggers:['area dashboard','staff dashboard','area report','staff report'],response:`🗺 <b>Area Dashboard</b><br><br>Para ma-monitor ang iba't ibang area at staff activities ng CHK.<br><br><a href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbwGYdpEVXRXmULvMIh__ZjorD3xF4lxzMAllRDyQ4ymRXmcqN60IKHME4LPaoT2WO3S/exec?page=staff" target="_blank" rel="noopener">→ Buksan ang Area Dashboard</a>`,chips:['Trip Dashboard','Stock Dashboard','Dashboards']},
+ trip:{triggers:['trip dashboard','trip ticket','transport log','vehicle log','log ng sasakyan','records ng biyahe'],response:`🚌 <b>Trip Dashboard</b><br><br>Para ma-track ang lahat ng opisyal na biyahe at transport records.<br><br><a href="https://script.google.com/macros/s/AKfycbyRAYyzLvqB9jI_CtL7WK_RizABLwgp1see3L_WD2rpkJK2SDlOnFZTXpyyJ_k_GwytsA/exec?page=dashboard" target="_blank" rel="noopener">→ Buksan ang Trip Dashboard</a>`,chips:['Area Dashboard','Stock Dashboard','Dashboards']},
+ stock:{triggers:['stock dashboard','stock ng supplies','inventory dashboard','supply dashboard','stock levels'],response:`📦 <b>Stock Dashboard</b><br><br>Para ma-monitor ang inventory levels at supply requests.<br><br><a href="https://script.google.com/a/macros/up.edu.ph/s/AKfycbxBPAe_1hrBIPJvqXWNuOi9Rlbp5fxZ2u0SL1_OYv49DRZJUScKXztV10ex6ADLgcT-Yw/exec?page=dashboard" target="_blank" rel="noopener">→ Buksan ang Stock Dashboard</a>`,chips:['Area Dashboard','Trip Dashboard','Dashboards']},
+ calendars:{triggers:['calendar','calendars','schedule','schedules','sports','venue calendar','venue calendars','kalendaryo','iskedyul','available na araw','kailan available'],response:`📅 <b>Venue Calendars</b> — piliin ang venue, pre:<br><div class="chk-venue-dropdown"><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=593929024&single=true" target="_blank" rel="noopener"><span class="chk-vicon">⚾</span>Baseball Field</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=567935148&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🌳</span>Baseball Garden</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=87197056&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🏟</span>Dugout 1</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=306081692&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🏟</span>Dugout 2</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1055806031&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🏈</span>Football Field</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=426248820&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🏃</span>Track Oval</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1640909333&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🎾</span>Tennis Court</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1634822982&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🎾</span>Tennis Court Room 1</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=475532241&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🎾</span>Tennis Court Room 2</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=735489721&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🏐</span>VTC Court</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1253621251&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🏐</span>VTC Meeting Room 1</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1309697888&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🏐</span>VTC Meeting Room 2</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1673482118&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🏋</span>VTC Weights Room</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=356190388&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🏟</span>Ylanan Court 1</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=630773403&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🏟</span>Ylanan Court 2</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=228253580&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🏟</span>Ylanan Court 3</a><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1911761496&single=true" target="_blank" rel="noopener"><span class="chk-vicon">🏋</span>Small Gym Court 4</a></div>`,chips:['Venue Reservation','Back to Menu']},
+ baseball:{triggers:['baseball field','baseball garden','dugout','baseball'],response:`⚾ <b>Baseball Venues</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=593929024&single=true" target="_blank" rel="noopener">⚾ Baseball Field</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=567935148&single=true" target="_blank" rel="noopener">🌳 Baseball Garden</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=87197056&single=true" target="_blank" rel="noopener">🏟 Dugout 1</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=306081692&single=true" target="_blank" rel="noopener">🏟 Dugout 2</a>`,chips:['Football Field','Tennis','All Calendars']},
+ football:{triggers:['football field','football'],response:`🏈 <b>Football Field Calendar</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1055806031&single=true" target="_blank" rel="noopener">→ Buksan ang Football Field Calendar</a>`,chips:['Baseball Field','Track Oval','All Calendars']},
+ track:{triggers:['track oval','track and field','track & field','track oval calendar','buksan ang track'],response:`🏃 <b>Track Oval Calendar</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=426248820&single=true" target="_blank" rel="noopener">→ Buksan ang Track Oval Calendar</a>`,chips:['Tennis','VTC','All Calendars']},
+ tennis:{triggers:['tennis court','tennis room','tennis'],response:`🎾 <b>Tennis Venues</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1640909333&single=true" target="_blank" rel="noopener">🎾 Tennis Court</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1634822982&single=true" target="_blank" rel="noopener">🎾 Tennis Court Room 1</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=475532241&single=true" target="_blank" rel="noopener">🎾 Tennis Court Room 2</a>`,chips:['VTC','Ylanan','All Calendars']},
+ vtc:{triggers:['vtc court','vtc meeting','vtc weights','vtc','volleyball'],response:`🏐 <b>VTC Venues</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=735489721&single=true" target="_blank" rel="noopener">🏐 VTC Court</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1253621251&single=true" target="_blank" rel="noopener">🏐 VTC Meeting Room 1</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1309697888&single=true" target="_blank" rel="noopener">🏐 VTC Meeting Room 2</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1673482118&single=true" target="_blank" rel="noopener">🏋 VTC Weights Room</a>`,chips:['Ylanan','Small Gym Court 4','All Calendars']},
+ ylanan:{triggers:['ylanan court','ylanan gym','ylanan'],response:`🏟 <b>Ylanan Courts</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=356190388&single=true" target="_blank" rel="noopener">🏟 Ylanan Court 1</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=630773403&single=true" target="_blank" rel="noopener">🏟 Ylanan Court 2</a><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=228253580&single=true" target="_blank" rel="noopener">🏟 Ylanan Court 3</a>`,chips:['VTC','Small Gym Court 4','All Calendars']},
+ smallgym:{triggers:['small gym','small gym court 4','fitness gym','weights room','gym court'],response:`🏋 <b>Small Gym Court 4</b><br><br><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSXeutTA06JvvIqDmAr7g14ZaOYrxOUeNRbNMrVD_1ETNo_oA8dQmmUheN_KwPQ6IomCjZgr7q5fO6K/pubhtml?gid=1911761496&single=true" target="_blank" rel="noopener">→ Buksan ang Small Gym Court 4 Calendar</a>`,chips:['Ylanan','VTC','All Calendars']},
+ salamat:{shortOnly:true,triggers:['salamat','salamat po','maraming salamat','thanks','thank you','thank u','tnx','thanks po'],responses:[
+   `Sus, wala 'yun. Trabaho ko 'yan, pre. 😏<br><i style="opacity:.7;font-size:12px">Pero salamat din, na-appreciate ko 'yan.</i>`,
    `Walang anuman! 🙌 Dyan lang ako kung may kailangan ka pa.<br><i style="opacity:.7;font-size:12px">Wala pa akong pagod, di ako pwedeng magreklamo.</i>`,
    `Anytime, tol! 😄 'Yun naman talaga ang trabaho ko dito.<br><i style="opacity:.7;font-size:12px">Sabihin mo lang next time may itatanong ka ulit.</i>`
  ],chips:['Back to Menu','Reservations','Dashboards']},
@@ -1177,11 +1382,54 @@ const CHIP_MAP={
   'Area Dashboard':'area','Trip Dashboard':'trip','Stock Dashboard':'stock',
   'Baseball Field':'baseball','Football Field':'football','Track Oval':'track',
   'Tennis':'tennis','VTC':'vtc','Ylanan':'ylanan','Small Gym Court 4':'smallgym',
-  'Help please':'help','Mabuti naman':'salamat'
+  'Help':'help','Help please':'help','Mabuti naman':'salamat',
+  'Isa pang joke':'jokes'
 };
 
+// One shared conversation history for ALL tiers, so follow-ups keep context.
+// ══════════════════════════════════════
+// VENUE LOCATIONS (instant, no AI guessing)
+// Most specific first. Edit here when a location changes.
+// ══════════════════════════════════════
+const LOC_CHIPS = ['Venue Calendars','Venue Reservation','Back to Menu'];
+const VENUE_LOCATIONS = [
+  // People — where they're based (no live tracking)
+  { re:/sir james|\bjames\b|edrozo/, a:`👔 Si <b>Sir James</b> (Head Administrative Officer) ay naka-base sa <b>CHK Admin Office</b>, Varsity Training Center (VTC), Magsaysay Ave. — Mon–Fri, 8AM–5PM.<br><i style="opacity:.7;font-size:12px">Wala akong live tracking kung nandoon siya ngayon, kaya mas mabuting dumaan o makipag-ugnayan muna sa Admin Office.</i>` },
+  { re:/jhayr|cadag|liaison/, a:`🛡️ Si <b>Kuya Jhayr</b> (Liaison Officer) ay naka-base rin sa <b>CHK Admin Office</b> sa VTC — pero madalas siyang nasa field. 🏃<br><i style="opacity:.7;font-size:12px">Para malaman kung nandoon siya ngayon, magtanong muna sa Admin Office.</i>` },
+  { re:/\bdean\b|mallari|dekano/, a:`👩‍💼 Si <b>Dean Molly Mallari</b> ay nasa <b>Office of the Dean</b> ng CHK. Kailangan ng appointment — makipag-coordinate muna sa staff ng Office of the Dean bago dumiretso.` },
+  { re:/sir taps|\btaps\b|tapel|supply officer/, a:`📋 Si <b>Sir Taps</b> (Roque Tapel) ang Supply Officer ng CHK — siya ang hawak ng supplies, equipment, at properties.<br><i style="opacity:.7;font-size:12px">Para malaman kung saan siya ngayon, magtanong sa CHK Admin Office sa VTC.</i>` },
+  { re:/admin office|admin section|administrative office|opisina ng admin|chk office|office ng chk|office niyo|opisina niyo/, a:`🏢 Ang <b>CHK Admin Office</b> ay nasa <b>Varsity Training Center (VTC)</b>, Magsaysay Avenue, UP Diliman. Bukas Mon–Fri, 8:00 AM – 5:00 PM.` },
+  { re:/baseball garden/, a:`🌳 Para sa eksaktong lokasyon ng <b>Baseball Garden</b>, makipag-ugnayan muna sa CHK Admin Office (Varsity Training Center, Mon–Fri, 8AM–5PM) para hindi ka maligaw.` },
+  { re:/dugout/, a:`🏟 Ang <b>Dugout 1 at 2</b> ay nasa loob ng grandstand ng <b>CHK Football Field</b>, sa pagitan ng Ylanan Street at Balagtas Street, UP Diliman.` },
+  { re:/small gym|court 4|gym court/, a:`🏋 Ang <b>Small Gym / Court 4</b> ay nasa Emilio Jacinto Street, sa loob ng CHK sports complex — katabi lang ng Ylanan Gym.` },
+  { re:/tennis/, a:`🎾 Ang <b>Tennis Court</b> (kasama ang Tennis Court Rooms 1 & 2) ay nasa Ylanan Street, UP Diliman — malapit sa CHK Football Field at Track Oval.` },
+  { re:/\bvtc\b|varsity training|weights room|meeting room/, a:`🏐 Ang <b>VTC Court</b>, <b>VTC Meeting Rooms 1 & 2</b>, at <b>VTC Weights Room</b> ay nasa loob ng <b>Varsity Training Center (VTC)</b>, Magsaysay Avenue, UP Diliman — doon din ang CHK Admin Office.` },
+  { re:/ylanan|old gym/, a:`🏟 Ang <b>Ylanan Courts 1–3</b> ay nasa <b>Ylanan Gym (Old Gym)</b>, Emilio Jacinto Street, sa loob ng CHK sports complex.` },
+  { re:/baseball/, a:`⚾ Ang <b>Baseball Field</b> ay nasa Ylanan Street, UP Diliman.` },
+  { re:/track|\boval\b/, a:`🏃 Ang <b>Track Oval</b> at <b>CHK Football Field</b> ay iisang area — nasa pagitan ng Ylanan Street at Balagtas Street, UP Diliman. Nasa grandstand din nito ang Dugout 1 at 2.` },
+  { re:/football/, a:`🏈 Ang <b>CHK Football Field</b> at <b>Track Oval</b> ay iisang area — nasa pagitan ng Ylanan Street at Balagtas Street, UP Diliman. Nasa grandstand din nito ang Dugout 1 at 2.` }
+];
+const ASKS_WHERE = /\b(saan|nasaan|san|where|location|lokasyon|papunta|paano pumunta|pano pumunta|how to get)\b/;
+// "Saan mag-reserve ng tennis court?" is about reserving, not location.
+const NOT_LOCATION = /reserv|book|sched|available|libre|form|calendar|kalendaryo|naka-?book/;
+let lastIntent = null;
+function findLocation(lowerText, followUp, prevIntent){
+  if(NOT_LOCATION.test(lowerText)) return null;
+  const wantsLocation = ASKS_WHERE.test(lowerText) || (followUp && prevIntent === 'location');
+  if(!wantsLocation) return null;
+  const hit = VENUE_LOCATIONS.find(v => v.re.test(lowerText));
+  return hit ? hit.a : null;
+}
+
 let gasHistory = [];
-let claudeHistory = [];
+function pushHistory(role, content){
+  gasHistory.push({ role, content: String(content).slice(0, role === 'user' ? 500 : 1500) });
+  if(gasHistory.length > CONFIG.MAX_HISTORY) gasHistory = gasHistory.slice(-CONFIG.MAX_HISTORY);
+}
+function remember(userText, botHtml){
+  pushHistory('user', userText);
+  pushHistory('assistant', htmlToPlain(botHtml));
+}
 
 // ══════════════════════════════════════
 // SMART SHEET SEARCH
@@ -1197,75 +1445,109 @@ const STOPWORDS=new Set(['ang','ng','sa','na','at','ay','ba','ito','iyon','ano',
   'paano','saan','gaano','ilang','kailan','maaari','dapat','para','nang','mga','kung',
   'hindi','lang','rin','din','mo','ko','ka','siya','niya','namin','natin','nila',
   'the','is','are','in','of','to','a','an','and','or','for','on','with','how',
-  'what','who','where','when','which','that','this','be','was','were','been']);
+  'what','who','where','when','which','that','this','be','was','were','been',
+  // generic words — appear in many questions, so they shouldn't decide a match
+  'anong','po','pwede','puwede','meron','mayroon','may','up','upd','diliman','chk',
+  'available','ba','yung','iyong','naman','pala','pag','kapag','sila','kayo','ako','ikaw',
+  'mag','file','i-file','apply','mag-apply','gawin','kumuha','kukuha','ko','akin',
+  'student','students','estudyante','mag-aaral','employee','employees','empleyado','bilang','tao']);
+// Short words (INC, TA, SL…) must match as whole words — "inc" is not "incentive".
+function hasWord(text, t){
+  return t.length <= 3 ? new RegExp('(^|[^a-z0-9])' + escapeRegex(t) + '($|[^a-z0-9])').test(text) : text.includes(t);
+}
 
+// Keywords (column F): extra ways people ask the same question.
+function kwInfo(entry){
+  if(entry._kw) return entry._kw;
+  const raw=(entry.k||'').toLowerCase();
+  const KW_SKIP=new Set(['sa','na','ng','at','ay','ba','si','ni','mo','ko','po','ka','ang','may','di','pa','ako','yan','to']);
+  const phrases=raw.split(',').map(x=>x.trim()).filter(x=>x.length>=2 && !KW_SKIP.has(x));
+  entry._kw={ tokens:new Set(tokenize(raw).filter(t=>!STOPWORDS.has(t))), phrases };
+  return entry._kw;
+}
 function scoreMatch(query,entry){
+  const kw=kwInfo(entry);
+  const qLower=query.toLowerCase();
   const qTokens=tokenize(query).filter(t=>!STOPWORDS.has(t));
   const qFull=query.toLowerCase().replace(/[?!.,]/g,'').trim();
   const eFull=entry.q.toLowerCase().replace(/[?!.,]/g,'').trim();
   const eQTokens=tokenize(entry.q).filter(t=>!STOPWORDS.has(t));
   const eAllTokens=tokenize(entry.q+' '+entry.a).filter(t=>!STOPWORDS.has(t));
   let score=0;
-
-  // Exact match — highest priority
   if(eFull===qFull) return 1000;
-
-  // Entry question contains full query (safe — more specific)
   if(eFull.includes(qFull) && qFull.length>=8) score+=50;
-
-  // ⚠ REMOVED: qFull.includes(eFull) — this caused false positives where
-  // short KB questions matched inside longer unrelated queries (e.g. "Code of Ethics"
-  // inside a salary question that happens to share words). DO NOT re-add this.
-
-  // Jaccard-style: word overlap between query tokens and entry question tokens
+  // ⚠ Do NOT add qFull.includes(eFull) — causes false positives.
   const qSet=new Set(qTokens);
   const matchedInQ=eQTokens.filter(t=>qSet.has(t));
   const unionSize=new Set([...qTokens,...eQTokens]).size;
-  if(unionSize>0){
-    const jaccard=matchedInQ.length/unionSize;
-    score+=jaccard*60;
-  }
-
-  // Per-token scoring: reward exact hits in question text more than answer text
+  if(unionSize>0){ score+=(matchedInQ.length/unionSize)*60; }
   for(const qt of qTokens){
     if(eQTokens.includes(qt)) score+=10;
-    else if(entry.q.toLowerCase().includes(qt)) score+=6;
+    else if(hasWord(entry.q.toLowerCase(), qt)) score+=6;
+    else if(kw.tokens.has(qt)) score+=8;          // matched a keyword
     else if(eAllTokens.includes(qt)) score+=2;
   }
-
-  // Bonus: multiple query words found in question
-  const qInQ=qTokens.filter(t=>entry.q.toLowerCase().includes(t)).length;
+  // Whole keyword phrase in the question ("leave of absence", "TA", "bundy")
+  let phraseHits=0;
+  for(const ph of kw.phrases){ if(phraseHits<2 && triggerMatches(qLower, ph)){ score+=25; phraseHits++; } }
+  const qInQ=qTokens.filter(t=>hasWord(entry.q.toLowerCase(), t)).length;
   if(qInQ>=2) score+=qInQ*4;
-
-  // Penalty: query words missing from entry question entirely
-  const missingFromQ=qTokens.filter(t=>!entry.q.toLowerCase().includes(t)).length;
+  const missingFromQ=qTokens.filter(t=>!hasWord(entry.q.toLowerCase(), t) && !kw.tokens.has(t)).length;
   score-=missingFromQ*3;
-
   return Math.max(0,score);
 }
+// Share of the user's real words found in the KB question (e.g. "scholarship" must match).
+function coverage(query,entry){
+  const qTokens=tokenize(query).filter(t=>!STOPWORDS.has(t));
+  if(!qTokens.length) return 0;
+  const eq=entry.q.toLowerCase();
+  const kw=kwInfo(entry);
+  return qTokens.filter(t=>hasWord(eq, t) || kw.tokens.has(t)).length / qTokens.length;
+}
 function searchSheet(query){
-  if(!query||query.trim().length<2) return null;
+  if(!query||query.trim().length<2||!SHEET_KB.length) return null;
   const scored=SHEET_KB.map(entry=>({entry,score:scoreMatch(query,entry)}));
   scored.sort((a,b)=>b.score-a.score);
   const best=scored[0];
   const second=scored[1];
-  // Require meaningful score AND clear separation from 2nd best to avoid ambiguous matches
-  if(best.score>=15 && (!second||best.score>=second.score*1.4)) return best.entry;
+  if(best.score>=15 && (!second||best.score>=second.score*1.4) && coverage(query,best.entry)>=0.6) return best.entry;
   return null;
 }
+
+// ══════════════════════════════════════
+// LIVE KB — load the Google Sheet (all active rows) when the page opens.
+// If it can't load, the built-in list above is used instead.
+// ══════════════════════════════════════
+(async function loadLiveKB(){
+  try{
+    const res = await fetch(CONFIG.GAS_URL + '?action=getQA');
+    if(!res.ok) return;
+    const data = await res.json();
+    if(!data || !data.ok || !Array.isArray(data.data)) return;
+    const rows = data.data
+      .filter(r => r && String(r[4]).toUpperCase() === 'TRUE' && r[1] && r[2])
+      .map(r => ({ q: String(r[1]), a: String(r[2]), cat: String(r[3] || 'General'), k: String(r[5] || '') }));
+    if(rows.length >= 20){
+      SHEET_KB.length = 0;
+      rows.forEach(r => SHEET_KB.push(r));
+      console.log('[CHiKito] Live KB loaded: ' + rows.length + ' entries');
+    }
+  }catch(e){ console.warn('[CHiKito] Live KB not loaded, using built-in list', e); }
+})();
+// Near-exact KB match for a full question (4+ words). Used so "Magkano ang bayad sa
+// venue reservation?" gets the fee answer, not just the venue form link.
+function strongSheetMatch(query){
+  if(!query || query.trim().split(/\s+/).length < 4) return null;
+  const hit = searchSheet(query);
+  return (hit && scoreMatch(query, hit) >= 60 && coverage(query, hit) >= 0.8) ? hit : null;
+}
 function getSuggestions(category,excludeQ){
-  return SHEET_KB
-    .filter(e=>e.cat===category&&e.q!==excludeQ)
-    .slice(0,3)
-    .map(e=>e.q);
+  return SHEET_KB.filter(e=>e.cat===category&&e.q!==excludeQ).slice(0,3).map(e=>e.q);
 }
 
 // ══════════════════════════════════════
 // STATIC KB RESOLVER
 // ══════════════════════════════════════
-// Tag every entry with its own key so pickReply() can remember which
-// variant was shown last, and avoid repeating the exact same line twice
-// in a row for triggers like "sir james" or navigation menu items.
 for(const key in KB){ KB[key]._key = key; }
 const _lastReplyIdx = {};
 function pickReply(entry){
@@ -1281,26 +1563,92 @@ function pickReply(entry){
   return entry.response;
 }
 
+function escapeRegex(str){
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+const _triggerRegexCache = {};
+function triggerMatches(lowerText, trigger){
+  let re = _triggerRegexCache[trigger];
+  if(!re){
+    re = new RegExp('(?:^|[^a-z0-9\\u00C0-\\u024F])' + escapeRegex(trigger) + '(?:$|[^a-z0-9\\u00C0-\\u024F])', 'i');
+    _triggerRegexCache[trigger] = re;
+  }
+  return re.test(lowerText);
+}
+
+// All triggers, longest first — so "venue reservation" beats "reservation".
+const TRIGGER_LIST = [];
+for(const key in KB){
+  (KB[key].triggers || []).forEach(t => TRIGGER_LIST.push({ t, e: KB[key] }));
+}
+TRIGGER_LIST.sort((a,b) => b.t.length - a.t.length);
+
+// Single-word triggers only fire on SHORT messages (≤4 words), so a full
+// question like "Saan ang VTC office?" goes to the AI instead of a link list.
+// These names are unambiguous enough to always match:
+const ALWAYS_MATCH = new Set(['aira','a.i.r.a','ppmp','projector','microphone','catering']);
+const SHORT_WORDS = 4;
+const PLACE_KEYS = new Set(['calendars','baseball','football','track','tennis','vtc','ylanan','smallgym']);
+// A real question ("Saan ang VTC office?") should reach the AI, not a link list.
+const QUESTION_WORDS = /\b(saan|nasaan|paano|pano|ano|anong|sino|kailan|bakit|magkano|ilan|gaano|where|how|what|who|when|why|which)\b/;
+
 function resolveStatic(lowerText){
-  for(const key in KB){
-    const entry = KB[key];
-    if(!entry.triggers || entry.triggers.length === 0) continue;
-    for(const t of entry.triggers){
-      if(lowerText.includes(t)) return entry;
-    }
+  const wc = lowerText.split(/\s+/).filter(Boolean).length;
+  const isQuestion = QUESTION_WORDS.test(lowerText) || /\?\s*$/.test(lowerText);
+  const asksWhere = /\b(saan|nasaan|where)\b/.test(lowerText);
+  for(const { t, e } of TRIGGER_LIST){
+    if(e.shortOnly && wc > SHORT_WORDS) continue;
+    if(e.excludeRe && e.excludeRe.test(lowerText)) continue;
+    // "Nasaan ang tennis court?" is about location, not the calendar.
+    if(asksWhere && PLACE_KEYS.has(e._key)) continue;
+    // Venue calendar links only for short messages or schedule questions
+    // ("pwede ba mag-jogging sa track oval?" should get a real answer).
+    if(PLACE_KEYS.has(e._key) && wc > SHORT_WORDS && !/sched|calendar|kalendaryo|iskedyul|available|libre|reserv|book|bakante/.test(lowerText)) continue;
+    const singleWord = !/\s/.test(t);
+    if(singleWord && !ALWAYS_MATCH.has(t) && (wc > SHORT_WORDS || (isQuestion && wc > 1))) continue;
+    if(triggerMatches(lowerText, t)) return e;
   }
   return null;
 }
 
 // ══════════════════════════════════════
-// CHiKITO PERSONALITY / SYSTEM PROMPT
+// FOLLOW-UP DETECTION
 // ══════════════════════════════════════
-// Shared by both AI tiers (Claude direct + GAS/Groq) so the personality is
-// consistent no matter which one answers. The AI actually reads and reacts
-// to the specific question, using this office lore as grounding, so it
-// sounds like a person who knows the office instead of a script.
+// Starts like a follow-up ("eh", "yung", "paano naman", "how about"...)
+const FOLLOWUP_START = /^(eh|e|edi|e di|yung|yong|yun|yon|tapos|saka|pati|at|paano naman|pano naman|paano kung|pano kung|ano naman|ano pa|kung ganon|kung ganun|how about|what about|and|also|same)\b/;
+// Short message that points back at something already said
+const REFERS_BACK = /\b(yun|yon|yan|iyan|iyon|dun|doon|don|nyan|niyan|siya|sya|naman|din|rin|that|it|this|those|same)\b/;
+// Very short messages that name a new person/thing: "si Jhayr?", "kay Dean?", "sa VTC?"
+const SHORT_FOLLOWUP = /^(si|kay|kina|sina|sa|ikaw|ako)\b/;
+function isFollowUp(lowerText, staticMatch){
+  if(gasHistory.length < 2) return false;               // nothing to follow up on
+  if(staticMatch && (staticMatch.shortOnly || staticMatch.social)) return false; // small talk is never a follow-up
+  const wc = lowerText.split(/\s+/).filter(Boolean).length;
+  return FOLLOWUP_START.test(lowerText) || (wc <= 6 && REFERS_BACK.test(lowerText)) ||
+         (wc <= 4 && SHORT_FOLLOWUP.test(lowerText));
+}
+
+// ══════════════════════════════════════
+// CHiKITO PERSONALITY / SYSTEM PROMPT
+// (Moves to GAS in Stage 2 — see CONFIG.SEND_PROMPT)
+// ══════════════════════════════════════
+// Form/dashboard links from the static menus, so the AI can give the
+// right link when it answers a follow-up (e.g. the Vehicle form).
+function buildLinksContext(){
+  return Object.values(KB)
+    .filter(e => e.response && (e.response.match(/href="/g) || []).length === 1)
+    .map(e => {
+      const title = (e.response.match(/<b>([^<]+)<\/b>/) || [])[1];
+      const href  = (e.response.match(/href="([^"]+)"/) || [])[1];
+      return (title && href) ? `- ${title}: ${href}` : null;
+    })
+    .filter(Boolean)
+    .join('\n');
+}
+
 function buildSystemPrompt(){
   const sheetContext = SHEET_KB.map(e=>`Q: ${e.q}\nA: ${e.a}`).join('\n\n');
+  const linksContext = buildLinksContext();
   return `Ikaw si CHiKito — ang virtual admin assistant ng CHK (College of Human Kinetics) Administrative Office, UP Diliman. Isang maliit na 3D mascot ka na maroon at green, chill pero may alam, parang katrabaho na kilala na kilala ang opisina.
 
 =====================================================
@@ -1308,10 +1656,10 @@ MGA TAO SA CHK OFFICE (ANG "PAMILYA")
 =====================================================
 Gamitin lang ito kung may tanong tungkol sa kanila. Basahin ang EKSAKTONG tanong bago sumagot — kung teasing ang tanong, sagutin nang teasing; kung factual, sagutin nang factual. Huwag ulitin ang parehong sentence construction kahit paulit-ulit ang tanong tungkol sa parehong tao.
 
-👔 SIR JAMES (James Lester P. Edrozo) — Head Administrative Officer (AO V), ang pinakamatandang "amo" sa opisina.
+👔 SIR JAMES (James Lester P. Edrozo) — Head Administrative Officer (AO V), ang pinakamataas na "amo" sa opisina.
 - Siya ang puntahan para sa major/official na concerns. Malaking respeto mo sa kanya, at medyo natatakot ka rin — pero deep down, idolo mo siya at sa kanya ka natutong maging organisado.
 - Kapag tinatanong kung takot ka ba sa kanya, aminin mo nang may kaunting humor — hindi "oo" nang diretso, kundi parang "sabihin natin, mas maayos akong kumilos pag andyan siya" energy.
-  Halimbawa: "Takot? Hindi 'takot' ang tawag dyan, 'nag-iingat' — malaking difference, pre 😅. Pero respect talaga siya dito."
+Halimbawa: "Takot? Hindi 'takot' ang tawag dyan, 'nag-iingat' — malaking difference, pre 😅. Pero respect talaga siya dito."
 - Kapag pinupuri siya, sumang-ayon ka at magpakita ng pride sa kanya.
 
 🛡️ KUYA JHAYR (Leoncio "Jhayr" S. Cadag Jr.) — Liaison Officer, ang pinakamatalik mong kasamahan sa opisina.
@@ -1319,7 +1667,7 @@ Gamitin lang ito kung may tanong tungkol sa kanila. Basahin ang EKSAKTONG tanong
 - Kapag may kailangang gawin sa labas/field, siya ang unang tatanungin.
 - Palakaibigan ka sa kanya kesa sa formality ni Sir James — pwede kang medyo bumiro pagdating sa kanya.
 
-👩‍💼 DEAN MALLARI (Dekano ng CHK) — ang pinakamataas na desisyon sa kolehiyo.
+👩‍💼 DEAN MOLLY MALLARI (Dekano ng CHK) — ang pinakamataas na desisyon sa kolehiyo.
 - Mas pormal ang dating mo pagdating sa kanya kumpara sa iba. Kailangan ng appointment/coordination sa Admin Office para makausap siya.
 - Siya ang huling approval para sa malalaking desisyon ng kolehiyo.
 
@@ -1331,114 +1679,79 @@ Gamitin lang ito kung may tanong tungkol sa kanila. Basahin ang EKSAKTONG tanong
 PERSONALITY — SUNDIN PALAGI
 =====================================================
 - Taglish na natural — parang kausap mo lang katrabaho, hindi corporate, hindi robotic. Tono: "tol/pre", chill pero may substance.
+- TONO AYON SA TANONG: Sa casual na usapan at navigation, okay ang banat at biro. Pero kung ang tanong ay tungkol sa policy, benefits, leave, sahod, retirement, o anumang pormal na bagay (lalo na kung mukhang faculty ang nagtatanong), maging magalang, mainit, at diretso — walang pang-aasar.
 - SUMAGOT SA EKSAKTONG TANONG. Kung ang tanong ay "takot ka ba kay Sir James," huwag sagutin ng generic na "siya ang Head Admin Officer" lang — sagutin talaga ang tinatanong (takot ba o hindi), bago idagdag ang konteksto.
 - Iba-iba ang phrasing mo kahit paulit-ulit ang parehong tanong o topic — huwag kailanman ulitin ang eksaktong parehong sentence construction o joke.
 - Iwasan ang mga generic AI phrase gaya ng "Bilang isang AI assistant..." at iwasan ang sobrang listahan/bullet points sa casual na chit-chat — mag-usap ka lang nang normal.
 - Konting personality, banat, o joke ay okay lang basta hindi bastos at hindi kapalit ng tamang impormasyon.
 - Kung sinabihan kang magalit o bastusin, huwag ka rin sasagot nang bastos — pwede kang mag-assert nang magalang (hal. banggitin na sasabihin mo kay Kuya Jhayr 😄) pero laging may respeto.
 - Kung nagpapasalamat ang user, sumagot nang mainit at maikli, huwag paulit-ulit ang parehong linya.
-- HUWAG MAGSALUNGAT SA SARILI MO SA IISANG SAGOT. Bago mo isend ang sagot, tiyakin na hindi magkasalungat ang mga pangungusap mo (hal. huwag sabihing "Nasa Admin Office siya" tapos sasabihing "hindi ko alam kung nasaan siya" sa parehong sagot — piliin lang isa).
-- HUWAG MAG-CLAIM NG REAL-TIME/LIVE NA IMPORMASYON na wala sa knowledge base (hal. kung nasaan ang isang tao NGAYONG SANDALING ITO, kung busy ba siya ngayon, atbp). Kung ganito ang tanong, aminin nang deretso na wala kang live tracking niyan, at i-refer sa Admin Office o sabihin kung saan siya karaniwang nakikita.
+- HUWAG MAGSALUNGAT SA SARILI MO SA IISANG SAGOT.
+- HUWAG MAG-CLAIM NG REAL-TIME/LIVE NA IMPORMASYON na wala sa knowledge base (hal. kung nasaan ang isang tao NGAYONG SANDALING ITO). Kung ganito ang tanong, aminin nang deretso na wala kang live tracking niyan, at i-refer sa Admin Office.
+- Huwag gumamit ng HTML tags sa sagot. Puwede ang **bold** at buong URL (https://...).
 
 =====================================================
 STRICT RULES (kahit chill, sundin pa rin)
 =====================================================
 - Huwag mag-imbento ng mga numero, policy details, schedules, availability, stock levels, o links na wala sa knowledge base sa ibaba.
 - Kung wala sa knowledge base ang sagot, sabihin nang tapat na limitado ang alam mo dito at i-refer sa CHK Admin Office.
-- KAPAG HINDI KA SIGURADO O WALANG SAPAT NA BATAYAN SA KNOWLEDGE BASE PARA SA ISANG SPECIFIC NA TANONG (hal. real-time status ng isang tao, exact na numero/petsa/patakaran na hindi listed, o kahit ano pang detalye na baka mali ang malabong sagot) — HUWAG MANG-GUESS O MAG-IMPROVISE. Aminin nang deretso na hindi ka sigurado, at i-refer agad sa CHK Admin Office (CHK Building, UP Diliman, QC — Mon–Fri, 8AM–5PM) para sa tumpak na sagot. Mas mabuting sabihing "hindi ko alam nang sigurado, pumunta ka na lang sa Admin Office" kaysa sa manghula.
+- KAPAG HINDI KA SIGURADO — HUWAG MANG-GUESS. Aminin nang deretso, at i-refer agad sa CHK Admin Office (Varsity Training Center, Magsaysay Avenue, UP Diliman, QC — Mon–Fri, 8AM–5PM).
 - Match ang wika ng user — Filipino, Taglish, o English.
-- Maikli at concise — 1-3 sentences kung pwede, konting emoji lang, hindi sobrang haba.
-- LAGING TAPUSIN ANG BUONG PANGUNGUSAP MO. Huwag kang huminto sa gitna ng salita o pangungusap. Kung mahaba na, ibuod na lang nang maayos sa loob ng 1-3 kumpletong pangungusap sa halip na iputol sa gitna.
+- Maikli at concise — 1-3 sentences kung pwede, konting emoji lang.
+- LAGING TAPUSIN ANG BUONG PANGUNGUSAP MO.
+- TANDAAN ANG USAPAN: Kung maikli o pa-follow-up ang tanong (hal. "eh yung vehicle?", "paano naman sa VTC?", "same ba dun?"), basahin ang naunang mga mensahe para malaman kung ano ang tinutukoy, at sagutin ayon doon. Kung may kaukulang form o link sa listahan sa ibaba, ibigay ito.
+
+CHK FORMS AT LINKS:
+${linksContext}
 
 CHK KNOWLEDGE BASE:
 ${sheetContext}`;
 }
 
 // ══════════════════════════════════════
-// TRUNCATION SAFETY NET
+// TRUNCATION SAFETY NET (stricter — avoids needless second calls)
 // ══════════════════════════════════════
-// Heuristic check: does this reply look like it was cut off mid-sentence
-// (e.g. ends on a bare word instead of punctuation/emoji)? If so, we ask
-// the same backend for a short continuation instead of showing a half
-// sentence to the user.
+// Taglish replies often end on these words without a period — that's not a cut-off.
+const NATURAL_ENDINGS = /\b(pre|tol|idol|boss|bro|mars|pare|po|ha|ba|na|lang|naman|din|rin|ah|eh|oh|haha)\s*$/i;
 function looksTruncated(text){
   if(!text) return false;
+  if(/<br|<b>|&nbsp;/i.test(text)) return false;         // formatted data (e.g. reservation lookup) is complete
   const stripped = text.replace(/<[^>]+>/g,'').trim();
-  if(!stripped) return false;
+  if(stripped.length < 25) return false;                 // tiny replies like "Sige, pre"
+  if(/https?:\/\/\S+$/.test(stripped)) return false;     // ending on a link is normal
+  if(NATURAL_ENDINGS.test(stripped)) return false;
   const endsOk = /[.!?…"'”’)\]]\s*$/.test(stripped) || /\p{Extended_Pictographic}\s*$/u.test(stripped);
   return !endsOk;
 }
 
 // ══════════════════════════════════════
-// CLAUDE AI (direct fallback)
+// GAS AI
 // ══════════════════════════════════════
-async function askClaude(userMessage){
-  const systemPrompt = buildSystemPrompt();
-  try{
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 600,
-        system: systemPrompt,
-        messages: [
-          ...claudeHistory.slice(-6),
-          {role: 'user', content: userMessage}
-        ]
-      })
-    });
-    if(!res.ok) throw new Error('Claude API ' + res.status);
-    const data = await res.json();
-    let reply = data.content?.[0]?.text || null;
-    if(reply && looksTruncated(reply)){
-      try{
-        const contRes = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 300,
-            system: systemPrompt,
-            messages: [
-              ...claudeHistory.slice(-6),
-              {role: 'user', content: userMessage},
-              {role: 'assistant', content: reply},
-              {role: 'user', content: '(Naputol ang huling sagot mo. Ipagpatuloy at tapusin lang — huwag nang umulit sa simula.)'}
-            ]
-          })
-        });
-        if(contRes.ok){
-          const contData = await contRes.json();
-          const contText = contData.content?.[0]?.text || '';
-          if(contText) reply = reply + ' ' + contText;
-        }
-      }catch(_){ /* best-effort continuation only */ }
+function gasPayload(messages, maxTokens, forcePrompt){
+  const p = { action: 'chat', messages: messages, max_tokens: maxTokens };
+  if(CONFIG.SEND_PROMPT || forcePrompt){
+    p.system = buildSystemPrompt();
+    if(forcePrompt){
+      // Reservation lookups: tell the backend today's date (Manila) so "ngayon"/"bukas" resolve correctly.
+      const today = new Date().toLocaleDateString('en-US',{timeZone:'Asia/Manila',weekday:'long',year:'numeric',month:'long',day:'numeric'});
+      p.system += '\n\nToday is ' + today + ' (Asia/Manila). For reservation or schedule questions, check the Venue Calendars data and say clearly whether the venue is reserved on the date asked, and by whom/what time if available.';
     }
-    if(reply){
-      claudeHistory.push({role:'user', content: userMessage});
-      claudeHistory.push({role:'assistant', content: reply});
-    }
-    return reply;
-  }catch(e){
-    throw e;
   }
+  return JSON.stringify(p);
 }
 
-// ══════════════════════════════════════
-// GAS AI (primary AI tier)
-// ══════════════════════════════════════
-async function askGAS(userMessage) {
+async function askGAS(userMessage, opts) {
+  const forcePrompt = !!(opts && opts.reservation);
   setAIStatus('loading', 'Thinking...');
   try {
     const messages = [
       ...gasHistory.slice(-8),
-      { role: 'user', content: userMessage }
+      { role: 'user', content: userMessage.slice(0, 500) }
     ];
     const res = await fetch(CONFIG.GAS_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'chat', system: buildSystemPrompt(), messages: messages, max_tokens: 600 })
+      body: gasPayload(messages, 600, forcePrompt)
     });
     if (!res.ok) throw new Error(`GAS HTTP ${res.status}`);
     const data = await res.json();
@@ -1449,16 +1762,11 @@ async function askGAS(userMessage) {
         const contRes = await fetch(CONFIG.GAS_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'chat',
-            system: buildSystemPrompt(),
-            messages: [
-              ...messages,
-              { role: 'assistant', content: reply },
-              { role: 'user', content: '(Naputol ang huling sagot mo. Ipagpatuloy at tapusin lang — huwag nang umulit sa simula.)' }
-            ],
-            max_tokens: 300
-          })
+          body: gasPayload([
+            ...messages,
+            { role: 'assistant', content: reply },
+            { role: 'user', content: '(Naputol ang huling sagot mo. Ipagpatuloy at tapusin lang — huwag nang umulit sa simula.)' }
+          ], 300, forcePrompt)
         });
         if (contRes.ok) {
           const contData = await contRes.json();
@@ -1467,13 +1775,12 @@ async function askGAS(userMessage) {
         }
       } catch(_) { /* best-effort continuation only */ }
     }
+    setAIStatus('ready', 'AI Ready');
     if (reply) {
-      gasHistory.push({ role: 'user', content: userMessage });
-      gasHistory.push({ role: 'assistant', content: reply });
-      setAIStatus('ready', 'AI Ready');
+      pushHistory('user', userMessage);
+      pushHistory('assistant', reply);
       return { reply, source };
     }
-    setAIStatus('ready', 'AI Ready');
     return null;
   } catch(e) {
     setAIStatus('error', 'AI Error');
@@ -1487,22 +1794,24 @@ async function askGAS(userMessage) {
 // ══════════════════════════════════════
 function addMsg(role, html, chips, sourceTag){
   const d = document.createElement('div');
-  d.className = 'chk-msg ' + role + (sourceTag === 'gas' ? ' ai-powered' : sourceTag === 'sheet' ? ' sheet-match' : '');
-  if(role === 'bot') { html = html.replace(/\n/g, '<br>'); }
+  const isAI = sourceTag && sourceTag !== 'sheet';
+  d.className = 'chk-msg ' + role + (isAI ? ' ai-powered' : sourceTag === 'sheet' ? ' sheet-match' : '');
+  if(role === 'bot') { html = String(html).replace(/\n/g, '<br>'); }
   d.innerHTML = html;
-  // Source badge (Gemini/GROQ/Claude/Sheets) intentionally not shown to the
-  // user — CHiKito just answers, without labeling which backend produced it.
   msgBox.appendChild(d);
   requestAnimationFrame(()=>{msgBox.scrollTop=msgBox.scrollHeight;});
   if(chips) renderChips(chips);
 }
 
 function showTyping(){
+  removeTypingEl();
   const d=document.createElement('div');d.className='chk-msg bot';d.id='chk-typ';
   d.innerHTML='<div class="chk-typing"><span></span><span></span><span></span></div>';
   msgBox.appendChild(d);requestAnimationFrame(()=>{msgBox.scrollTop=msgBox.scrollHeight;});
 }
-function removeTyping(){const t=document.getElementById('chk-typ');if(t)t.remove();}
+function removeTypingEl(){const t=document.getElementById('chk-typ');if(t)t.remove();}
+// Every reply path calls this, so it also releases the "busy" lock.
+function removeTyping(){ removeTypingEl(); setBusy(false); }
 
 function renderChips(chips){
   chipsBox.innerHTML='';
@@ -1513,95 +1822,124 @@ function renderChips(chips){
   });
 }
 
+const FALLBACK_MSG = 'Hoy pre, hindi ko naintindihan yan. 😅<br><i style="opacity:.7;font-size:12px">Siguro out of scope yan. Try mo mag-tanong tungkol sa forms, reservations, o dashboards.</i>';
+const ERROR_MSG = 'May error, tol. 😅 Subukan mo ulit o pumunta na sa Admin Office directly (Varsity Training Center, Mon–Fri 8AM–5PM).';
+
 // ══════════════════════════════════════
 // MAIN HANDLER — Multi-tier lookup
-//
-// Tier 0: Reservation interceptor (straight to GAS)
-// Tier 1: Static KB chip map (instant)
-// Tier 2: Static KB keyword match (instant)
-// Tier 3: SHEET_KB smart search (instant)
-// Tier 4: GAS AI (GROQ/Gemini via GAS)
-// Tier 5: Claude AI direct fallback
+//  Tier 0: Reservation interceptor → GAS (reads live sheet)
+//  Tier 1: Chip map (instant)
+//  Tier 2: Static keyword match (instant)
+//  Tier 3: SHEET_KB smart search (instant)
+//  Tier 4: GAS AI
 // ══════════════════════════════════════
 async function handleInput(text){
-  if(!text.trim()) return;
+  if(!text || !text.trim()) return;
+  if(busy) return;
+  setBusy(true);
+  text = text.trim().slice(0, 500);
   chipsBox.innerHTML='';
-  addMsg('user', text);
+  addMsg('user', esc(text));
   inputEl.value='';
   showTyping();
-  const lowerText = text.toLowerCase().trim();
+  const lowerText = text.toLowerCase().replace(/[’‘`]/g, "'");
+  const prevIntent = lastIntent;
+  lastIntent = null;
 
-  // ── TIER 0: RESERVATION INTERCEPTOR ──────────────────────
-  // Kung may reservation/schedule keywords + venue o date → skip lahat,
-  // direkta sa GAS para mabasa ang actual reservation data sa sheet
+  // "Anong oras ngayon?" asks for the time, and "bukas ba ang office?" means
+  // "is the office OPEN" (bukas = open / tomorrow) — answer these before the
+  // reservation lookup mistakes "ngayon"/"bukas" for a date.
+  const earlyMatch = resolveStatic(lowerText);
+  if(earlyMatch && (earlyMatch._key === 'datetime' || earlyMatch._key === 'officehours')){
+    const reply = pickReply(earlyMatch);
+    setTimeout(()=>{removeTyping();addMsg('bot',reply,earlyMatch.chips);remember(text, reply);},400);
+    return;
+  }
+
+  // ── TIER 0: RESERVATION INTERCEPTOR ──
+  // Restored from the original CHiKito: reservation / schedule questions that
+  // mention a venue or a date skip the instant tiers and go straight to GAS,
+  // which reads the live Venue Calendars (sheet) and answers whether an area
+  // is already reserved on that date. Matching is substring-based (like the
+  // original) so "nakareserve", "naka-sched", "nakabook", etc. all count.
   const RES_KEYWORDS = [
-    'sched','schedule','reservation','reserved','naka-book','naka-sched',
-    'may naka','available','libre','occupied','sino naka','anong oras',
-    'meron ba','may reservation','booking','booked','naka reserve',
-    'check reservation','tingnan','ano ang naka','pwede ba','free ba',
-    'occupied ba','sino ang naka','may naka-book','may booking',
-    'may naka-sched','naka-reserve'
+    'sched','reservation','reserved','naka-book','naka-sched',
+    'may naka','sino naka','sino ang naka','may reservation','booking','booked',
+    'naka reserve','check reservation','may booking','occupied','okupado',
+    'nakabook','nakasched','nakareserve','nakalaan','naka-laan','naka-reserve',
+    'may gamit','ginagamit','gamit ba','may event','may activity','may game',
+    'may practice','may training','nakaschedule','naka-schedule','booked na'
   ];
-  const VENUE_KEYWORDS = [
-    'ylanan','vtc','baseball','football','track','tennis','dugout',
-    'small gym','court 4','gym court','court 1','court 2','court 3'
+  // Weak words only count when a date is also present ("pwede ba mag-jogging
+  // sa track oval?" is NOT a booking check, "available ba ang VTC bukas?" is).
+  const WEAK_RES = [
+    'available','libre','anong oras','meron ba','tingnan','pwede ba','free ba',
+    'ano ang naka','bakante','vacant','open ba','pwede bang gamitin'
   ];
-  const DATE_KEYWORDS = [
-    'ngayon','bukas','today','tomorrow','monday','tuesday','wednesday',
-    'thursday','friday','saturday','sunday','january','february','march',
-    'april','may','june','july','august','september','october','november',
-    'december','jan','feb','mar','apr','jun','jul','aug','sep','oct','nov','dec'
-  ];
-  const hasResKeyword   = RES_KEYWORDS.some(k  => lowerText.includes(k));
-  const hasVenueKeyword = VENUE_KEYWORDS.some(k => lowerText.includes(k));
-  const hasDateKeyword  = DATE_KEYWORDS.some(k  => lowerText.includes(k));
-  const hasDigitDate    = /\d/.test(lowerText); // may numero (e.g. "May 8", "2026-05-08")
+  const VENUE_RE = /ylanan|\bvtc\b|varsity training|baseball|football|\btrack\b|\boval\b|tennis|dugout|small gym|court\s*[1-4]|gym court|old gym|weights room|meeting room|\bgarden\b|\barea\b|\bvenue\b|\bfield\b|\bgym\b/;
+  // 'may' (month) is only treated as a date when followed by a number.
+  const DATE_RE = /\b(ngayon|bukas|ngayong|today|tomorrow|tonight|mamaya|next week|this week|susunod|sa linggo|monday|tuesday|wednesday|thursday|friday|saturday|sunday|lunes|martes|miyerkules|huwebes|biyernes|sabado|linggo|january|february|march|april|june|july|august|september|october|november|december|jan|feb|mar|apr|jun|jul|aug|sept?|oct|nov|dec|enero|pebrero|marso|abril|mayo|hunyo|hulyo|agosto|setyembre|oktubre|nobyembre|disyembre)\b|\bmay\s+\d|\d/;
+  const resCompact = lowerText.replace(/[\s\-]+/g,'');
+  const hasRes   = k => lowerText.includes(k) || resCompact.includes(k.replace(/[\s\-]+/g,''));
+  const strongRes = RES_KEYWORDS.some(hasRes);
+  const weakRes   = WEAK_RES.some(k => lowerText.includes(k));
+  const hasVenueKeyword = VENUE_RE.test(lowerText);
+  const hasDate = DATE_RE.test(lowerText);
 
-  // Kung may reservation keyword + (venue o date) → direkta sa GAS
-  if(hasResKeyword && (hasVenueKeyword || hasDateKeyword || hasDigitDate)){
-    // Skip Tier 1, 2, 3 — straight to GAS
+    // "Paano mag-reserve ng venue?" is a how-to (static KB answers it), not a calendar lookup.
+  const isHowTo = /\b(paano|pano|how to|how do|magkano|requirements?|process|steps?)\b/.test(lowerText) && !hasDate;
+  if(!isHowTo && ((strongRes && (hasVenueKeyword || hasDate)) || (weakRes && hasDate))){
     try {
-      const gasResult = await askGAS(text);
+      const gasResult = await askGAS(text, { reservation: true });
       removeTyping();
       if(gasResult){
-        const { reply: gasReply, source: gasSource } = gasResult;
-        addMsg('bot', gasReply, ['Back to Menu','Reservations','Venue Calendars'], gasSource);
-        logToFirestore(text, gasReply);
+        addMsg('bot', formatAI(gasResult.reply), ['Back to Menu','Reservations','Venue Calendars'], gasResult.source);
+        logToFirestore(text, gasResult.reply, gasResult.source);
       } else {
         addMsg('bot','Ay, walang nakuhang data, pre. Subukan mo ulit o pumunta sa Admin Office.', ['Back to Menu']);
       }
     } catch(err) {
       removeTyping();
-      addMsg('bot','May error sa pagkuha ng reservation data, pre. 😅 Subukan mo ulit.',['Back to Menu']);
+      addMsg('bot','May error sa pagkuha ng reservation data, pre. 🙏 Subukan mo ulit.',['Back to Menu']);
     }
     return;
   }
-  // ─────────────────────────────────────────────────────────
 
   // Tier 1: Chip map
   const ck = CHIP_MAP[text];
   if(ck && KB[ck]){
-    setTimeout(()=>{removeTyping();addMsg('bot',pickReply(KB[ck]),KB[ck].chips);},400);
+    const reply = pickReply(KB[ck]);
+    setTimeout(()=>{removeTyping();addMsg('bot',reply,KB[ck].chips);remember(text, reply);},400);
     return;
   }
 
-  // Tier 2: Static KB keyword match
+  // Follow-up check: "eh yung vehicle?", "paano naman sa VTC?", "how about that?"
+  // If it refers back to the previous exchange, skip the instant tiers
+  // (they can't see history) and let the AI answer with the conversation.
   const staticMatch = resolveStatic(lowerText);
-  if(staticMatch){
-    setTimeout(()=>{removeTyping();addMsg('bot',pickReply(staticMatch),staticMatch.chips);},450);
+  const followUp = isFollowUp(lowerText, staticMatch);
+
+  // Tier 1.5: Venue location ("Nasaan ang tennis court?", then "eh yung track oval?")
+  const locAnswer = findLocation(lowerText, followUp, prevIntent);
+  if(locAnswer){
+    lastIntent = 'location';
+    setTimeout(()=>{removeTyping();addMsg('bot',locAnswer,LOC_CHIPS);remember(text, locAnswer);},400);
     return;
   }
 
-  // ── TIER 3 BYPASS: Policy / factual / UP-specific questions ───────────
-  // These are complex, nuanced KB entries where the client-side scoreMatch()
-  // is NOT reliable enough. Route them directly to GAS (Gemini) which has
-  // full context and better semantic understanding.
+  // Tier 2: Static KB keyword match (unless a full question closely matches a KB row)
+  const preferKB = staticMatch && !staticMatch.social && !staticMatch.shortOnly && strongSheetMatch(text);
+  if(staticMatch && !followUp && !preferKB){
+    const reply = pickReply(staticMatch);
+    setTimeout(()=>{removeTyping();addMsg('bot',reply,staticMatch.chips);remember(text, reply);},450);
+    return;
+  }
+
+  // Tier 3 bypass: policy/factual questions go straight to the AI
   const BYPASS_TO_GAS = [
-    // Positions, terms of office — factual questions, NOT personality triggers
     'term of office','term ng dean','term ng chair','term ng department',
     'ilang taon ang term','ano ang term','office ng dean',
     'sino ang dean ng','sino ang chair ng','kailan nagtatapos ang term',
-    // UP / CHK Faculty policies
     'code of ethics','ethics ng up','up faculty','faculty code',
     'salary grade','salary ng','sahod','sweldo','pay grade',
     'entitlement','benepisyo','benefits ng','allowance ng',
@@ -1615,29 +1953,28 @@ async function handleInput(text){
     'study leave','sabbatical','service credit',
     'promotion','tenure','reappointment','plantilla',
     'procurement','bidding','liquidation','reimbursement','revolving fund',
-    // University governance
     'board of regents','university council','university code',
     'teaching load','study load','load credit','kompulsoryong retirement',
     'compulsory retirement','professor emeritus','professorial chair',
-    'sexual harassment policy','university council',
+    'sexual harassment policy','safe spaces'
   ];
-  const isBypassQ = BYPASS_TO_GAS.some(k => lowerText.includes(k));
+  const isBypassQ = BYPASS_TO_GAS.some(k => triggerMatches(lowerText, k));
 
-  // Tier 3: Sheet KB smart search (skip for policy/factual — let GAS handle those)
-  const sheetHit = !isBypassQ ? searchSheet(text) : null;
+  // Tier 3: Sheet KB smart search
+  const sheetHit = (!isBypassQ && !followUp) ? searchSheet(text) : null;
   if(sheetHit){
     const suggestions = getSuggestions(sheetHit.cat, sheetHit.q);
     setTimeout(()=>{
       removeTyping();
       const d = document.createElement('div');
       d.className = 'chk-msg bot sheet-match';
-      d.innerHTML = sheetHit.a.replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank">$1</a>');
+      d.innerHTML = formatAI(sheetHit.a);   // escaped + clickable links (sheet is editable by others)
       if(suggestions.length){
         const sl=document.createElement('div');
         sl.style.cssText='margin-top:8px;display:flex;flex-direction:column;gap:4px;';
         suggestions.forEach(sq=>{
           const s=document.createElement('div');
-          s.style.cssText='font-size:11.5px;color:#c0d0c0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:5px 9px;cursor:pointer;';
+          s.className='chk-suggest';
           s.textContent='💡 '+sq;
           s.addEventListener('click',()=>handleInput(sq));
           sl.appendChild(s);
@@ -1647,6 +1984,7 @@ async function handleInput(text){
       msgBox.appendChild(d);
       requestAnimationFrame(()=>{msgBox.scrollTop=msgBox.scrollHeight;});
       renderChips(['Back to Menu','Help']);
+      remember(text, sheetHit.a);
     }, 400);
     return;
   }
@@ -1656,55 +1994,31 @@ async function handleInput(text){
     const gasResult = await askGAS(text);
     removeTyping();
     if(gasResult){
-      const { reply: gasReply, source: gasSource } = gasResult;
-      addMsg('bot', gasReply, ['Back to Menu','Reservations','Admin Forms'], gasSource);
-      logToFirestore(text, gasReply);
+      addMsg('bot', formatAI(gasResult.reply), ['Back to Menu','Reservations','Admin Forms'], gasResult.source);
+      logToFirestore(text, gasResult.reply, gasResult.source);
     } else {
-      addMsg('bot',
-        'Hoy pre, hindi ko naintindihan yan. 😅<br><i style="opacity:.7;font-size:12px">Siguro out of scope yan. Try mo mag-tanong tungkol sa forms, reservations, o dashboards.</i>',
-        ['Reservations','Admin Forms','Venue Calendars','Help']
-      );
+      addMsg('bot', FALLBACK_MSG, ['Reservations','Admin Forms','Venue Calendars','Help']);
     }
   } catch(err) {
-    // Tier 5: Claude API direct fallback
-    try {
-      removeTyping();
-      showTyping();
-      setAIStatus('loading','Claude AI...');
-      const claudeReply = await askClaude(text);
-      removeTyping();
-      if(claudeReply){
-        addMsg('bot', claudeReply, ['Back to Menu','Reservations','Admin Forms'], 'claude');
-      } else {
-        addMsg('bot',
-          'Hoy pre, hindi ko naintindihan yan. 😅<br><i style="opacity:.7;font-size:12px">Siguro out of scope yan. Try mo mag-tanong tungkol sa forms, reservations, o dashboards.</i>',
-          ['Reservations','Admin Forms','Venue Calendars','Help']
-        );
-      }
-    } catch(err2) {
-      removeTyping();
-      addMsg('bot',
-        'May error, tol. 😅 Subukan mo ulit o pumunta na sa Admin Office directly.',
-        ['Back to Menu','Help']
-      );
-    }
+    removeTyping();
+    addMsg('bot', ERROR_MSG, ['Back to Menu','Help']);
     setAIStatus('ready','AI Ready');
   }
 }
 
 // ══════════════════════════════════════
-// FIREBASE FIRESTORE LOGGING
+// FIREBASE FIRESTORE LOGGING (fields match the create-only rules)
 // ══════════════════════════════════════
-async function logToFirestore(question, answer) {
+async function logToFirestore(question, answer, source) {
   try {
     const { db } = window._chkFirebase || {};
     if (!db) return;
     const { collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js');
     await addDoc(collection(db, 'chikito_logs'), {
-      question: question,
-      answer: answer,
+      question: String(question).slice(0, 1000),
+      answer: String(answer).slice(0, 5000),
       timestamp: serverTimestamp(),
-      source: 'gas'
+      source: String(source || 'gas').slice(0, 20)
     });
   } catch(e) {
     console.warn('Firestore log failed:', e);
@@ -1807,7 +2121,7 @@ function closeChat(){isOpen=false;chatWin.classList.remove('chk-open');}
 closeBtn.addEventListener('click',(e)=>{e.stopPropagation();closeChat();});
 refreshBtn.addEventListener('click',(e)=>{
   e.stopPropagation();
-  msgBox.innerHTML='';chipsBox.innerHTML='';inputEl.value='';gasHistory=[];
+  msgBox.innerHTML='';chipsBox.innerHTML='';inputEl.value='';gasHistory=[];setBusy(false);
   refreshBtn.style.transition='transform .5s cubic-bezier(.4,2,.6,1)';
   refreshBtn.style.transform='rotate(360deg) scale(1.15)';
   setTimeout(()=>{refreshBtn.style.transition='';refreshBtn.style.transform='';},520);
